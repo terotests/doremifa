@@ -49,7 +49,7 @@ index_1.start(document.body, function (state) { return __awaiter(_this, void 0, 
             case 0:
                 _a = index_1.forElem;
                 _b = index_1.element;
-                _c = [templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>\n  <div>Hello World</div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ", "\n    ", "\n    ", " \n</div>\n  "], ["<div>\n  <div>Hello World</div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ",
+                _c = [templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ", "\n    ", "\n    ", " \n</div>\n  "], ["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ",
                         "\n    ",
                         "\n    ",
                         " \n</div>\n  "])), index_1.element(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div>The counter is ", " and page <b>", "</b></div>"], ["<div>The counter is ", " and page <b>", "</b></div>"])), state.cnt, state.page), index_1.element(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"], ["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"])))];
@@ -57,6 +57,7 @@ index_1.start(document.body, function (state) { return __awaiter(_this, void 0, 
                         "hello": function (_) { return index_1.element(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
                         "default": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>default route</div>"], ["<div>default route</div>"]))); },
                         "list": function (_) {
+                            console.log(_.phase);
                             var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
                             return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n          <ul>", "</ul>\n        </div>\n        "], ["<div>\n          <ul>", "</ul>\n        </div>\n        "])), values.map(function (_) { return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
                         }

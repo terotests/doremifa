@@ -6,6 +6,10 @@ import { start, router, getState, setState, element, forElem, html } from './ind
 start(document.body, async (state) => {
   return forElem( element`<div>
   <div>Hello World</div>
+    <div>
+      <a href="#hello">hello</a>
+      <a href="#list">list</a>
+    </div>
     <button id="inc">+1</button>
     <button id="dec">-1</button>
     <div></div>   
@@ -24,6 +28,7 @@ start(document.body, async (state) => {
       "hello" : _ => element`<div>This is hello from hello route</div>`,
       "default" : _ => element`<div>default route</div>`,
       "list" : _ => {
+        console.log(_.phase)
         const values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list
         return element`<div>
           <ul>${values.map( _ => html`<li><a href="#hello">${_}</a></li>`)}</ul>

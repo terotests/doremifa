@@ -269,14 +269,22 @@ function reduce(reducer) {
 exports.reduce = reduce;
 function router(routermap) {
     return __awaiter(this, void 0, void 0, function () {
-        var page;
+        var page_name, page, phase, last_page;
         return __generator(this, function (_a) {
-            page = routermap[app.state.page || 'default'];
+            page_name = app.state.page || 'default';
+            page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default);
+            phase = 'refresh';
             if (page) {
-                return [2 /*return*/, page(app.state)];
+                if (page_name != app.last_page_name) {
+                    last_page = routermap[app.last_page_name];
+                    if (last_page) {
+                        last_page(__assign({}, app.state, { phase: 'close' }));
+                    }
+                    phase = 'init';
+                }
+                app.last_page_name = page_name;
+                return [2 /*return*/, page(__assign({}, app.state, { phase: phase }))];
             }
-            if (routermap.default)
-                return [2 /*return*/, routermap.default(app.state)];
             return [2 /*return*/, element(templateObject_1 || (templateObject_1 = __makeTemplateObject(["route not found"], ["route not found"])))];
         });
     });
@@ -291,7 +299,6 @@ var register_hash = function () {
     for (var i = 0; i < parts.length; i += 2) {
         params[parts[i]] = parts[i + 1];
     }
-    console.log(params);
     app.state = __assign({}, app.state, { page: name, params: params });
 };
 var interval = null;
@@ -300,8 +307,9 @@ var is_registered = false;
 // initialize app using init function...
 function start(root, render_function, state, options) {
     var _this = this;
-    if (!is_registered) {
-        is_registered = true;
+    if (!app.is_registered) {
+        console.log('registering app');
+        app.is_registered = true;
         register_hash();
         window.addEventListener("hashchange", register_hash, false);
     }

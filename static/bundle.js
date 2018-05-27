@@ -50,7 +50,7 @@ index_1.start(document.body, function (state) { return __awaiter(_this, void 0, 
             case 0:
                 _a = index_1.forElem;
                 _b = index_1.element;
-                _c = [templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>\n  <div>Hello World</div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ", "\n    ", "\n    ", " \n</div>\n  "], ["<div>\n  <div>Hello World</div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ",
+                _c = [templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ", "\n    ", "\n    ", " \n</div>\n  "], ["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ",
                         "\n    ",
                         "\n    ",
                         " \n</div>\n  "])), index_1.element(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div>The counter is ", " and page <b>", "</b></div>"], ["<div>The counter is ", " and page <b>", "</b></div>"])), state.cnt, state.page), index_1.element(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"], ["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"])))];
@@ -58,6 +58,7 @@ index_1.start(document.body, function (state) { return __awaiter(_this, void 0, 
                         "hello": function (_) { return index_1.element(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
                         "default": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>default route</div>"], ["<div>default route</div>"]))); },
                         "list": function (_) {
+                            console.log(_.phase);
                             var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
                             return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n          <ul>", "</ul>\n        </div>\n        "], ["<div>\n          <ul>", "</ul>\n        </div>\n        "])), values.map(function (_) { return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
                         }
@@ -362,14 +363,22 @@ function reduce(reducer) {
 exports.reduce = reduce;
 function router(routermap) {
     return __awaiter(this, void 0, void 0, function () {
-        var page;
+        var page_name, page, phase, last_page;
         return __generator(this, function (_a) {
-            page = routermap[app.state.page || 'default'];
+            page_name = app.state.page || 'default';
+            page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default);
+            phase = 'refresh';
             if (page) {
-                return [2 /*return*/, page(app.state)];
+                if (page_name != app.last_page_name) {
+                    last_page = routermap[app.last_page_name];
+                    if (last_page) {
+                        last_page(__assign({}, app.state, { phase: 'close' }));
+                    }
+                    phase = 'init';
+                }
+                app.last_page_name = page_name;
+                return [2 /*return*/, page(__assign({}, app.state, { phase: phase }))];
             }
-            if (routermap.default)
-                return [2 /*return*/, routermap.default(app.state)];
             return [2 /*return*/, element(templateObject_1 || (templateObject_1 = __makeTemplateObject(["route not found"], ["route not found"])))];
         });
     });
@@ -384,7 +393,6 @@ var register_hash = function () {
     for (var i = 0; i < parts.length; i += 2) {
         params[parts[i]] = parts[i + 1];
     }
-    console.log(params);
     app.state = __assign({}, app.state, { page: name, params: params });
 };
 var interval = null;
@@ -393,8 +401,9 @@ var is_registered = false;
 // initialize app using init function...
 function start(root, render_function, state, options) {
     var _this = this;
-    if (!is_registered) {
-        is_registered = true;
+    if (!app.is_registered) {
+        console.log('registering app');
+        app.is_registered = true;
         register_hash();
         window.addEventListener("hashchange", register_hash, false);
     }

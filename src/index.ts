@@ -205,11 +205,20 @@ export function reduce( reducer:(state:any) => any ) {
 }
 
 export async function router(routermap:any) : Promise<Element>  {
-  const page = routermap[app.state.page || 'default']
+  let page_name = app.state.page || 'default';
+  let page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default)
+  let phase = 'refresh'
   if(page) {
-    return page(app.state)
+    if( page_name != app.last_page_name ) {
+      const last_page = routermap[app.last_page_name]
+      if(last_page) {
+        last_page({...app.state, phase:'close'})
+      }
+      phase = 'init'
+    }
+    app.last_page_name = page_name
+    return page({...app.state, phase})
   }
-  if(routermap.default) return routermap.default(app.state)
   return element`route not found`
 }
 
@@ -223,7 +232,6 @@ const register_hash = () => {
   for(let i=0; i<parts.length; i+=2) {
     params[parts[i]] = parts[i+1]
   }
-  console.log(params)
   app.state = { ...app.state, 
     page : name,
     params : params
@@ -242,8 +250,9 @@ export function start ( root:Element,
     render_function : (state:any) => Promise<Element>, 
     state? :any, 
     options?:DoremifaOptions ) {
-  if(!is_registered) {
-    is_registered = true
+  if(!app.is_registered) {
+    console.log('registering app')
+    app.is_registered = true
     register_hash()
     window.addEventListener("hashchange", register_hash, false);
   }
