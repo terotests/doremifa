@@ -66,6 +66,16 @@ var escapedHtml = /** @class */ (function () {
 }());
 exports.escapedHtml = escapedHtml;
 var cache_of = {};
+setInterval(function () {
+    var keys = Object.keys(cache_of);
+    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+        var key = keys_1[_i];
+        var o = cache_of[key];
+        if (!o.parentNode) {
+            delete cache_of[key];
+        }
+    }
+}, 100);
 function _dom(str, fn) {
     var cached = cache_of[str];
     if (cached) {
@@ -150,6 +160,16 @@ function html(strings) {
 }
 exports.html = html;
 var element_cache = {};
+setInterval(function () {
+    var keys = Object.keys(element_cache);
+    for (var _i = 0, keys_2 = keys; _i < keys_2.length; _i++) {
+        var key = keys_2[_i];
+        var o = element_cache[key];
+        if (!o.elem.parentNode) {
+            delete element_cache[key];
+        }
+    }
+}, 100);
 function element(strings) {
     var values = [];
     for (var _i = 1; _i < arguments.length; _i++) {
@@ -158,6 +178,7 @@ function element(strings) {
     var results = [];
     var f_values = [];
     var s = "", i = 0, pcnt = 0;
+    var key = strings.join('');
     for (; i < values.length; i++) {
         var v = values[i];
         var is_string = typeof (v) == "string";
@@ -186,7 +207,7 @@ function element(strings) {
                     else {
                         if (item instanceof Element) {
                             var placeholder = "<div placeholder=\"" + pcnt++ + "\" list=\"placeholders\"></div>";
-                            s += strings[i] + placeholder;
+                            to_join.push(placeholder);
                             f_values.push(item);
                         }
                         else {
@@ -239,6 +260,7 @@ function element(strings) {
     return thedom;
 }
 exports.element = element;
+// export let html = element;
 // the application state for doremifa
 var app = {
     state: {
@@ -305,7 +327,7 @@ var interval = null;
 var current_node = null;
 var is_registered = false;
 // initialize app using init function...
-function start(root, render_function, state, options) {
+function start(root, renderFn, state, options) {
     var _this = this;
     if (!app.is_registered) {
         console.log('registering app');
@@ -335,7 +357,7 @@ function start(root, render_function, state, options) {
                     if (!(last_state != app.state)) return [3 /*break*/, 3];
                     last_state = app.state;
                     b_render_on = true;
-                    return [4 /*yield*/, render_function(app.state)];
+                    return [4 /*yield*/, renderFn(app.state)];
                 case 2:
                     el = _a.sent();
                     if (!current_node) {

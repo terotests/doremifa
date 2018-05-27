@@ -19,7 +19,17 @@ export class escapedHtml {
 }
 
 let cache_of = {}
+setInterval( () => {
+  const keys = Object.keys(cache_of)
+  for( let key of keys ) {
+    const o = cache_of[key]
+    if(!o.parentNode) {
+      delete cache_of[key]
+    }
+  }
+},100)
 function _dom( str:string, fn?: (elems:any) => void ) : Element {
+  
   const cached = cache_of[str]
   if(cached) {
     if(fn) {
@@ -27,6 +37,7 @@ function _dom( str:string, fn?: (elems:any) => void ) : Element {
     }
     return cached;
   }
+  
   const elem = document.createElement('div')
   elem.innerHTML = str.trim()
   const v = ( cache_of[str] = elem.firstChild as Element)
@@ -80,6 +91,7 @@ export function forElem( parent:Element, fn: (elems:any) => void) : Element {
   return parent;
 }
 
+
 export function html(strings, ...values) : escapedHtml {
   let results = []
   let f_values = []
@@ -97,10 +109,20 @@ export function html(strings, ...values) : escapedHtml {
 }
 
 let element_cache:any = {}
+setInterval( () => {
+  const keys = Object.keys(element_cache)
+  for( let key of keys ) {
+    const o = element_cache[key]
+    if(!o.elem.parentNode) {
+      delete element_cache[key]
+    }
+  }
+},100)
 export function element(strings, ...values) : Element {
   let results = []
   let f_values = []
   var s = "",i=0, pcnt = 0;
+  var key = strings.join('')
   for(; i<values.length; i++) {
     const v = values[i]
     const is_string = typeof(v)=="string"
@@ -125,7 +147,7 @@ export function element(strings, ...values) : Element {
           } else {            
             if( item instanceof Element) {
               const placeholder = `<div placeholder="${pcnt++}" list="placeholders"></div>`
-              s+=strings[i] + placeholder
+              to_join.push( placeholder )
               f_values.push( item )      
             } else {
               throw "HTML must be escaped"
@@ -174,6 +196,8 @@ export function element(strings, ...values) : Element {
   
   return thedom;
 }
+
+// export let html = element;
 
 // the application state for doremifa
 let app:any = {
@@ -247,9 +271,9 @@ let is_registered = false
 
 // initialize app using init function...
 export function start ( root:Element, 
-    render_function : (state:any) => Promise<Element>, 
-    state? :any, 
-    options?:DoremifaOptions ) {
+  renderFn : (state:any) => Promise<Element>, 
+  state? :any, 
+  options?:DoremifaOptions ) {
   if(!app.is_registered) {
     console.log('registering app')
     app.is_registered = true
@@ -270,7 +294,7 @@ export function start ( root:Element,
       if(last_state != app.state) {
         last_state = app.state
         b_render_on = true
-        const el = await render_function(app.state)
+        const el = await renderFn(app.state)
         if(!current_node) {
           root.appendChild( el )
         } else {

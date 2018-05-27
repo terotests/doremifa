@@ -38,55 +38,86 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
+perf_test();
 // 
-index_1.start(document.body, function (state) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _a = index_1.forElem;
-                _b = index_1.element;
-                _c = [templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ", "\n    ", "\n    ", " \n</div>\n  "], ["<div>\n  <div>Hello World</div>\n    <div>\n      <a href=\"#hello\">hello</a>\n      <a href=\"#list\">list</a>\n    </div>\n    <button id=\"inc\">+1</button>\n    <button id=\"dec\">-1</button>\n    <div></div>   \n    \n    ",
-                        "\n    ",
-                        "\n    ",
-                        " \n</div>\n  "])), index_1.element(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div>The counter is ", " and page <b>", "</b></div>"], ["<div>The counter is ", " and page <b>", "</b></div>"])), state.cnt, state.page), index_1.element(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"], ["<div>\n        This is the  page value\n        <b>It may work ? </b>\n        <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n      </div>"])))];
-                return [4 /*yield*/, index_1.router({
-                        "hello": function (_) { return index_1.element(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
-                        "default": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>default route</div>"], ["<div>default route</div>"]))); },
-                        "list": function (_) {
-                            console.log(_.phase);
-                            var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
-                            return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n          <ul>", "</ul>\n        </div>\n        "], ["<div>\n          <ul>", "</ul>\n        </div>\n        "])), values.map(function (_) { return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
-                        }
-                    })];
-            case 1: return [2 /*return*/, _a.apply(void 0, [_b.apply(void 0, _c.concat([_d.sent()])), function (o) {
-                        o.inc.onclick = function () { return index_1.setState({ cnt: state.cnt + 1 }); };
-                        o.dec.onclick = function () { return index_1.setState({ cnt: state.cnt - 1 }); };
-                    }])];
-        }
+function simple_test() {
+    var _this = this;
+    index_1.start(document.body, function (state) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, index_1.forElem(index_1.element(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n      <div>\n          ", "\n          <button id=\"inc\">+1</button>\n          <button id=\"dec\">-1</button>\n          ", "\n          <input/>\n      </div>\n    "], ["\n      <div>\n          ", "\n          <button id=\"inc\">+1</button>\n          <button id=\"dec\">-1</button>\n          ", "\n          <input/>\n      </div>\n    "])), index_1.element(templateObject_2 || (templateObject_2 = __makeTemplateObject(["", ""], ["", ""])), state.cnt), index_1.element(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>", "</div>"], ["<div>", "</div>"])), state.cnt)), function (o) {
+                    o.inc.onclick = function () { return index_1.setState({ cnt: state.cnt + 1 }); };
+                    o.dec.onclick = function () { return index_1.setState({ cnt: state.cnt - 1 }); };
+                })];
+        });
+    }); }, {
+        cnt: 0
     });
-}); }, {
-    cnt: 0,
-    list: [1, 2, 3, 4, 5]
-});
-setInterval(function () {
-    var list = [];
-    var cnt = 100 + Math.random() * 20;
-    while (cnt-- > 0) {
-        list.push(Math.floor(Math.random() * 20));
-    }
-    index_1.setState({ list: list });
-}, 5000);
-var templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_7, templateObject_6, templateObject_1;
-/*
-
-    ${await router({
-      "hello" : _ => element`<div>This is hello from hello route</div>`,
-      "default" : _ => element`<div>default route</div>`
-    })}
-
-*/ 
+}
+function router_example() {
+    var _this = this;
+    index_1.start(document.body, function (state) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _a = index_1.element;
+                    _b = [templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>\n      <div>\n        <a href=\"#hello\">hello</a>\n        <a href=\"#list\">list all</a>\n        <a href=\"#list/len/4\">list, first 4</a>\n      </div>\n      ", " \n  </div>\n    "], ["<div>\n      <div>\n        <a href=\"#hello\">hello</a>\n        <a href=\"#list\">list all</a>\n        <a href=\"#list/len/4\">list, first 4</a>\n      </div>\n      ",
+                            " \n  </div>\n    "]))];
+                    return [4 /*yield*/, index_1.router({
+                            "hello": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
+                            "list": function (_) {
+                                var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
+                                return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.element(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
+                            }
+                        })];
+                case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
+            }
+        });
+    }); }, {
+        list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    });
+}
+function perf_test() {
+    var _this = this;
+    index_1.start(document.body, function (state) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    _a = index_1.forElem;
+                    _b = index_1.element;
+                    _c = [templateObject_8 || (templateObject_8 = __makeTemplateObject(["<div>\n        <div>Hello World</div>\n          <div>\n            <a href=\"#hello\">hello</a>\n            <a href=\"#list\">list</a>\n          </div>\n      <button id=\"inc\">+1</button>\n      <button id=\"dec\">-1</button>\n      <div>", "</div>   \n      \n      ", "\n      ", "\n      ", " \n  </div>\n    "], ["<div>\n        <div>Hello World</div>\n          <div>\n            <a href=\"#hello\">hello</a>\n            <a href=\"#list\">list</a>\n          </div>\n      <button id=\"inc\">+1</button>\n      <button id=\"dec\">-1</button>\n      <div>", "</div>   \n      \n      ",
+                            "\n      ",
+                            "\n      ",
+                            " \n  </div>\n    "])), state.cnt, index_1.element(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<div>The counter is ", " and page <b>", "</b></div>"], ["<div>The counter is ", " and page <b>", "</b></div>"])), state.cnt, state.page), index_1.element(templateObject_10 || (templateObject_10 = __makeTemplateObject(["<div>\n          This is the  page value\n          <b>It may work ? </b>\n          <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n        </div>"], ["<div>\n          This is the  page value\n          <b>It may work ? </b>\n          <textarea value=\"jee\" cols=\"80\" rows=\"5\" ></textarea>\n        </div>"])))];
+                    return [4 /*yield*/, index_1.router({
+                            "hello": function (_) { return index_1.element(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
+                            "default": function (_) { return index_1.element(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<div>default route</div>"], ["<div>default route</div>"]))); },
+                            "list": function (_) {
+                                console.log(_.phase);
+                                var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
+                                return index_1.element(templateObject_13 || (templateObject_13 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
+                            }
+                        })];
+                case 1: return [2 /*return*/, _a.apply(void 0, [_b.apply(void 0, _c.concat([_d.sent()])), function (o) {
+                            o.inc.onclick = function () { return index_1.setState({ cnt: state.cnt + 1 }); };
+                            o.dec.onclick = function () { return index_1.setState({ cnt: state.cnt - 1 }); };
+                        }])];
+            }
+        });
+    }); }, {
+        cnt: 0
+    });
+    setInterval(function () {
+        var list = [];
+        var cnt = 1000 + Math.random() * 20;
+        while (cnt-- > 0) {
+            list.push(Math.floor(Math.random() * 20));
+        }
+        index_1.setState({ list: list });
+    }, 40);
+}
+var templateObject_2, templateObject_3, templateObject_1, templateObject_5, templateObject_7, templateObject_6, templateObject_4, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_14, templateObject_13, templateObject_8;
 //# sourceMappingURL=client.js.map
