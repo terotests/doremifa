@@ -1,0 +1,35 @@
+{
+  "name": "doremifa",
+  "version": "1.0.7",
+  "description": "Reactive DOM library based on template literals",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ts": "tsc --declaration false",
+    "build:browserify": "browserify ./dist/src/client.js -o ./static/bundle.js",
+    "build": "npm run build:ts && npm run build:browserify",   
+    "start": "npm run build && node dist/src/server.js"    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terotests/doremifa.git"
+  },
+  "keywords": [
+    "DOM",
+    "template",
+    "reactive"
+  ],
+  "author": "Tero Tolonen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terotests/doremifa/issues"
+  },
+  "homepage": "https://github.com/terotests/doremifa#readme",
+  "dependencies": {
+    "@types/node": "^10.1.2"
+  },
+  "devDependencies": {
+    "express": "^4.16.3"
+  }
+}
