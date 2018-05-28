@@ -29,7 +29,6 @@ setInterval( () => {
   }
 },100)
 function _dom( str:string, fn?: (elems:any) => void ) : Element {
-  
   const cached = cache_of[str]
   if(cached) {
     if(fn) {
@@ -169,26 +168,57 @@ export function element(strings, ...values) : Element {
   let obj
   let elem;
   const thedom = _dom(s, o => {
+
     obj = element_cache[s] = element_cache[s] || { 
         first:true,
         elem:o.elem, 
         placeholders:o.placeholders}
-    elem = o.elem;
+
+    // TODO: verify this... using the cache is disabled if cloning is required...
+    let b_mustbe_new = false
     if(obj.placeholders) {
       for(let i=0; i<f_values.length; i++) {
         if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
           const v = f_values[i]
           if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
-            // we have to make a copy of this node...
-            console.log('clone')
+            b_mustbe_new = true
+          }
+        } 
+      }
+      if(b_mustbe_new) {
+        obj = element_cache[s] = { 
+          first:true,
+          elem:o.elem, 
+          placeholders:o.placeholders}
+      }
+    }        
+    elem = o.elem;
+    if(obj.placeholders) {
+      for(let i=0; i<f_values.length; i++) {
+
+        // version without cloning...
+        if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
+          obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
+          obj.placeholders[i] = f_values[i];              
+        } 
+
+        /*
+        if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
+          const v = f_values[i]
+          // the bug comes from here...
+          if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
             const clone = v.cloneNode(true)
             obj.placeholders[i].parentNode.replaceChild( clone, obj.placeholders[i]  )
-            obj.placeholders[i] = clone;              
+            obj.placeholders[i] = clone;    
+            console.log('cloned node ', clone)    
+            console.log(obj.placeholders[i]) 
+            console.log(v)      
           } else {
             obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
             obj.placeholders[i] = f_values[i];              
           }
         } 
+        */
       }
     }
     obj.first = false;
@@ -235,9 +265,9 @@ export async function router(routermap:any) : Promise<Element>  {
   if(page) {
     if( page_name != app.last_page_name ) {
       const last_page = routermap[app.last_page_name]
-      if(last_page) {
-        last_page({...app.state, phase:'close'})
-      }
+      //if(last_page) {
+      //  last_page({...app.state, phase:'close'})
+      //}
       phase = 'init'
     }
     app.last_page_name = page_name

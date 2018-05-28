@@ -41,7 +41,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
-perf_test();
+router_example();
 // 
 function simple_test() {
     var _this = this;
@@ -70,7 +70,14 @@ function router_example() {
                             "hello": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
                             "list": function (_) {
                                 var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
-                                return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.element(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
+                                return index_1.forElem(index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.element(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\" list=\"item\">", "</a></li>"], ["<li><a href=\"#hello\" list=\"item\">", "</a></li>"])), _); })), function (o) {
+                                    o.item.forEach(function (el) {
+                                        el.onclick = function (e) {
+                                            e.preventDefault();
+                                            alert('click!');
+                                        };
+                                    });
+                                });
                             }
                         })];
                 case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];
@@ -361,23 +368,50 @@ function element(strings) {
             elem: o.elem,
             placeholders: o.placeholders
         };
-        elem = o.elem;
+        // TODO: verify this... using the cache is disabled if cloning is required...
+        var b_mustbe_new = false;
         if (obj.placeholders) {
             for (var i_1 = 0; i_1 < f_values.length; i_1++) {
                 if (f_values[i_1] && (obj.first || f_values[i_1] !== obj.placeholders[i_1])) {
                     var v = f_values[i_1];
                     if (v.parentNode && (v.parentNode != obj.placeholders[i_1].parentNode)) {
-                        // we have to make a copy of this node...
-                        console.log('clone');
-                        var clone = v.cloneNode(true);
-                        obj.placeholders[i_1].parentNode.replaceChild(clone, obj.placeholders[i_1]);
-                        obj.placeholders[i_1] = clone;
-                    }
-                    else {
-                        obj.placeholders[i_1].parentNode.replaceChild(f_values[i_1], obj.placeholders[i_1]);
-                        obj.placeholders[i_1] = f_values[i_1];
+                        b_mustbe_new = true;
                     }
                 }
+            }
+            if (b_mustbe_new) {
+                obj = element_cache[s] = {
+                    first: true,
+                    elem: o.elem,
+                    placeholders: o.placeholders
+                };
+            }
+        }
+        elem = o.elem;
+        if (obj.placeholders) {
+            for (var i_2 = 0; i_2 < f_values.length; i_2++) {
+                // version without cloning...
+                if (f_values[i_2] && (obj.first || f_values[i_2] !== obj.placeholders[i_2])) {
+                    obj.placeholders[i_2].parentNode.replaceChild(f_values[i_2], obj.placeholders[i_2]);
+                    obj.placeholders[i_2] = f_values[i_2];
+                }
+                /*
+                if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
+                  const v = f_values[i]
+                  // the bug comes from here...
+                  if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
+                    const clone = v.cloneNode(true)
+                    obj.placeholders[i].parentNode.replaceChild( clone, obj.placeholders[i]  )
+                    obj.placeholders[i] = clone;
+                    console.log('cloned node ', clone)
+                    console.log(obj.placeholders[i])
+                    console.log(v)
+                  } else {
+                    obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
+                    obj.placeholders[i] = f_values[i];
+                  }
+                }
+                */
             }
         }
         obj.first = false;
@@ -424,9 +458,9 @@ function router(routermap) {
             if (page) {
                 if (page_name != app.last_page_name) {
                     last_page = routermap[app.last_page_name];
-                    if (last_page) {
-                        last_page(__assign({}, app.state, { phase: 'close' }));
-                    }
+                    //if(last_page) {
+                    //  last_page({...app.state, phase:'close'})
+                    //}
                     phase = 'init';
                 }
                 app.last_page_name = page_name;

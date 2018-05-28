@@ -40,7 +40,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
-perf_test();
+router_example();
 // 
 function simple_test() {
     var _this = this;
@@ -69,7 +69,14 @@ function router_example() {
                             "hello": function (_) { return index_1.element(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div>This is hello from hello route</div>"], ["<div>This is hello from hello route</div>"]))); },
                             "list": function (_) {
                                 var values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list;
-                                return index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.element(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\">", "</a></li>"], ["<li><a href=\"#hello\">", "</a></li>"])), _); }));
+                                return index_1.forElem(index_1.element(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<div>\n            <ul>", "</ul>\n          </div>\n          "], ["<div>\n            <ul>", "</ul>\n          </div>\n          "])), values.map(function (_) { return index_1.element(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<li><a href=\"#hello\" list=\"item\">", "</a></li>"], ["<li><a href=\"#hello\" list=\"item\">", "</a></li>"])), _); })), function (o) {
+                                    o.item.forEach(function (el) {
+                                        el.onclick = function (e) {
+                                            e.preventDefault();
+                                            alert('click!');
+                                        };
+                                    });
+                                });
                             }
                         })];
                 case 1: return [2 /*return*/, _a.apply(void 0, _b.concat([_c.sent()]))];

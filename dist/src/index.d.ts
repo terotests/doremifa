@@ -12,4 +12,4 @@ export declare function router(routermap: any): Promise<Element>;
 export interface DoremifaOptions {
     updateInterval: number;
 }
-export declare function start(root: Element, render_function: (state: any) => Promise<Element>, state?: any, options?: DoremifaOptions): void;
+export declare function start(root: Element, renderFn: (state: any) => Promise<Element>, state?: any, options?: DoremifaOptions): void;

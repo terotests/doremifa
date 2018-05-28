@@ -2,7 +2,7 @@
 
 import { start, router, getState, setState, element, forElem, html } from './index';
 
-perf_test()
+router_example()
 
 // 
 function simple_test() {
@@ -37,10 +37,17 @@ function router_example() {
         "hello" : _ => element`<div>This is hello from hello route</div>`,
         "list" : _ => {
           const values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list
-          return element`<div>
-            <ul>${values.map( _ => element`<li><a href="#hello">${_}</a></li>`)}</ul>
+          return forElem(element`<div>
+            <ul>${values.map( _ => element`<li><a href="#hello" list="item">${_}</a></li>`)}</ul>
           </div>
-          `
+          `, o => {
+            o.item.forEach( el => {              
+              el.onclick = (e) => {
+                e.preventDefault()
+                alert('click!')
+              }
+            })
+          })
         }
       })} 
   </div>
