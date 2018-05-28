@@ -8,7 +8,7 @@ Reactive view library based on tagged template literals. It features:
 - cached template literals to maintain UI state (with garbage collection)
 - `forElem` convenience method for quick and dirty DOM manipulation
 
-The renderin process re-uses the templates, so if you have TEXTAREA or INPUT elements they
+The rendering process re-uses the templates, so if you have TEXTAREA or INPUT elements they
 behave properly even if the data is inserted to the template.
 
 Simple example with simple state
@@ -36,13 +36,13 @@ start(document.body, async (state) => {
 
 ## start( root:Element, renderFn : (state:any) => Promise<Element>, state? :any, options?:DoremifaOptions) 
 
-Starts the rendering of application with 
+Starts the rendering of the application with 
 - `root` element to insert the renderers result
 - `renderFn` function returning the element to render
 - `state` initial state of the app
 - `options`
 
-Currently only option is:
+Currently the only option is:
 - `updateInterval` render loop delay in milliseconds (default 100)
 
 ```javascript
@@ -55,7 +55,7 @@ start(document.body, async (state) => {
 
 Returns the application state `{}`. 
 
-State can have any keys except for routing state has three defined keys
+State can have any keys except for the routing state that has three defined keys
 
 - `state.page` which indicates the active page from `location.hash` like `#page`
 - `state.params` from the hash like `#page/id/1238`
@@ -64,7 +64,7 @@ State can have any keys except for routing state has three defined keys
 
 ## setState
 
-Sets the application state for keys given, for example if state is
+Sets the application state for given keys, for example if the state is
 ```javascript
 {
   name : "foobar",
@@ -85,7 +85,7 @@ element`<ul>${[1,2,3,4].map( item => html`<li>${item}</li>`)}</ul>`
 
 ## forEach(element, items:(o) => void) - binding and accessing DOM
 
-After element is created there is convenience method `forEach` to quickly access certain
+After an element is created there is a convenience method `forEach` for quickly accessing certain
 elements inside the rendered DOM
 
 - `list="items"` collects elements to Array `o.items`
@@ -114,6 +114,7 @@ Routing is derived from the `window.location.hash` and follow format `#list/len/
 - `len/4` results as `state.params.len == 4`
 
 Additionally the routing function is given `state.phase` which has values
+
 ```javascript 
   state.phase == "init"` // when the page is called the first time
   state.phase == "refresh"` // during refresh calls
@@ -129,7 +130,7 @@ ${await router({
 })
 ```
 
-Example with router.
+Example with router:
 
 ```javascript
   start(document.body, async (state) => {
