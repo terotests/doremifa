@@ -603,7 +603,7 @@ var drmfRouter = /** @class */ (function (_super) {
             app.last_page_name = page_name;
             return page(__assign({}, app.state, { phase: phase }));
         }
-        return exports.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["route not found"], ["route not found"])));
+        return exports.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
     };
     return drmfRouter;
 }(drmfComponent));

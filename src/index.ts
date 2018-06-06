@@ -567,7 +567,7 @@ class drmfRouter extends drmfComponent {
       app.last_page_name = page_name
       return page({...app.state, phase})
     }
-    return drmf`route not found`      
+    return drmf`<div></div>`      
   }
 }
 

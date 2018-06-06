@@ -62,7 +62,7 @@ export class testComponent extends drmfComponent {
     const swap = Math.floor( render_counter / 10 ) & 1
     // is the component just updated with some new parameters ? 
     return  drmf`
-    <div style=${`position:absolute;left:${i*50+''}px;top:${i*450}px;`}>
+    <div >
       ${myHelloComponent}
       <div>${0}</div>
       <div>${getState().time ? getState().time.toString() : ''}</div>
@@ -140,6 +140,7 @@ export class testComponent extends drmfComponent {
 }
 
 export class WestWorld extends drmfComponent {
+  testc = new testComponent()
   render() {
     const links = [1,2,3,4,5]
     return html`<div>
@@ -148,11 +149,29 @@ export class WestWorld extends drmfComponent {
           default : _ => html`<div>Default Page</div>`,
           test : _ => html`<div>Test Page
                 ${myHelloComponent4}
-            </div>`
+                <div>${_.page}</div>
+            </div>`,
+          second : _ => html`<div>Second Page
+            ${myHelloComponent4}
+                <div>${_.page}</div>
+            </div>`,            
         })}
+
+        <a class="waves-effect waves-light btn" click=${_ => alert("Moro")}>Moro</a>
         <div class="collection">
           ${links.map( item => html`<a href="#test/${item}" class="collection-item">Item ${item}</a>` ) }
         </div>  
+        
+        <h4>Links to second page</h4>
+        <div class="collection">
+          ${links.map( item => html`<a href="#second/${item}" class="collection-item">Item ${item}</a>` ) }
+        </div>         
+
+        ${router({
+          second : _ => html`<div>End of Second Page
+                ${this.testc}
+            </div>`,            
+        })}        
       </div>
     
     `
@@ -164,7 +183,7 @@ export class HelloWorld extends drmfComponent {
     return html`<h4>Hello World, it is ${(new Date).toString()}</h4>`
   }
 }
-mount( document.body, new HelloWorld() )
+mount( document.body, new WestWorld() )
 
 setInterval( ()=>{
   setState({time: new Date()})
