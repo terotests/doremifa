@@ -3,7 +3,6 @@
 import { mount, router, getState, setState, forElem, html, drmf, drmfComponent, drmfTemplate, key } from './index';
 
 import { XMLBuilder, XMLParser} from './xmlparser'
-import { setInterval } from 'timers';
 
 
 export class helloComponent extends drmfComponent {
@@ -40,8 +39,6 @@ let render_counter = 0
 // So here it is, not really inside the component Tree!!!
 const myHelloComponent = new helloComponent(0)
 const myHelloComponent2 = new helloComponent(12)
-const myHelloComponent3 = new helloComponent(12)
-const myHelloComponent4 = new helloComponent(5)
 
 export class testComponent extends drmfComponent {
 
@@ -58,34 +55,18 @@ export class testComponent extends drmfComponent {
       this.myValue = e.target.value
       console.log(e.target.value)
     }
-
-    const swap = Math.floor( render_counter / 10 ) & 1
     // is the component just updated with some new parameters ? 
     return  drmf`
     <div style=${`position:absolute;left:${i*50+''}px;top:${i*450}px;`}>
       ${myHelloComponent}
-      <div>${0}</div>
-      <div>${getState().time ? getState().time.toString() : ''}</div>
       <div><textarea class="foobar"/></div>
       <h1 click=${(e)=> {
         console.log('round ', i)
       }}>Hello ${'World' + (render_counter++) + this.myValue}</h1>
       
-      <div> 
-        <div>Swap 1</div>
-        ${ swap ?  drmf`<div>This is a <b>test...${render_counter}</b></div>` : '<div>OK!!!</div>'}
-      </div>
-      <div> 
-        <div>Swap 2</div>
-        ${ swap ?  myHelloComponent3 : '... text ...'}
-      </div>
-
-      <div> 
-        <div>Swap 3</div>
-        ${ swap ? drmf`<div><b>text</b> swap component <-> html</div>` : myHelloComponent4}
-      </div>      
-
-      ${ Math.floor(render_counter / 100) & 1 ?
+      ${drmf`<div>This is a <b>test...${render_counter}</b></div>`}
+      
+      ${ Math.floor(render_counter / 550) & 1 ?
       drmf`
       <div>
         <h2>Second Page</h2>
@@ -127,7 +108,7 @@ export class testComponent extends drmfComponent {
       <p>Here is <b>Some</b> test</p>
       <div style="color:blue;"> 
         <ul style=${ this.myList.length > 6 ? 'color:red;' : 'color:green;' }>
-          ${this.myList.map( (item,idx) => drmf`<li >item ${item+''} <b>Bold</b> 
+          ${this.myList.map( (item,idx) => drmf`<li key=${key(item+'')}>item ${item+''} <b>Bold</b> 
               <input keyup=${(e) => {
                 // this.myList[idx] = parseInt(e.target.value)
               }}/></li>`)}
@@ -139,36 +120,53 @@ export class testComponent extends drmfComponent {
   }
 }
 
-export class WestWorld extends drmfComponent {
-  render() {
-    const links = [1,2,3,4,5]
-    return html`<div>
-      <h4>Hello World, it is ${(new Date).toString()}</h4>
-        ${router({
-          default : _ => html`<div>Default Page</div>`,
-          test : _ => html`<div>Test Page
-                ${myHelloComponent4}
-            </div>`
-        })}
-        <div class="collection">
-          ${links.map( item => html`<a href="#test/${item}" class="collection-item">Item ${item}</a>` ) }
-        </div>  
-      </div>
-    
-    `
+console.time('xml parser')
+for(let i=0; i< 1; i++) {
+  const size=100
+  const el_style = `position:absolute;left:${i+''}px;top:${i*450}px;`
+
+  // ? list of dynamic elements may have to be diffed
+  // element 1 -> template + values
+  // -> the event handlers will be different
+  // -> possibly rebind always to the actual DOM
+  // --> the DOM tree
+  // --> set the value for each position 
+  // --> each of the templates are re-rendered and rendering is re-used
+
+  // NOTE: cache key will be strings + the slots...
+  // must be exactly the same template so can use the same DOM view...
+  //  1) what if the position of the template changes in the array ? 
+  //  2) must walk the array of templates and insert to new position
+  // What if there is some field which is edited <textarea></textarea>
+  // 
+
+  // could implement some local states if wants...
+  
+  const state = {};
+
+  // The function which creates the object...
+  const obj = new testComponent()
+  
+  console.log(obj)
+  const items = obj.toDom()
+  for( let item of items ) {
+    document.body.appendChild( item )
   }
-}
 
-export class HelloWorld extends drmfComponent {
-  render() {
-    return html`<h4>Hello World, it is ${(new Date).toString()}</h4>`
+  for(let i=0; i<1000; i++) {
+    obj.myList.push(i)
   }
+
+  setInterval( () => {
+    obj.myList.splice(0,1)
+    const items2 = obj.toDom()
+    for( let item of items2 ) {
+      if(!item.parentNode) document.body.appendChild( item )
+    }    
+  },60)
+  
+
 }
-mount( document.body, new HelloWorld() )
-
-setInterval( ()=>{
-  setState({time: new Date()})
-},100)
-
+console.timeEnd('xml parser')
 
 
