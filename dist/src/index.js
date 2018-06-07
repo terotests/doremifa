@@ -3,6 +3,16 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
     return cooked;
 };
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -47,6 +57,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var xmlparser_1 = require("./xmlparser");
+var component_registry;
 function escapeXml(unsafe) {
     return unsafe.replace(/[<>&'"]/g, function (c) {
         switch (c) {
@@ -58,6 +70,22 @@ function escapeXml(unsafe) {
         }
     });
 }
+function registerComponent(name, component) {
+    component_registry[name] = component;
+}
+exports.registerComponent = registerComponent;
+var drfmKey = /** @class */ (function () {
+    function drfmKey() {
+    }
+    return drfmKey;
+}());
+exports.drfmKey = drfmKey;
+function key(value) {
+    var o = new drfmKey;
+    o.value = typeof value === 'string' ? value : value + '';
+    return o;
+}
+exports.key = key;
 var escapedHtml = /** @class */ (function () {
     function escapedHtml(value) {
         this.str = value;
@@ -65,229 +93,459 @@ var escapedHtml = /** @class */ (function () {
     return escapedHtml;
 }());
 exports.escapedHtml = escapedHtml;
-var cache_of = {};
-setInterval(function () {
-    var keys = Object.keys(cache_of);
-    for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-        var key = keys_1[_i];
-        var o = cache_of[key];
-        if (!o.parentNode) {
-            delete cache_of[key];
-        }
+var drmfComponent = /** @class */ (function () {
+    function drmfComponent() {
     }
-}, 100);
-function _dom(str, fn) {
-    var cached = cache_of[str];
-    if (cached) {
-        if (fn) {
-            _forElem(cached, fn);
+    drmfComponent.prototype.toDom = function () {
+        var tpl = this.render();
+        // if not rendered at all or different template
+        if (!this.lastRender || (this.lastRender.key != tpl.key)) {
+            var elems = tpl.createDOM();
+            this.lastRender = tpl;
+            return elems;
         }
-        return cached;
+        var last = this.lastRender;
+        last.updateValues(tpl.values);
+        // TODO: does not work always, root nodes can change
+        return last.rootNodes;
+    };
+    drmfComponent.prototype.render = function () {
+        return exports.drmf(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>Hello World</div>"], ["<div>Hello World</div>"])));
+    };
+    return drmfComponent;
+}());
+exports.drmfComponent = drmfComponent;
+var drmfTemplateCollection = /** @class */ (function () {
+    function drmfTemplateCollection() {
     }
-    var elem = document.createElement('div');
-    elem.innerHTML = str.trim();
-    var v = (cache_of[str] = elem.firstChild);
-    elem.removeChild(v);
-    if (fn) {
-        _forElem(v, fn);
+    return drmfTemplateCollection;
+}());
+exports.drmfTemplateCollection = drmfTemplateCollection;
+var drmfTemplate = /** @class */ (function () {
+    function drmfTemplate() {
+        this.children = {};
+        this.doms = {};
+        this.rootNodes = [];
+        this.slotTypes = [];
+        this.ids = {};
+        this.list = {};
     }
-    return v;
-}
-function _build_dom(str, fn) {
-    var elem = document.createElement('div');
-    elem.innerHTML = str.trim();
-    var v = (cache_of[str] = elem.firstChild);
-    if (fn) {
-        setTimeout(function () { return _forElem(v, fn); }, 1);
-    }
-    return v;
-}
-function getelem(parent, id) {
-    var matches = parent.querySelectorAll("#" + id);
-    return matches.item(0);
-}
-function _forElem(parent, fn) {
-    var res = {};
-    var lists = {};
-    var walk_tree = function (elem) {
-        if (!elem)
-            return;
-        if (!elem.getAttribute)
-            return;
-        var elem_id = elem.getAttribute('id');
-        var list_id = elem.getAttribute('list');
-        if (elem_id) {
-            res[elem_id] = elem;
+    drmfTemplate.prototype.replaceWith = function (renderedTpl) {
+        if (this.key == renderedTpl.key) {
+            this.updateValues(renderedTpl.values);
+            return this;
         }
-        if (list_id) {
-            (lists[list_id] = lists[list_id] || []).push(elem);
+        var currTpl = this;
+        var nodes = currTpl.rootNodes;
+        var renderNodes;
+        var new_nodes = renderedTpl.createDOM();
+        // replace current with new
+        var pNode = nodes[0].parentNode;
+        var first = nodes[0];
+        for (var _i = 0, new_nodes_1 = new_nodes; _i < new_nodes_1.length; _i++) {
+            var n = new_nodes_1[_i];
+            pNode.insertBefore(n, first);
         }
-        var list = Array.prototype.slice.call(elem.childNodes);
-        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-            var ch = list_1[_i];
-            walk_tree(ch);
+        for (var _a = 0, nodes_1 = nodes; _a < nodes_1.length; _a++) {
+            var n = nodes_1[_a];
+            pNode.removeChild(n);
+        }
+        return renderedTpl;
+    };
+    drmfTemplate.prototype.updateValues = function (values) {
+        var _loop_1 = function (i) {
+            var value = values[i];
+            if (!value)
+                return "continue";
+            var last_slot = this_1.slotTypes[i];
+            if (!last_slot)
+                return "continue";
+            var last_type = last_slot[0];
+            var last_root = last_slot[1];
+            // assuming now that the type stays the same...
+            switch (last_type) {
+                case 1:
+                    var name_1 = last_slot[2];
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            last_root.setAttribute(name_1, '');
+                        }
+                        else {
+                            last_root.removeAttribute(name_1);
+                        }
+                    }
+                    else {
+                        last_root.setAttribute(name_1, value);
+                    }
+                    break;
+                case 2:
+                    // simple content template was the last type...
+                    var currTpl = last_slot[2];
+                    var nodes = currTpl.rootNodes;
+                    if (value instanceof drmfTemplate) {
+                        var renderedTpl = value;
+                        this_1.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                    }
+                    if (value instanceof drmfComponent) {
+                        // render the situation now...
+                        var renderedComp = value;
+                        var rTpl = renderedComp.render();
+                        var newTpl = currTpl.replaceWith(rTpl);
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                    }
+                    // transform into txt node
+                    if (typeof (value) == 'string') {
+                        var txt = document.createTextNode(value);
+                        this_1.slotTypes[i] = [3, last_root, txt];
+                        var nodes_2 = currTpl.rootNodes;
+                        var pNode = nodes_2[0].parentNode;
+                        var first = nodes_2[0];
+                        pNode.insertBefore(txt, first);
+                        for (var _i = 0, nodes_3 = nodes_2; _i < nodes_3.length; _i++) {
+                            var n = nodes_3[_i];
+                            pNode.removeChild(n);
+                        }
+                    }
+                    break;
+                case 3:
+                    var text_node = last_slot[2];
+                    if (typeof (value) == 'string') {
+                        text_node.textContent = value;
+                    }
+                    if (value instanceof drmfTemplate) {
+                        var new_nodes = value.createDOM();
+                        // replace current with new
+                        var pNode = text_node.parentNode;
+                        for (var _a = 0, new_nodes_2 = new_nodes; _a < new_nodes_2.length; _a++) {
+                            var n = new_nodes_2[_a];
+                            pNode.insertBefore(n, text_node);
+                        }
+                        pNode.removeChild(text_node);
+                        this_1.slotTypes[i] = [2, last_root, value, new_nodes];
+                    }
+                    if (value instanceof drmfComponent) {
+                        var comp = value;
+                        var tpl = comp.render();
+                        var new_nodes = tpl.createDOM();
+                        var pNode = text_node.parentNode;
+                        for (var _b = 0, new_nodes_3 = new_nodes; _b < new_nodes_3.length; _b++) {
+                            var n = new_nodes_3[_b];
+                            pNode.insertBefore(n, text_node);
+                        }
+                        pNode.removeChild(text_node);
+                        this_1.slotTypes[i] = [5, last_root, comp, tpl, new_nodes];
+                        return { value: void 0 };
+                    }
+                    break;
+                case 4:
+                    var tpls = value;
+                    var curr_collection = last_slot[2];
+                    var curr_tpls = curr_collection.list;
+                    var prevNode_1 = curr_collection.node;
+                    var len = Math.max(tpls.length, curr_tpls.length);
+                    if (len === 0)
+                        return { value: void 0 };
+                    if (tpls.length === 0) {
+                        curr_tpls.forEach(function (d) {
+                            d.rootNodes.forEach(function (n) { return n.parentNode.removeChild(n); });
+                        });
+                        curr_collection.list = [];
+                        return { value: void 0 };
+                    }
+                    var ii = 0;
+                    var list = [];
+                    for (var ii_1 = 0; ii_1 < len; ii_1++) {
+                        var ct = curr_tpls[ii_1];
+                        var rt = tpls[ii_1];
+                        if (ct && rt) {
+                            var p = ct.replaceWith(rt);
+                            list[ii_1] = p;
+                            prevNode_1 = p.rootNodes[p.rootNodes.length - 1];
+                            continue;
+                        }
+                        if (ct && !rt) {
+                            ct.rootNodes.forEach(function (n) { return n.parentNode.removeChild(n); });
+                            continue;
+                        }
+                        if (!ct && rt) {
+                            if (rt.rootNodes.length === 0)
+                                rt.createDOM();
+                            rt.rootNodes.forEach(function (n) {
+                                prevNode_1.parentNode.insertBefore(n, prevNode_1.nextSibling);
+                                prevNode_1 = n;
+                            });
+                            list[ii_1] = rt;
+                            continue;
+                        }
+                    }
+                    curr_collection.list = list;
+                    break;
+                case 5:
+                    if (typeof (value) == 'string') {
+                        var tplNow = last_slot[3];
+                        var txt = document.createTextNode(value);
+                        this_1.slotTypes[i] = [3, last_root, txt];
+                        var nodes_4 = tplNow.rootNodes;
+                        var pNode = nodes_4[0].parentNode;
+                        var first = nodes_4[0];
+                        pNode.insertBefore(txt, first);
+                        for (var _c = 0, nodes_5 = nodes_4; _c < nodes_5.length; _c++) {
+                            var n = nodes_5[_c];
+                            pNode.removeChild(n);
+                        }
+                    }
+                    if (value instanceof drmfTemplate) {
+                        var comp = last_slot[2];
+                        var tplNow = last_slot[3];
+                        var tpl_nodes = tplNow.rootNodes;
+                        var rTpl = value;
+                        var newTpl = tplNow.replaceWith(rTpl);
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                    }
+                    if (value instanceof drmfComponent) {
+                        var comp = last_slot[2];
+                        var tplNow = last_slot[3];
+                        var tpl_nodes = tplNow.rootNodes;
+                        // render the situation now...
+                        var renderedComp = value;
+                        var rTpl = renderedComp.render();
+                        var newTpl = tplNow.replaceWith(rTpl);
+                        if (newTpl === rTpl) {
+                            this_1.slotTypes[i][2] = renderedComp;
+                            this_1.slotTypes[i][3] = newTpl;
+                        }
+                    }
+                    break;
+            }
+        };
+        var this_1 = this;
+        for (var i = 0; i < values.length; i++) {
+            var state_1 = _loop_1(i);
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
     };
-    walk_tree(parent);
-    res = __assign({}, res, lists, { elem: parent });
-    fn(res);
-    return parent;
-}
-function forElem(parent, fn) {
-    setTimeout(function () { return _forElem(parent, fn); }, 1);
-    return parent;
-}
-exports.forElem = forElem;
+    drmfTemplate.prototype.createDOM = function () {
+        var parser = new xmlparser_1.XMLParser(this.valustream);
+        var eof = false;
+        var nodetree = [];
+        var activeNode;
+        // let activeComponent:drmfComponent
+        var is_svg = false;
+        var me = this;
+        var svgNS = "http://www.w3.org/2000/svg";
+        var callbacks = {
+            beginNode: function (name, index) {
+                var new_node;
+                switch (name) {
+                    case "svg":
+                        new_node = document.createElementNS(svgNS, "svg");
+                        is_svg = true;
+                        break;
+                    default:
+                        if (is_svg) {
+                            new_node = document.createElementNS(svgNS, name);
+                        }
+                        else {
+                            new_node = document.createElement(name);
+                        }
+                }
+                if (activeNode instanceof Node && activeNode) {
+                    activeNode.appendChild(new_node);
+                }
+                else {
+                    me.rootNodes.push(new_node);
+                }
+                activeNode = new_node;
+                nodetree.push(new_node);
+            },
+            setAttribute: function (name, value, index) {
+                if (!activeNode)
+                    return;
+                if (value instanceof drfmKey) {
+                    return;
+                }
+                if (index & 1) {
+                    me.slotTypes[(index - 1) >> 1] = [1, activeNode, name, value];
+                }
+                // console.log('attribute', name, index)
+                if (typeof (value) == 'function') {
+                    // console.log('Binding function')
+                    if (activeNode instanceof Node) {
+                        activeNode.addEventListener(name, function (e) {
+                            value(e, me);
+                        });
+                    }
+                    if (activeNode instanceof drmfComponent) {
+                        activeNode.addEventListener(name, value);
+                    }
+                    return;
+                }
+                var node = activeNode;
+                if (is_svg) {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttributeNS(null, name, '');
+                        }
+                    }
+                    else {
+                        node.setAttributeNS(null, name, value);
+                    }
+                }
+                else {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttribute(name, '');
+                        }
+                    }
+                    else {
+                        node.setAttribute(name, value);
+                    }
+                }
+                if (name === 'id')
+                    me.ids[value] = node;
+                if (name === 'list') {
+                    if (!me.list[value])
+                        me.list[value] = [];
+                    me.list[value].push(node);
+                }
+            },
+            closeNode: function (name) {
+                if (name == 'svg') {
+                    is_svg = false;
+                }
+                nodetree.pop();
+                if (nodetree.length > 0) {
+                    activeNode = nodetree[nodetree.length - 1];
+                }
+                else {
+                    activeNode = null;
+                }
+            },
+            addTextNode: function (value, index) {
+                if (value instanceof drfmKey) {
+                    return;
+                }
+                if (index & 1) {
+                    if (value instanceof drmfTemplate) {
+                        var tpl = value;
+                        var items = tpl.createDOM();
+                        var snodes = [];
+                        for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+                            var it = items_1[_i];
+                            activeNode.appendChild(it);
+                            snodes.push(it);
+                        }
+                        // render template
+                        me.slotTypes[(index - 1) >> 1] = [2, activeNode, tpl, snodes];
+                        return;
+                    }
+                    if (value instanceof drmfComponent) {
+                        var comp = value;
+                        var tpl = comp.render();
+                        var items = tpl.createDOM();
+                        var snodes = [];
+                        for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
+                            var it = items_2[_a];
+                            activeNode.appendChild(it);
+                            snodes.push(it);
+                        }
+                        // render template
+                        me.slotTypes[(index - 1) >> 1] = [5, activeNode, comp, tpl, snodes];
+                        return;
+                    }
+                    if (Array.isArray(value)) {
+                        var coll = new drmfTemplateCollection;
+                        var txtV = document.createTextNode('');
+                        coll.node = txtV;
+                        activeNode.appendChild(txtV); // placeholder in case empty list
+                        var tpls = value;
+                        coll.list = tpls;
+                        var snodes = [];
+                        for (var _b = 0, tpls_1 = tpls; _b < tpls_1.length; _b++) {
+                            var cont = tpls_1[_b];
+                            var items = cont.createDOM();
+                            for (var _c = 0, items_3 = items; _c < items_3.length; _c++) {
+                                var it = items_3[_c];
+                                activeNode.appendChild(it);
+                                snodes.push(it);
+                            }
+                        }
+                        // render templates
+                        me.slotTypes[(index - 1) >> 1] = [4, activeNode, coll, snodes];
+                        return;
+                    }
+                }
+                // the inserted text could be parsed...
+                var v = value;
+                if (!isNaN(v))
+                    v = v + '';
+                var txt = document.createTextNode(v);
+                if (index & 1) {
+                    // render text
+                    me.slotTypes[(index - 1) >> 1] = [3, activeNode, txt];
+                }
+                if (!activeNode) {
+                    me.rootNodes.push(txt);
+                    return;
+                }
+                activeNode.appendChild(txt);
+            },
+            eof: function () {
+                eof = true;
+            }
+        };
+        var max_cnt = 10000;
+        while (!parser.eof) {
+            parser.parse(callbacks);
+            if (max_cnt-- < 0)
+                break;
+        }
+        return this.rootNodes;
+    };
+    drmfTemplate.prototype.renderTemplate = function () {
+        var parts = [];
+        var s = "", i = 0, pcnt = 0;
+        for (; i < this.values.length; i++) {
+            parts.push(this.strings[i]);
+            parts.push("<div placeholder=\"" + pcnt++ + "\" list=\"placeholders\"></div>");
+        }
+        parts.push(this.strings[i]);
+        this.templateStr = parts.join('');
+        this.templateDom = this.createDOM();
+    };
+    return drmfTemplate;
+}());
+exports.drmfTemplate = drmfTemplate;
 function html(strings) {
     var values = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         values[_i - 1] = arguments[_i];
     }
-    var results = [];
-    var f_values = [];
-    var s = "", i = 0;
-    for (; i < values.length; i++) {
-        var v = values[i];
-        if (!isNaN(v)) {
-            s += strings[i] + v;
-        }
-        else {
-            s += strings[i] + escapeXml(v);
-        }
+    var t = new drmfTemplate();
+    t.key = strings.join('<>');
+    t.strings = strings;
+    t.values = values.map(function (value) {
+        if (!isNaN(value) && (!Array.isArray(value)))
+            return value.toString();
+        return value;
+    });
+    var kk = t.values.filter(function (_) { return _ instanceof drfmKey; }).map(function (_) { return 'key=' + _.value; }).join('&');
+    t.key = t.key + kk;
+    var len = strings.length + values.length;
+    t.valustream = new Array(len);
+    var i = 0, si = 0, vi = 0;
+    while (i < len) {
+        t.valustream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
+        i++;
     }
-    s += strings[i];
-    return new escapedHtml(s);
+    return t;
 }
 exports.html = html;
-var element_cache = {};
-setInterval(function () {
-    var keys = Object.keys(element_cache);
-    for (var _i = 0, keys_2 = keys; _i < keys_2.length; _i++) {
-        var key = keys_2[_i];
-        var o = element_cache[key];
-        if (!o.elem.parentNode) {
-            delete element_cache[key];
-        }
-    }
-}, 100);
-function element(strings) {
-    var values = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        values[_i - 1] = arguments[_i];
-    }
-    var results = [];
-    var f_values = [];
-    var s = "", i = 0, pcnt = 0;
-    var key = strings.join('');
-    for (; i < values.length; i++) {
-        var v = values[i];
-        var is_string = typeof (v) == "string";
-        var is_number = !isNaN(v);
-        if (typeof (v) == "string" || !isNaN(v)) {
-            if (is_string) {
-                s += strings[i] + escapeXml(v);
-            }
-            else {
-                s += strings[i] + v;
-            }
-        }
-        else {
-            if (v instanceof escapedHtml) {
-                s += strings[i] + v.str;
-                continue;
-            }
-            // mapping several elements would be problematic
-            if (Array.isArray(v)) {
-                var to_join = [];
-                for (var _a = 0, v_1 = v; _a < v_1.length; _a++) {
-                    var item = v_1[_a];
-                    if (item instanceof escapedHtml) {
-                        to_join.push(item.str);
-                    }
-                    else {
-                        if (item instanceof Element) {
-                            var placeholder = "<div placeholder=\"" + pcnt++ + "\" list=\"placeholders\"></div>";
-                            to_join.push(placeholder);
-                            f_values.push(item);
-                        }
-                        else {
-                            throw "HTML must be escaped";
-                        }
-                    }
-                }
-                s += strings[i] + to_join.join('');
-            }
-            else {
-                if (typeof (v) == "object") {
-                    var placeholder = "<div placeholder=\"" + pcnt++ + "\" list=\"placeholders\"></div>";
-                    s += strings[i] + placeholder;
-                    f_values.push(v);
-                }
-            }
-        }
-    }
-    s += strings[i];
-    s = s.trim();
-    var obj;
-    var elem;
-    var thedom = _dom(s, function (o) {
-        obj = element_cache[s] = element_cache[s] || {
-            first: true,
-            elem: o.elem,
-            placeholders: o.placeholders
-        };
-        // TODO: verify this... using the cache is disabled if cloning is required...
-        var b_mustbe_new = false;
-        if (obj.placeholders) {
-            for (var i_1 = 0; i_1 < f_values.length; i_1++) {
-                if (f_values[i_1] && (obj.first || f_values[i_1] !== obj.placeholders[i_1])) {
-                    var v = f_values[i_1];
-                    if (v.parentNode && (v.parentNode != obj.placeholders[i_1].parentNode)) {
-                        b_mustbe_new = true;
-                    }
-                }
-            }
-            if (b_mustbe_new) {
-                obj = element_cache[s] = {
-                    first: true,
-                    elem: o.elem,
-                    placeholders: o.placeholders
-                };
-            }
-        }
-        elem = o.elem;
-        if (obj.placeholders) {
-            for (var i_2 = 0; i_2 < f_values.length; i_2++) {
-                // version without cloning...
-                if (f_values[i_2] && (obj.first || f_values[i_2] !== obj.placeholders[i_2])) {
-                    obj.placeholders[i_2].parentNode.replaceChild(f_values[i_2], obj.placeholders[i_2]);
-                    obj.placeholders[i_2] = f_values[i_2];
-                }
-                /*
-                if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
-                  const v = f_values[i]
-                  // the bug comes from here...
-                  if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
-                    const clone = v.cloneNode(true)
-                    obj.placeholders[i].parentNode.replaceChild( clone, obj.placeholders[i]  )
-                    obj.placeholders[i] = clone;
-                    console.log('cloned node ', clone)
-                    console.log(obj.placeholders[i])
-                    console.log(v)
-                  } else {
-                    obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
-                    obj.placeholders[i] = f_values[i];
-                  }
-                }
-                */
-            }
-        }
-        obj.first = false;
-    });
-    return thedom;
-}
-exports.element = element;
-// export let html = element;
+exports.drmf = html;
 // the application state for doremifa
 var app = {
     state: {
@@ -307,7 +565,6 @@ function setState(state) {
     }
 }
 exports.setState = setState;
-// reduce( _ => {} )
 function reduce(reducer) {
     try {
         app.state = __assign({}, app.state, reducer(app.state));
@@ -316,27 +573,35 @@ function reduce(reducer) {
     }
 }
 exports.reduce = reduce;
-function router(routermap) {
-    return __awaiter(this, void 0, void 0, function () {
-        var page_name, page, phase, last_page;
-        return __generator(this, function (_a) {
-            page_name = app.state.page || 'default';
-            page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default);
-            phase = 'refresh';
-            if (page) {
-                if (page_name != app.last_page_name) {
-                    last_page = routermap[app.last_page_name];
-                    //if(last_page) {
-                    //  last_page({...app.state, phase:'close'})
-                    //}
-                    phase = 'init';
-                }
-                app.last_page_name = page_name;
-                return [2 /*return*/, page(__assign({}, app.state, { phase: phase }))];
+var drmfRouter = /** @class */ (function (_super) {
+    __extends(drmfRouter, _super);
+    function drmfRouter(routes) {
+        var _this = _super.call(this) || this;
+        _this.routemap = routes;
+        return _this;
+    }
+    drmfRouter.prototype.render = function () {
+        var routermap = this.routemap;
+        var page_name = app.state.page || 'default';
+        var page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default);
+        var phase = 'refresh';
+        if (page) {
+            if (page_name != app.last_page_name) {
+                var last_page = routermap[app.last_page_name];
+                //if(last_page) {
+                //  last_page({...app.state, phase:'close'})
+                //}
+                phase = 'init';
             }
-            return [2 /*return*/, element(templateObject_1 || (templateObject_1 = __makeTemplateObject(["route not found"], ["route not found"])))];
-        });
-    });
+            app.last_page_name = page_name;
+            return page(__assign({}, app.state, { phase: phase }));
+        }
+        return exports.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
+    };
+    return drmfRouter;
+}(drmfComponent));
+function router(routermap) {
+    return new drmfRouter(routermap);
 }
 exports.router = router;
 var b_render_on = false;
@@ -353,8 +618,11 @@ var register_hash = function () {
 var interval = null;
 var current_node = null;
 var is_registered = false;
+var last_items = null;
 // initialize app using init function...
-function start(root, renderFn, state, options) {
+function mount(root, comp, 
+// renderFn : (state:any) => Promise<drmfTemplate>, 
+state, options) {
     var _this = this;
     if (!app.is_registered) {
         console.log('registering app');
@@ -369,46 +637,43 @@ function start(root, renderFn, state, options) {
     if (state)
         app.state = __assign({}, app.state, state);
     var update_application = function () { return __awaiter(_this, void 0, void 0, function () {
-        var el, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (b_render_on && (retry_cnt < 5)) {
-                        retry_cnt++;
-                        return [2 /*return*/];
-                    }
-                    retry_cnt = 0;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    if (!(last_state != app.state)) return [3 /*break*/, 3];
+        var items, _i, items_4, item, _a, last_items_1, last;
+        return __generator(this, function (_b) {
+            if (b_render_on && (retry_cnt < 5)) {
+                retry_cnt++;
+                return [2 /*return*/];
+            }
+            retry_cnt = 0;
+            try {
+                if (last_state != app.state) {
                     last_state = app.state;
                     b_render_on = true;
-                    return [4 /*yield*/, renderFn(app.state)];
-                case 2:
-                    el = _a.sent();
-                    if (!current_node) {
-                        root.appendChild(el);
+                    items = comp.toDom();
+                    for (_i = 0, items_4 = items; _i < items_4.length; _i++) {
+                        item = items_4[_i];
+                        if (!item.parentNode)
+                            document.body.appendChild(item);
                     }
-                    else {
-                        if (el != current_node) {
-                            current_node.parentNode.replaceChild(el, current_node);
+                    if (last_items) {
+                        for (_a = 0, last_items_1 = last_items; _a < last_items_1.length; _a++) {
+                            last = last_items_1[_a];
+                            if (last.parentNode && items.indexOf(last) < 0) {
+                                last.parentNode.removeChild(last);
+                            }
                         }
                     }
-                    current_node = el;
+                    last_items = items;
                     b_render_on = false;
-                    _a.label = 3;
-                case 3: return [3 /*break*/, 5];
-                case 4:
-                    e_1 = _a.sent();
-                    console.error(e_1);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                }
             }
+            catch (e) {
+                console.error(e);
+            }
+            return [2 /*return*/];
         });
     }); };
-    setInterval(update_application, update_delay);
+    interval = setInterval(update_application, update_delay);
 }
-exports.start = start;
-var templateObject_1;
+exports.mount = mount;
+var templateObject_1, templateObject_2;
 //# sourceMappingURL=index.js.map

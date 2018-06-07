@@ -1,3 +1,7 @@
+ 
+import { XMLParser, bufferType } from './xmlparser'
+
+let component_registry : { [key:string] : typeof drmfComponent }
 
 function escapeXml(unsafe) {
   return unsafe.replace(/[<>&'"]/g, function (c) {
@@ -11,6 +15,20 @@ function escapeXml(unsafe) {
   });
 }
 
+export function registerComponent(name:string, component:any) {
+  component_registry[name] = component
+}
+
+export class drfmKey {
+  value:string
+}
+
+export function key(value:string|number) : drfmKey {
+  const o = new drfmKey
+  o.value = typeof value === 'string' ? value : value+''
+  return o
+}
+
 export class escapedHtml {
   str:string
   constructor( value ) {
@@ -18,216 +36,459 @@ export class escapedHtml {
   }
 }
 
-let cache_of = {}
-setInterval( () => {
-  const keys = Object.keys(cache_of)
-  for( let key of keys ) {
-    const o = cache_of[key]
-    if(!o.parentNode) {
-      delete cache_of[key]
+export class drmfComponent {
+  lastRender : drmfTemplate
+  toDom() : Node[] {
+    const tpl = this.render()    
+    // if not rendered at all or different template
+    if(!this.lastRender || (this.lastRender.key != tpl.key)) {
+      const elems = tpl.createDOM()
+      this.lastRender = tpl
+      return elems
     }
+    const last = this.lastRender 
+    last.updateValues( tpl.values )
+    // TODO: does not work always, root nodes can change
+    return last.rootNodes
   }
-},100)
-function _dom( str:string, fn?: (elems:any) => void ) : Element {
-  const cached = cache_of[str]
-  if(cached) {
-    if(fn) {
-      _forElem(cached,fn)
-    }
-    return cached;
+
+  render() : drmfTemplate {
+    return drmf`<div>Hello World</div>`
   }
+}
+
+export class drmfTemplateCollection {
+  node:Node
+  list:drmfTemplate[]
+}
+
+export class drmfTemplate {
+  key:string
+  strings:string[]
+  values:any[]
+  valustream:bufferType[]
+  children : { [key: string]: any } = {}
+  doms : { [key: string]: Element[] } = {}
+
+  templateStr:string
+  templateDom:Node[]
+
+  rootNodes:Node[] = []
+  slotTypes:any[][] = []
   
-  const elem = document.createElement('div')
-  elem.innerHTML = str.trim()
-  const v = ( cache_of[str] = elem.firstChild as Element)
-  elem.removeChild( v )
-  if(fn) {
-    _forElem(v,fn)
-  }
-  return v
-}
+  prevNode:Node
 
-function _build_dom( str:string, fn?: (elems:any) => void ) : Element {
-  const elem = document.createElement('div')
-  elem.innerHTML = str.trim()
-  const v = ( cache_of[str] = elem.firstChild as Element)
-  if(fn) {
-    setTimeout( () => _forElem(v,fn), 1)
-  }
-  return v
-}
+  ids : { [key: string]: Element } = {}
+  list : { [key: string]: Element[] } = {}
 
-function getelem( parent:Element, id:string) : Element {
-  var matches = parent.querySelectorAll(`#${id}`);  
-  return matches.item(0)
-}
+  replaceWith(renderedTpl:drmfTemplate) : drmfTemplate {
 
-function _forElem( parent:Element, fn: (elems:any) => void) : Element {
-  let res:any = {}
-  const lists:any={}
-  const walk_tree = ( elem:Element ) => {
-    if(!elem) return;
-    if(!elem.getAttribute) return
-    let elem_id = elem.getAttribute('id')
-    let list_id = elem.getAttribute('list')
-    if(elem_id) {
-      res[elem_id] = elem
+    if(this.key == renderedTpl.key) {
+      this.updateValues( renderedTpl.values )
+      return this
+    } 
+
+    const currTpl = this
+    const nodes = currTpl.rootNodes
+    let renderNodes
+    const new_nodes = renderedTpl.createDOM()
+    // replace current with new
+    const pNode = nodes[0].parentNode
+    const first = nodes[0]
+    for( let n of new_nodes ) {
+      pNode.insertBefore( n, first )
     }
-    if(list_id) {
-      (lists[list_id] = lists[list_id] || []).push( elem )
+    for( let n of nodes ) {
+      pNode.removeChild( n )
     }
-    const list = Array.prototype.slice.call(elem.childNodes)
-    for( let ch of list) walk_tree( ch )
+    return renderedTpl
   }
-  walk_tree(parent)
-  res = {...res, ...lists, elem:parent}
-  fn(res)
-  return parent
-}
 
-export function forElem( parent:Element, fn: (elems:any) => void) : Element {
-  setTimeout( () => _forElem(parent, fn), 1)
-  return parent;
-}
+  updateValues(values:any[]) {
 
+    for( let i=0; i<values.length ; i++) {
+      const value = values[i]
+      if(!value) continue
+      const last_slot = this.slotTypes[i]
+      if(!last_slot) continue
+      const last_type = last_slot[0]
+      const last_root = last_slot[1]
+      // assuming now that the type stays the same...
+      switch(last_type) {
+        case 1:
+          const name = last_slot[2]
 
-export function html(strings, ...values) : escapedHtml {
-  let results = []
-  let f_values = []
-  var s = "",i=0;
-  for(; i<values.length; i++) {
-    const v = values[i]
-    if(!isNaN(v)) {
-      s+=strings[i]+v
-    } else {
-      s+=strings[i]+escapeXml( v ); 
-    }
-  }
-  s+=strings[i];
-  return new escapedHtml(s)
-}
-
-let element_cache:any = {}
-setInterval( () => {
-  const keys = Object.keys(element_cache)
-  for( let key of keys ) {
-    const o = element_cache[key]
-    if(!o.elem.parentNode) {
-      delete element_cache[key]
-    }
-  }
-},100)
-export function element(strings, ...values) : Element {
-  let results = []
-  let f_values = []
-  var s = "",i=0, pcnt = 0;
-  var key = strings.join('')
-  for(; i<values.length; i++) {
-    const v = values[i]
-    const is_string = typeof(v)=="string"
-    const is_number = !isNaN(v)
-    if(typeof(v)=="string" || !isNaN(v)) {
-      if(is_string) {
-        s+=strings[i]+escapeXml( v ); 
-      } else {
-        s+=strings[i]+v
-      }
-    } else {
-      if( v instanceof escapedHtml) {
-        s+=strings[i]+v.str
-        continue
-      }
-      // mapping several elements would be problematic
-      if(Array.isArray(v)) {
-        const to_join = []
-        for( let item of v ) {
-          if( item instanceof escapedHtml) {
-            to_join.push(item.str)
-          } else {            
-            if( item instanceof Element) {
-              const placeholder = `<div placeholder="${pcnt++}" list="placeholders"></div>`
-              to_join.push( placeholder )
-              f_values.push( item )      
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              last_root.setAttribute(name, '')
             } else {
-              throw "HTML must be escaped"
+              last_root.removeAttribute(name)
+            }
+          } else {
+            last_root.setAttribute( name, value )
+          }          
+          
+        break;
+        case 2:
+          // simple content template was the last type...
+          const currTpl = last_slot[2] as drmfTemplate
+          const nodes = currTpl.rootNodes
+
+          if( value instanceof drmfTemplate) {
+            const renderedTpl = value as drmfTemplate
+            this.slotTypes[i][2] = currTpl.replaceWith( renderedTpl )            
+          }
+
+          if(value instanceof drmfComponent) {
+            // render the situation now...
+            const renderedComp = value as drmfComponent
+            const rTpl = renderedComp.render()  
+            const newTpl = currTpl.replaceWith( rTpl )   
+            this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]   
+          }          
+
+          // transform into txt node
+          if( typeof(value) == 'string' ) {
+            const txt = document.createTextNode(value)
+            this.slotTypes[i] = [3, last_root, txt]            
+            const nodes = currTpl.rootNodes
+            const pNode = nodes[0].parentNode
+            const first = nodes[0]
+            pNode.insertBefore( txt, first )
+            for( let n of nodes ) {
+              pNode.removeChild( n )
             }             
           }
-        }
-        s+=strings[i]+to_join.join('')
-      } else {
-        if(typeof(v) == "object") {
-          const placeholder = `<div placeholder="${pcnt++}" list="placeholders"></div>`
-          s+=strings[i] + placeholder
-          f_values.push( v )  
-        }
-      }
-    }
-  }
-  s+=strings[i];
-  s = s.trim()
-  let obj
-  let elem;
-  const thedom = _dom(s, o => {
-
-    obj = element_cache[s] = element_cache[s] || { 
-        first:true,
-        elem:o.elem, 
-        placeholders:o.placeholders}
-
-    // TODO: verify this... using the cache is disabled if cloning is required...
-    let b_mustbe_new = false
-    if(obj.placeholders) {
-      for(let i=0; i<f_values.length; i++) {
-        if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
-          const v = f_values[i]
-          if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
-            b_mustbe_new = true
+          
+        break;
+        case 3:
+          const text_node = last_slot[2]
+          if(typeof(value) == 'string') {
+            text_node.textContent = value
           }
-        } 
-      }
-      if(b_mustbe_new) {
-        obj = element_cache[s] = { 
-          first:true,
-          elem:o.elem, 
-          placeholders:o.placeholders}
-      }
-    }        
-    elem = o.elem;
-    if(obj.placeholders) {
-      for(let i=0; i<f_values.length; i++) {
-
-        // version without cloning...
-        if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
-          obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
-          obj.placeholders[i] = f_values[i];              
-        } 
-
-        /*
-        if(f_values[i] && (obj.first || f_values[i] !== obj.placeholders[i])) {
-          const v = f_values[i]
-          // the bug comes from here...
-          if(v.parentNode && (v.parentNode != obj.placeholders[i].parentNode)) {
-            const clone = v.cloneNode(true)
-            obj.placeholders[i].parentNode.replaceChild( clone, obj.placeholders[i]  )
-            obj.placeholders[i] = clone;    
-            console.log('cloned node ', clone)    
-            console.log(obj.placeholders[i]) 
-            console.log(v)      
-          } else {
-            obj.placeholders[i].parentNode.replaceChild( f_values[i], obj.placeholders[i]  )
-            obj.placeholders[i] = f_values[i];              
+          if( value instanceof drmfTemplate) {
+            const new_nodes = value.createDOM()
+            // replace current with new
+            const pNode = text_node.parentNode
+            for( let n of new_nodes ) {
+              pNode.insertBefore( n, text_node )
+            }            
+            pNode.removeChild(text_node)
+            this.slotTypes[i] = [2, last_root, value, new_nodes] 
           }
-        } 
-        */
-      }
-    }
-    obj.first = false;
-  })
+          if(value instanceof drmfComponent) {
+            const comp = value as drmfComponent
+            const tpl = comp.render()
+            const new_nodes = tpl.createDOM()
+            const pNode = text_node.parentNode
+            for( let n of new_nodes ) {
+              pNode.insertBefore( n, text_node )
+            }  
+            pNode.removeChild(text_node)
+            this.slotTypes[i] = [5, last_root, comp, tpl, new_nodes]             
+            return
+          } 
+
+        break;
+        case 4:
+          const tpls = value as drmfTemplate[]
+          const curr_collection = last_slot[2] as drmfTemplateCollection
+          const curr_tpls = curr_collection.list
+          let prevNode = curr_collection.node
+          const len = Math.max( tpls.length, curr_tpls.length )
+          if(len === 0) return
+          if(tpls.length === 0) {
+            curr_tpls.forEach( d => {
+              d.rootNodes.forEach( n => n.parentNode.removeChild(n))
+            })
+            curr_collection.list = []
+            return
+          }
+          let ii = 0
+          let list = []
+          for(let ii = 0 ; ii <len ; ii++) {
+            const ct = curr_tpls[ii]
+            const rt = tpls[ii]
+            if(ct && rt) {
+              const p = ct.replaceWith( rt )
+              list[ii] = p
+              prevNode = p.rootNodes[p.rootNodes.length - 1]
+              continue
+            } 
+            if(ct && !rt) {
+              ct.rootNodes.forEach( n => n.parentNode.removeChild(n))                              
+              continue
+            }
+            if(!ct && rt) { 
+              if(rt.rootNodes.length === 0) rt.createDOM()
+              rt.rootNodes.forEach( n => {
+                prevNode.parentNode.insertBefore( n, prevNode.nextSibling )
+                prevNode = n
+              })
+              list[ii] = rt
+              continue
+            }            
+          }
+          curr_collection.list = list
+
+        break;
+
+        case 5:
+
+          if(typeof(value) == 'string') {
+            const tplNow = last_slot[3] as drmfTemplate
+            const txt = document.createTextNode(value)
+            this.slotTypes[i] = [3, last_root, txt]     
+
+            const nodes = tplNow.rootNodes
+            const pNode = nodes[0].parentNode
+            const first = nodes[0]
+            pNode.insertBefore( txt, first )
+            for( let n of nodes ) {
+              pNode.removeChild( n )
+            }  
+          }
+
+          if(value instanceof drmfTemplate) {
+            const comp = last_slot[2] as drmfComponent
+            const tplNow = last_slot[3] as drmfTemplate
+            const tpl_nodes = tplNow.rootNodes
+            const rTpl = value as drmfTemplate
+            const newTpl = tplNow.replaceWith( rTpl ) 
+            this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]  
+          }          
+
+          if(value instanceof drmfComponent) {
+            const comp = last_slot[2] as drmfComponent
+            const tplNow = last_slot[3] as drmfTemplate
+            const tpl_nodes = tplNow.rootNodes
   
-  return thedom;
+            // render the situation now...
+            const renderedComp = value as drmfComponent
+            const rTpl = renderedComp.render()
+  
+            const newTpl = tplNow.replaceWith( rTpl ) 
+  
+            if(newTpl === rTpl) {
+              this.slotTypes[i][2] = renderedComp 
+              this.slotTypes[i][3] = newTpl 
+            }   
+          }
+          
+        break;
+        
+      }
+    }    
+  }
+
+  createDOM() : Node[] {
+
+    const parser = new XMLParser(this.valustream)
+    let eof = false
+    const nodetree:Node[] = []
+    
+    let activeNode:Node 
+    // let activeComponent:drmfComponent
+    let is_svg = false
+    const me = this
+    const svgNS = "http://www.w3.org/2000/svg";  
+    const callbacks = {
+      beginNode(name, index:number) {
+        let new_node
+        switch(name) {
+          case "svg":
+            new_node= document.createElementNS(svgNS, "svg");
+            is_svg = true
+          break
+          default:
+            if(is_svg) {
+              new_node= document.createElementNS(svgNS, name);
+            } else {
+              new_node = document.createElement(name)
+            }
+        }
+        if( activeNode instanceof Node && activeNode) {
+          activeNode.appendChild( new_node )
+        } else {
+          me.rootNodes.push(new_node)        
+        }
+        activeNode = new_node
+        nodetree.push(new_node)
+      },
+      setAttribute(name, value, index) {
+        if(!activeNode) return;
+        if(value instanceof drfmKey) {
+          return
+        }        
+        if( index & 1 ) {
+          me.slotTypes[( index - 1 ) >> 1] = [1, activeNode, name, value] 
+        }              
+        // console.log('attribute', name, index)
+        if(typeof(value) == 'function') {
+          // console.log('Binding function')
+          if(activeNode instanceof Node) {
+            activeNode.addEventListener(name, (e)=>{
+              value(e,me)
+            })
+          }
+          if(activeNode instanceof drmfComponent) {
+            activeNode.addEventListener(name, value)
+          }
+          return;
+        }
+        const node = activeNode as Element
+
+        if(is_svg) {
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              node.setAttributeNS(null,name, '')
+            }
+          } else {
+            node.setAttributeNS(null,name, value)
+          }        } else {
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              node.setAttribute(name, '')
+            }
+          } else {
+            node.setAttribute(name, value)
+          }
+        }        
+
+
+        if(name==='id') me.ids[value] = node        
+        if(name==='list') {
+          if(!me.list[value]) me.list[value] = []
+          me.list[value].push(node)  
+        }      
+      },
+      closeNode(name) {
+        if(name == 'svg') {
+          is_svg = false
+        }
+        nodetree.pop()
+        if(nodetree.length > 0) {
+          activeNode = nodetree[nodetree.length-1]
+        } else {
+          activeNode = null
+        }
+      },
+      addTextNode(value, index) {
+
+        if(value instanceof drfmKey) {
+          return
+        }
+        if( index & 1 ) {
+          if(value instanceof drmfTemplate) {
+            const tpl = value as drmfTemplate
+            const items = tpl.createDOM()
+            const snodes = []
+            for( let it of items ) {
+              activeNode.appendChild( it )
+              snodes.push( it )
+            }
+            // render template
+            me.slotTypes[( index - 1 ) >> 1] = [2, activeNode, tpl, snodes]           
+            return
+          }            
+          if(value instanceof drmfComponent) {
+            const comp = value as drmfComponent
+            const tpl = comp.render()
+            const items = tpl.createDOM()
+            const snodes = []
+            for( let it of items ) {
+              activeNode.appendChild( it )
+              snodes.push( it )
+            }
+            // render template
+            me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]           
+            return
+          }            
+          if(Array.isArray( value )) {
+            const coll = new drmfTemplateCollection
+            const txtV = document.createTextNode('')
+            coll.node = txtV
+            activeNode.appendChild(txtV) // placeholder in case empty list
+
+            const tpls = value as drmfTemplate[]
+            coll.list = tpls
+            const snodes = []
+            for( let cont of tpls ) {
+              const items = cont.createDOM()
+              for( let it of items ) {
+                activeNode.appendChild( it )
+                snodes.push( it )
+              }  
+            }
+            // render templates
+            me.slotTypes[( index - 1 ) >> 1] = [4, activeNode, coll, snodes]  
+            return
+          }            
+        }
+        // the inserted text could be parsed...
+        let v = value
+        if(!isNaN(v)) v = v + ''
+        const txt = document.createTextNode(v)
+        if( index & 1) {
+          // render text
+          me.slotTypes[( index - 1 ) >> 1] = [3, activeNode, txt]           
+        }
+        if(!activeNode) {
+          me.rootNodes.push(txt)
+          return 
+        }  
+        activeNode.appendChild( txt )        
+      },
+      eof() {
+        eof = true
+      }
+    }  
+    let max_cnt = 10000
+    while(!parser.eof) {
+      parser.parse(callbacks)
+      if(max_cnt-- < 0 ) break
+    }  
+    return this.rootNodes
+  }  
+
+  renderTemplate() {
+    const parts = []
+    let s = "",i=0, pcnt = 0;
+    for(; i<this.values.length; i++) {
+      parts.push(this.strings[i])
+      parts.push(`<div placeholder="${pcnt++}" list="placeholders"></div>`)
+    }
+    parts.push(this.strings[i])  
+    this.templateStr = parts.join('')   
+    this.templateDom = this.createDOM()
+  }
+
 }
 
-// export let html = element;
+export function html(strings, ...values) : drmfTemplate {
+  const t = new drmfTemplate()   
+  t.key = strings.join('<>')
+  t.strings = strings
+  t.values = values.map( value => {
+    if(!isNaN(value) && (!Array.isArray(value))) return value.toString()
+    return value
+  }) 
+  const kk = t.values.filter( _ => _ instanceof drfmKey).map( _ => 'key=' + _.value ).join('&')
+  t.key = t.key + kk
+  const len = strings.length + values.length
+  t.valustream = new Array(len);
+  let i = 0, si = 0, vi = 0;
+  while(i<len) {
+    t.valustream[i] = i&1 ? t.values[vi++] : t.strings[si++]
+    i++;
+  }  
+  return t
+}
+
+export const drmf = html;
 
 // the application state for doremifa
 let app:any = {
@@ -249,7 +510,6 @@ export function setState( state:any ) {
   }
 }
 
-// reduce( _ => {} )
 export function reduce( reducer:(state:any) => any ) {
   try {
     app.state = { ...app.state, ...reducer(app.state) }
@@ -258,22 +518,34 @@ export function reduce( reducer:(state:any) => any ) {
   }
 }
 
-export async function router(routermap:any) : Promise<Element>  {
-  let page_name = app.state.page || 'default';
-  let page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default)
-  let phase = 'refresh'
-  if(page) {
-    if( page_name != app.last_page_name ) {
-      const last_page = routermap[app.last_page_name]
-      //if(last_page) {
-      //  last_page({...app.state, phase:'close'})
-      //}
-      phase = 'init'
-    }
-    app.last_page_name = page_name
-    return page({...app.state, phase})
+class drmfRouter extends drmfComponent {
+  routemap:any
+  constructor(routes:any) {
+    super()
+    this.routemap = routes
   }
-  return element`route not found`
+  render() {
+    const routermap = this.routemap
+    let page_name = app.state.page || 'default';
+    let page = routermap[app.state.page || 'default'] || (page_name = 'default', routermap.default)
+    let phase = 'refresh'
+    if(page) {
+      if( page_name != app.last_page_name ) {
+        const last_page = routermap[app.last_page_name]
+        //if(last_page) {
+        //  last_page({...app.state, phase:'close'})
+        //}
+        phase = 'init'
+      }
+      app.last_page_name = page_name
+      return page({...app.state, phase})
+    }
+    return drmf`<div></div>`      
+  }
+}
+
+export function router(routermap:any) : drmfComponent  {
+  return new drmfRouter(routermap)
 }
 
 let b_render_on = false
@@ -298,10 +570,13 @@ export interface DoremifaOptions {
 let interval = null
 let current_node = null
 let is_registered = false
+let last_items = null
+
 
 // initialize app using init function...
-export function start ( root:Element, 
-  renderFn : (state:any) => Promise<Element>, 
+export function mount ( root:Element, 
+  comp:drmfComponent,
+  // renderFn : (state:any) => Promise<drmfTemplate>, 
   state? :any, 
   options?:DoremifaOptions ) {
   if(!app.is_registered) {
@@ -324,22 +599,25 @@ export function start ( root:Element,
       if(last_state != app.state) {
         last_state = app.state
         b_render_on = true
-        const el = await renderFn(app.state)
-        if(!current_node) {
-          root.appendChild( el )
-        } else {
-          if( el != current_node ) {
-            current_node.parentNode.replaceChild( el, current_node )
-          }
+        const items = comp.toDom()
+        for( let item of items ) {
+          if(!item.parentNode) document.body.appendChild( item )
+        } 
+        if(last_items) {
+          for( let last of last_items ) {
+            if( last.parentNode && items.indexOf(last) < 0 ) {
+              last.parentNode.removeChild( last )
+            }
+          }  
         }
-        current_node = el
+        last_items = items
         b_render_on = false
       }
     } catch(e) {
       console.error(e)
     }
   }
-  setInterval( update_application, update_delay);
+  interval = setInterval( update_application, update_delay);
 }
 
 
