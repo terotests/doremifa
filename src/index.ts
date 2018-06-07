@@ -38,19 +38,6 @@ export class escapedHtml {
 
 export class drmfComponent {
   lastRender : drmfTemplate
-
-  setAttribute(name:string, value:any) {
-
-  }
-
-  appendChild( node:Node|drmfComponent) {
-
-  }
-
-  addEventListener(name:string, value:any) {
-
-  }
-
   toDom() : Node[] {
     const tpl = this.render()    
     // if not rendered at all or different template
@@ -60,9 +47,7 @@ export class drmfComponent {
       return elems
     }
     const last = this.lastRender 
-
     last.updateValues( tpl.values )
-
     // TODO: does not work always, root nodes can change
     return last.rootNodes
   }
@@ -89,16 +74,12 @@ export class drmfTemplate {
   templateDom:Node[]
 
   rootNodes:Node[] = []
-
-  // is this enough ??? 
-  slotNodes:Node[][]
-
   slotTypes:any[][] = []
-
-  // 0,1,2,3...
-  nodesForValues : Node[][] = [] 
   
   prevNode:Node
+
+  ids : { [key: string]: Element } = {}
+  list : { [key: string]: Element[] } = {}
 
   replaceWith(renderedTpl:drmfTemplate) : drmfTemplate {
 
@@ -136,7 +117,18 @@ export class drmfTemplate {
       switch(last_type) {
         case 1:
           const name = last_slot[2]
-          last_root.setAttribute( name, value )
+
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              last_root.setAttribute(name, '')
+            } else {
+              last_root.removeAttribute(name)
+            }
+          } else {
+            last_root.setAttribute( name, value )
+          }          
+          
         break;
         case 2:
           // simple content template was the last type...
@@ -149,13 +141,10 @@ export class drmfTemplate {
           }
 
           if(value instanceof drmfComponent) {
-
             // render the situation now...
             const renderedComp = value as drmfComponent
-            const rTpl = renderedComp.render()
-  
-            const newTpl = currTpl.replaceWith( rTpl ) 
-  
+            const rTpl = renderedComp.render()  
+            const newTpl = currTpl.replaceWith( rTpl )   
             this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]   
           }          
 
@@ -301,15 +290,23 @@ export class drmfTemplate {
     
     let activeNode:Node 
     // let activeComponent:drmfComponent
-
+    let is_svg = false
     const me = this
+    const svgNS = "http://www.w3.org/2000/svg";  
     const callbacks = {
       beginNode(name, index:number) {
         let new_node
-        if(name=='script') {
-          new_node = document.createElement('pre')
-        } else {
-          new_node = document.createElement(name)
+        switch(name) {
+          case "svg":
+            new_node= document.createElementNS(svgNS, "svg");
+            is_svg = true
+          break
+          default:
+            if(is_svg) {
+              new_node= document.createElementNS(svgNS, name);
+            } else {
+              new_node = document.createElement(name)
+            }
         }
         if( activeNode instanceof Node && activeNode) {
           activeNode.appendChild( new_node )
@@ -331,7 +328,9 @@ export class drmfTemplate {
         if(typeof(value) == 'function') {
           // console.log('Binding function')
           if(activeNode instanceof Node) {
-            activeNode.addEventListener(name, value)
+            activeNode.addEventListener(name, (e)=>{
+              value(e,me)
+            })
           }
           if(activeNode instanceof drmfComponent) {
             activeNode.addEventListener(name, value)
@@ -339,9 +338,37 @@ export class drmfTemplate {
           return;
         }
         const node = activeNode as Element
-        node.setAttribute(name, value)
+
+        if(is_svg) {
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              node.setAttributeNS(null,name, '')
+            }
+          } else {
+            node.setAttributeNS(null,name, value)
+          }        } else {
+          if(value==='false' || value==='true') {
+            const t = value==='true'
+            if(t) {
+              node.setAttribute(name, '')
+            }
+          } else {
+            node.setAttribute(name, value)
+          }
+        }        
+
+
+        if(name==='id') me.ids[value] = node        
+        if(name==='list') {
+          if(!me.list[value]) me.list[value] = []
+          me.list[value].push(node)  
+        }      
       },
       closeNode(name) {
+        if(name == 'svg') {
+          is_svg = false
+        }
         nodetree.pop()
         if(nodetree.length > 0) {
           activeNode = nodetree[nodetree.length-1]
@@ -439,26 +466,6 @@ export class drmfTemplate {
     this.templateDom = this.createDOM()
   }
 
-  replaceNodes( index:number, elems:Node[]) {
-    if(!this.nodesForValues[index]) this.nodesForValues[index] = []
-    for(let i=0; i<elems.length;i++) {
-
-    }
-  }
-
-  render() {
-    for( let i = 0; i < this.values.length; i++) {
-      const value = this.values[i]
-      if(typeof(value) === 'string' || !isNaN(value)) {
-        // this is going to be a constant, so if rendered do not render again
-        if(!this.nodesForValues[i]) {
-          const txtNode = document.createTextNode( value )
-          this.replaceNodes( i, [txtNode])
-        }
-      }
-    }
-  }
-
 }
 
 export function html(strings, ...values) : drmfTemplate {
@@ -466,7 +473,7 @@ export function html(strings, ...values) : drmfTemplate {
   t.key = strings.join('<>')
   t.strings = strings
   t.values = values.map( value => {
-    if(!isNaN(value)) return value.toString()
+    if(!isNaN(value) && (!Array.isArray(value))) return value.toString()
     return value
   }) 
   const kk = t.values.filter( _ => _ instanceof drfmKey).map( _ => 'key=' + _.value ).join('&')
@@ -482,40 +489,6 @@ export function html(strings, ...values) : drmfTemplate {
 }
 
 export const drmf = html;
-
-
-function getelem( parent:Element, id:string) : Element {
-  var matches = parent.querySelectorAll(`#${id}`);  
-  return matches.item(0)
-}
-
-function _forElem( parent:Element, fn: (elems:any) => void) : Element {
-  let res:any = {}
-  const lists:any={}
-  const walk_tree = ( elem:Element ) => {
-    if(!elem) return;
-    if(!elem.getAttribute) return
-    let elem_id = elem.getAttribute('id')
-    let list_id = elem.getAttribute('list')
-    if(elem_id) {
-      res[elem_id] = elem
-    }
-    if(list_id) {
-      (lists[list_id] = lists[list_id] || []).push( elem )
-    }
-    const list = Array.prototype.slice.call(elem.childNodes)
-    for( let ch of list) walk_tree( ch )
-  }
-  walk_tree(parent)
-  res = {...res, ...lists, elem:parent}
-  fn(res)
-  return parent
-}
-
-export function forElem( parent:Element, fn: (elems:any) => void) : Element {
-  setTimeout( () => _forElem(parent, fn), 1)
-  return parent;
-}
 
 // the application state for doremifa
 let app:any = {

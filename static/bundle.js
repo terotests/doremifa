@@ -1,5 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10,109 +14,95 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
-var timers_1 = require("timers");
-var helloComponent = /** @class */ (function (_super) {
-    __extends(helloComponent, _super);
-    function helloComponent(initValue) {
-        var _this = _super.call(this) || this;
-        _this.cnt = 0;
-        _this.txt = 'Hello World from Component';
-        _this.cnt = initValue;
-        timers_1.setInterval(function () {
-            _this.cnt++;
-        }, 1000);
-        return _this;
-    }
-    helloComponent.prototype.reset = function () {
-        this.cnt = 0;
+function intropage(state) {
+    var colorList = ['red', 'yellow', 'green', 'brown'];
+    return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n  "], ["\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
+        "\n</form>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=",
+        " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "])), state.color === color, function (e, tpl) {
+        index_1.setState({ color: color });
+    }, color); }));
+}
+function details(state) {
+    var item = state.list.filter(function (item) { return item.id == state.params.id; }).pop();
+    // could you just bind to the ID values directly...
+    return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=",
+        ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=",
+        ">Poista</a>      \n    </div>    \n    </form>\n  </div>"])), state.params.id, item.name, item.duration, function (e, tpl) {
+        item.duration = tpl.ids.duration.value;
+        item.name = tpl.ids.name.value;
+        window.location.hash = 'lista';
+    }, function (e, tpl) {
+        removeTask(item);
+        window.location.hash = 'lista';
+    });
+}
+function removeTask(task) {
+    var list = index_1.getState().list;
+    var index = list.indexOf(task);
+    list.splice(index, 1);
+    index_1.setState({ list: list });
+}
+var id_list = 10;
+function generateID() {
+    return id_list++;
+}
+function addTask() {
+    var list = index_1.getState().list;
+    var id = generateID();
+    var task = {
+        id: id,
+        name: 'Task ' + id,
+        duration: Math.floor(2 + Math.random() * 8)
     };
-    helloComponent.prototype.setText = function (v) {
-        this.txt = v;
-        return this;
-    };
-    helloComponent.prototype.render = function () {
-        if (this.cnt > 10) {
-            return index_1.drmf(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div style=\"padding:10px;background-color:#eeeeee\">\n        <h2>", " ", "</h2>\n      </div>"], ["<div style=\"padding:10px;background-color:#eeeeee\">\n        <h2>", " ", "</h2>\n      </div>"])), this.txt, this.cnt + '');
-        }
-        return index_1.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div>\n      <h2>", " ", "</h2>\n    </div>"], ["<div>\n      <h2>", " ", "</h2>\n    </div>"])), this.txt, this.cnt + '');
-    };
-    return helloComponent;
-}(index_1.drmfComponent));
-exports.helloComponent = helloComponent;
-var render_counter = 0;
-// So here it is, not really inside the component Tree!!!
-var myHelloComponent = new helloComponent(0);
-var myHelloComponent2 = new helloComponent(12);
-var myHelloComponent3 = new helloComponent(12);
-var myHelloComponent4 = new helloComponent(5);
-var testComponent = /** @class */ (function (_super) {
-    __extends(testComponent, _super);
-    function testComponent() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.myValue = '';
-        _this.mySize = 100;
-        _this.myList = [1, 2, 3, 4];
-        return _this;
-    }
-    testComponent.prototype.render = function () {
-        var _this = this;
-        var i = 0;
-        var size = 100;
-        var upd_value = function (e) {
-            _this.myValue = e.target.value;
-            console.log(e.target.value);
-        };
-        var swap = Math.floor(render_counter / 10) & 1;
-        // is the component just updated with some new parameters ? 
-        return index_1.drmf(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n    <div >\n      ", "\n      <div>", "</div>\n      <div>", "</div>\n      <div><textarea class=\"foobar\"/></div>\n      <h1 click=", ">Hello ", "</h1>\n      \n      <div> \n        <div>Swap 1</div>\n        ", "\n      </div>\n      <div> \n        <div>Swap 2</div>\n        ", "\n      </div>\n\n      <div> \n        <div>Swap 3</div>\n        ", "\n      </div>      \n\n      ", "\n    </div>\n    "], ["\n    <div >\n      ", "\n      <div>", "</div>\n      <div>", "</div>\n      <div><textarea class=\"foobar\"/></div>\n      <h1 click=",
-            ">Hello ", "</h1>\n      \n      <div> \n        <div>Swap 1</div>\n        ", "\n      </div>\n      <div> \n        <div>Swap 2</div>\n        ", "\n      </div>\n\n      <div> \n        <div>Swap 3</div>\n        ", "\n      </div>      \n\n      ",
-            "\n    </div>\n    "])), myHelloComponent, 0, index_1.getState().time ? index_1.getState().time.toString() : '', function (e) {
-            console.log('round ', i);
-        }, 'World' + (render_counter++) + this.myValue, swap ? index_1.drmf(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>This is a <b>test...", "</b></div>"], ["<div>This is a <b>test...", "</b></div>"])), render_counter) : '<div>OK!!!</div>', swap ? myHelloComponent3 : '... text ...', swap ? index_1.drmf(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<div><b>text</b> swap component <-> html</div>"], ["<div><b>text</b> swap component <-> html</div>"]))) : myHelloComponent4, Math.floor(render_counter / 100) & 1 ? index_1.drmf(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n      <div>\n        <h2>Second Page</h2>\n        <div style=\"color:green;\">\n          ", "\n        </div>\n        <div>Some text here...", "</div>\n        <button click=", ">Reset counter</button>\n        <textarea/>\n      </div>\n      "], ["\n      <div>\n        <h2>Second Page</h2>\n        <div style=\"color:green;\">\n          ", "\n        </div>\n        <div>Some text here...", "</div>\n        <button click=", ">Reset counter</button>\n        <textarea/>\n      </div>\n      "])), myHelloComponent2.setText('Toinen Hello Comp'), render_counter, function () { return myHelloComponent2.reset(); }) : index_1.drmf(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<textarea keyup=", ">", "</textarea>\n      <div>\n        <input value=", " keyup=", "/>\n        ", "\n      </div>\n      <div>\n        <button click=", ">Click Me</button>\n        <button click=", ">Remove</button>\n\n        <div><button>Something 1</button><button>Something 2</button></div>\n      </div>\n  \n      <img height=", " width=", " src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Wikipedia-logo-v2-fr.svg/500px-Wikipedia-logo-v2-fr.svg.png\"/>\n  \n      <p>Here is <b>Some</b> test</p>\n      <div style=\"color:blue;\"> \n        <ul style=", ">\n          ", "\n        </ul>\n        <div>Footnote</div>\n      </div>"], ["<textarea keyup=", ">", "</textarea>\n      <div>\n        <input value=", " keyup=",
-            "/>\n        ", "\n      </div>\n      <div>\n        <button click=",
-            ">Click Me</button>\n        <button click=",
-            ">Remove</button>\n\n        <div><button>Something 1</button><button>Something 2</button></div>\n      </div>\n  \n      <img height=", " width=", " src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Wikipedia-logo-v2-fr.svg/500px-Wikipedia-logo-v2-fr.svg.png\"/>\n  \n      <p>Here is <b>Some</b> test</p>\n      <div style=\"color:blue;\"> \n        <ul style=", ">\n          ",
-            "\n        </ul>\n        <div>Footnote</div>\n      </div>"])), upd_value, 'somevalue...', '123', function (e) {
-            if (!isNaN(e.target.value)) {
-                _this.mySize = parseInt(e.target.value);
-                console.log(_this.myList);
-            }
-        }, myHelloComponent2.setText('Toinen Hello Comp, toisella sivulla'), function () {
-            _this.myList.push(_this.mySize);
-        }, function () {
-            _this.myList.splice(0, 1);
-        }, this.mySize, this.mySize, this.myList.length > 6 ? 'color:red;' : 'color:green;', this.myList.map(function (item, idx) { return index_1.drmf(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<li >item ", " <b>Bold</b> \n              <input keyup=", "/></li>"], ["<li >item ", " <b>Bold</b> \n              <input keyup=",
-            "/></li>"])), item + '', function (e) {
-            // this.myList[idx] = parseInt(e.target.value)
-        }); })));
-    };
-    return testComponent;
-}(index_1.drmfComponent));
-exports.testComponent = testComponent;
+    list.push(task);
+    index_1.setState({ list: list });
+    return task;
+}
+function addThousandTasks() {
+    var cnt = 1000;
+    while (cnt--)
+        addTask();
+}
+function listademo(state) {
+    var item_list;
+    console.log('listademo called');
+    var res = index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 1000 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 1000 Tasks</a>\n    <div class=\"collection\">\n      ",
+        "\n    </div>    \n  </div>\n  "])), addTask, addThousandTasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"], ["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
+        ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=",
+        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"])), item.id, function (e) {
+        e.preventDefault();
+        item.duration--;
+        index_1.setState({});
+    }, function (e) {
+        e.preventDefault();
+        item.duration++;
+        index_1.setState({});
+    }, item.duration > 3 ? 'new badge red' : 'new badge blue', item.duration, item.name); }));
+    return res;
+}
 var WestWorld = /** @class */ (function (_super) {
     __extends(WestWorld, _super);
     function WestWorld() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.testc = new testComponent();
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    WestWorld.prototype.removeItem = function () {
+        var list = index_1.getState().list;
+        list.push(Math.floor(Math.random() * 100));
+        index_1.setState({ list: list });
+    };
     WestWorld.prototype.render = function () {
-        var _this = this;
-        var links = [1, 2, 3, 4, 5];
-        return index_1.html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<div>\n      <h4>Hello World, it is ", "</h4>\n        ", "\n\n        <a class=\"waves-effect waves-light btn\" click=", ">Moro</a>\n        <div class=\"collection\">\n          ", "\n        </div>  \n        \n        <h4>Links to second page</h4>\n        <div class=\"collection\">\n          ", "\n        </div>         \n\n        ", "        \n      </div>\n    \n    "], ["<div>\n      <h4>Hello World, it is ", "</h4>\n        ",
-            "\n\n        <a class=\"waves-effect waves-light btn\" click=", ">Moro</a>\n        <div class=\"collection\">\n          ", "\n        </div>  \n        \n        <h4>Links to second page</h4>\n        <div class=\"collection\">\n          ", "\n        </div>         \n\n        ",
-            "        \n      </div>\n    \n    "])), (new Date).toString(), index_1.router({
-            default: function (_) { return index_1.html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["<div>Default Page</div>"], ["<div>Default Page</div>"]))); },
-            test: function (_) { return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Test Page\n                ", "\n                <div>", "</div>\n            </div>"], ["<div>Test Page\n                ", "\n                <div>", "</div>\n            </div>"])), myHelloComponent4, _.page); },
-            second: function (_) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<div>Second Page\n            ", "\n                <div>", "</div>\n            </div>"], ["<div>Second Page\n            ", "\n                <div>", "</div>\n            </div>"])), myHelloComponent4, _.page); },
-        }), function (_) { return alert("Moro"); }, links.map(function (item) { return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["<a href=\"#test/", "\" class=\"collection-item\">Item ", "</a>"], ["<a href=\"#test/", "\" class=\"collection-item\">Item ", "</a>"])), item, item); }), links.map(function (item) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<a href=\"#second/", "\" class=\"collection-item\">Item ", "</a>"], ["<a href=\"#second/", "\" class=\"collection-item\">Item ", "</a>"])), item, item); }), index_1.router({
-            second: function (_) { return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["<div>End of Second Page\n                ", "\n            </div>"], ["<div>End of Second Page\n                ", "\n            </div>"])), _this.testc); },
+        return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <svg height  =  \"300\" width=\"300\">\n      <path id=\"lineAB\" d=\"M 100 350 l 150 -300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path id=\"lineBC\" d=\"M 250 50 l 150 300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 175 200 l 150 0\" stroke=\"green\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 100 350 q 150 -300 300 0\" stroke=\"blue\" stroke-width=\"5\" fill=\"none\" />\n        <!-- Mark relevant points -->\n        <g stroke=\"black\" stroke-width=\"3\" fill=\"black\">\n          <circle id=\"pointA\" cx=\"100\" cy=\"350\" r=\"3\" />\n          <circle id=\"pointB\" cx=\"250\" cy=\"50\" r=\"3\" />\n          <circle id=\"pointC\" cx=\"400\" cy=\"350\" r=\"3\" />\n        </g>\n        <!-- Label the points -->\n        <g font-size=\"30\" font-family=\"sans-serif\" fill=\"black\" stroke=\"none\" text-anchor=\"middle\">\n          <text x=\"100\" y=\"350\" dx=\"-30\">A</text>\n          <text x=\"250\" y=\"50\" dy=\"-10\">B</text>\n          <text x=\"400\" y=\"350\" dx=\"30\">C</text>\n        </g>\n        Sorry, your browser does not support inline SVG.\n      </svg>\n\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=",
+            ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <svg height  =  \"300\" width=\"300\">\n      <path id=\"lineAB\" d=\"M 100 350 l 150 -300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path id=\"lineBC\" d=\"M 250 50 l 150 300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 175 200 l 150 0\" stroke=\"green\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 100 350 q 150 -300 300 0\" stroke=\"blue\" stroke-width=\"5\" fill=\"none\" />\n        <!-- Mark relevant points -->\n        <g stroke=\"black\" stroke-width=\"3\" fill=\"black\">\n          <circle id=\"pointA\" cx=\"100\" cy=\"350\" r=\"3\" />\n          <circle id=\"pointB\" cx=\"250\" cy=\"50\" r=\"3\" />\n          <circle id=\"pointC\" cx=\"400\" cy=\"350\" r=\"3\" />\n        </g>\n        <!-- Label the points -->\n        <g font-size=\"30\" font-family=\"sans-serif\" fill=\"black\" stroke=\"none\" text-anchor=\"middle\">\n          <text x=\"100\" y=\"350\" dx=\"-30\">A</text>\n          <text x=\"250\" y=\"50\" dy=\"-10\">B</text>\n          <text x=\"400\" y=\"350\" dx=\"30\">C</text>\n        </g>\n        Sorry, your browser does not support inline SVG.\n      </svg>\n\n      <div class=\"container\">\n        ",
+            "\n      </div>        \n    </div>   \n    "])), index_1.getState().list.length, function (e) {
+            e.preventDefault();
+            addTask();
+        }, index_1.router({
+            intro: intropage,
+            lista: listademo,
+            details: details,
+            default: intropage,
         }));
     };
     return WestWorld;
@@ -124,18 +114,23 @@ var HelloWorld = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     HelloWorld.prototype.render = function () {
-        return index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["<h4>Hello World, it is ", "</h4>"], ["<h4>Hello World, it is ", "</h4>"])), (new Date).toString());
+        return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<h4>Hello World, it is ", "</h4>"], ["<h4>Hello World, it is ", "</h4>"])), (new Date).toString());
     };
     return HelloWorld;
 }(index_1.drmfComponent));
 exports.HelloWorld = HelloWorld;
+index_1.setState({
+    color: 'red',
+    list: [1, 2, 3, 4].map(function (item) { return ({
+        id: item,
+        name: 'Task ' + item,
+        duration: Math.floor(1 + Math.random() * 8)
+    }); })
+});
 index_1.mount(document.body, new WestWorld());
-timers_1.setInterval(function () {
-    index_1.setState({ time: new Date() });
-}, 100);
-var templateObject_1, templateObject_2, templateObject_4, templateObject_5, templateObject_6, templateObject_8, templateObject_7, templateObject_3, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_14, templateObject_15, templateObject_9, templateObject_16;
+var templateObject_2, templateObject_1, templateObject_3, templateObject_5, templateObject_4, templateObject_6, templateObject_7;
 
-},{"./index":2,"timers":5}],2:[function(require,module,exports){
+},{"./index":2}],2:[function(require,module,exports){
 "use strict";
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
@@ -234,12 +229,6 @@ exports.escapedHtml = escapedHtml;
 var drmfComponent = /** @class */ (function () {
     function drmfComponent() {
     }
-    drmfComponent.prototype.setAttribute = function (name, value) {
-    };
-    drmfComponent.prototype.appendChild = function (node) {
-    };
-    drmfComponent.prototype.addEventListener = function (name, value) {
-    };
     drmfComponent.prototype.toDom = function () {
         var tpl = this.render();
         // if not rendered at all or different template
@@ -271,8 +260,8 @@ var drmfTemplate = /** @class */ (function () {
         this.doms = {};
         this.rootNodes = [];
         this.slotTypes = [];
-        // 0,1,2,3...
-        this.nodesForValues = [];
+        this.ids = {};
+        this.list = {};
     }
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
@@ -310,7 +299,18 @@ var drmfTemplate = /** @class */ (function () {
             switch (last_type) {
                 case 1:
                     var name_1 = last_slot[2];
-                    last_root.setAttribute(name_1, value);
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            last_root.setAttribute(name_1, '');
+                        }
+                        else {
+                            last_root.removeAttribute(name_1);
+                        }
+                    }
+                    else {
+                        last_root.setAttribute(name_1, value);
+                    }
                     break;
                 case 2:
                     // simple content template was the last type...
@@ -465,15 +465,24 @@ var drmfTemplate = /** @class */ (function () {
         var nodetree = [];
         var activeNode;
         // let activeComponent:drmfComponent
+        var is_svg = false;
         var me = this;
+        var svgNS = "http://www.w3.org/2000/svg";
         var callbacks = {
             beginNode: function (name, index) {
                 var new_node;
-                if (name == 'script') {
-                    new_node = document.createElement('pre');
-                }
-                else {
-                    new_node = document.createElement(name);
+                switch (name) {
+                    case "svg":
+                        new_node = document.createElementNS(svgNS, "svg");
+                        is_svg = true;
+                        break;
+                    default:
+                        if (is_svg) {
+                            new_node = document.createElementNS(svgNS, name);
+                        }
+                        else {
+                            new_node = document.createElement(name);
+                        }
                 }
                 if (activeNode instanceof Node && activeNode) {
                     activeNode.appendChild(new_node);
@@ -497,7 +506,9 @@ var drmfTemplate = /** @class */ (function () {
                 if (typeof (value) == 'function') {
                     // console.log('Binding function')
                     if (activeNode instanceof Node) {
-                        activeNode.addEventListener(name, value);
+                        activeNode.addEventListener(name, function (e) {
+                            value(e, me);
+                        });
                     }
                     if (activeNode instanceof drmfComponent) {
                         activeNode.addEventListener(name, value);
@@ -505,9 +516,40 @@ var drmfTemplate = /** @class */ (function () {
                     return;
                 }
                 var node = activeNode;
-                node.setAttribute(name, value);
+                if (is_svg) {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttributeNS(null, name, '');
+                        }
+                    }
+                    else {
+                        node.setAttributeNS(null, name, value);
+                    }
+                }
+                else {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttribute(name, '');
+                        }
+                    }
+                    else {
+                        node.setAttribute(name, value);
+                    }
+                }
+                if (name === 'id')
+                    me.ids[value] = node;
+                if (name === 'list') {
+                    if (!me.list[value])
+                        me.list[value] = [];
+                    me.list[value].push(node);
+                }
             },
             closeNode: function (name) {
+                if (name == 'svg') {
+                    is_svg = false;
+                }
                 nodetree.pop();
                 if (nodetree.length > 0) {
                     activeNode = nodetree[nodetree.length - 1];
@@ -608,24 +650,6 @@ var drmfTemplate = /** @class */ (function () {
         this.templateStr = parts.join('');
         this.templateDom = this.createDOM();
     };
-    drmfTemplate.prototype.replaceNodes = function (index, elems) {
-        if (!this.nodesForValues[index])
-            this.nodesForValues[index] = [];
-        for (var i = 0; i < elems.length; i++) {
-        }
-    };
-    drmfTemplate.prototype.render = function () {
-        for (var i = 0; i < this.values.length; i++) {
-            var value = this.values[i];
-            if (typeof (value) === 'string' || !isNaN(value)) {
-                // this is going to be a constant, so if rendered do not render again
-                if (!this.nodesForValues[i]) {
-                    var txtNode = document.createTextNode(value);
-                    this.replaceNodes(i, [txtNode]);
-                }
-            }
-        }
-    };
     return drmfTemplate;
 }());
 exports.drmfTemplate = drmfTemplate;
@@ -638,7 +662,7 @@ function html(strings) {
     t.key = strings.join('<>');
     t.strings = strings;
     t.values = values.map(function (value) {
-        if (!isNaN(value))
+        if (!isNaN(value) && (!Array.isArray(value)))
             return value.toString();
         return value;
     });
@@ -655,42 +679,6 @@ function html(strings) {
 }
 exports.html = html;
 exports.drmf = html;
-function getelem(parent, id) {
-    var matches = parent.querySelectorAll("#" + id);
-    return matches.item(0);
-}
-function _forElem(parent, fn) {
-    var res = {};
-    var lists = {};
-    var walk_tree = function (elem) {
-        if (!elem)
-            return;
-        if (!elem.getAttribute)
-            return;
-        var elem_id = elem.getAttribute('id');
-        var list_id = elem.getAttribute('list');
-        if (elem_id) {
-            res[elem_id] = elem;
-        }
-        if (list_id) {
-            (lists[list_id] = lists[list_id] || []).push(elem);
-        }
-        var list = Array.prototype.slice.call(elem.childNodes);
-        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-            var ch = list_1[_i];
-            walk_tree(ch);
-        }
-    };
-    walk_tree(parent);
-    res = __assign({}, res, lists, { elem: parent });
-    fn(res);
-    return parent;
-}
-function forElem(parent, fn) {
-    setTimeout(function () { return _forElem(parent, fn); }, 1);
-    return parent;
-}
-exports.forElem = forElem;
 // the application state for doremifa
 var app = {
     state: {
@@ -1103,267 +1091,4 @@ var XMLParser = /** @class */ (function () {
 }());
 exports.XMLParser = XMLParser;
 
-},{"./index":2}],4:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],5:[function(require,module,exports){
-var nextTick = require('process/browser.js').nextTick;
-var apply = Function.prototype.apply;
-var slice = Array.prototype.slice;
-var immediateIds = {};
-var nextImmediateId = 0;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) { timeout.close(); };
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// That's not how node.js implements it but the exposed api is the same.
-exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-  var id = nextImmediateId++;
-  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-  immediateIds[id] = true;
-
-  nextTick(function onNextTick() {
-    if (immediateIds[id]) {
-      // fn.call() is faster so we optimize for the common use-case
-      // @see http://jsperf.com/call-apply-segu
-      if (args) {
-        fn.apply(null, args);
-      } else {
-        fn.call(null);
-      }
-      // Prevent ids from leaking
-      exports.clearImmediate(id);
-    }
-  });
-
-  return id;
-};
-
-exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-  delete immediateIds[id];
-};
-},{"process/browser.js":4}]},{},[1]);
+},{"./index":2}]},{},[1]);

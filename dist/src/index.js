@@ -96,12 +96,6 @@ exports.escapedHtml = escapedHtml;
 var drmfComponent = /** @class */ (function () {
     function drmfComponent() {
     }
-    drmfComponent.prototype.setAttribute = function (name, value) {
-    };
-    drmfComponent.prototype.appendChild = function (node) {
-    };
-    drmfComponent.prototype.addEventListener = function (name, value) {
-    };
     drmfComponent.prototype.toDom = function () {
         var tpl = this.render();
         // if not rendered at all or different template
@@ -133,8 +127,8 @@ var drmfTemplate = /** @class */ (function () {
         this.doms = {};
         this.rootNodes = [];
         this.slotTypes = [];
-        // 0,1,2,3...
-        this.nodesForValues = [];
+        this.ids = {};
+        this.list = {};
     }
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
@@ -172,7 +166,18 @@ var drmfTemplate = /** @class */ (function () {
             switch (last_type) {
                 case 1:
                     var name_1 = last_slot[2];
-                    last_root.setAttribute(name_1, value);
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            last_root.setAttribute(name_1, '');
+                        }
+                        else {
+                            last_root.removeAttribute(name_1);
+                        }
+                    }
+                    else {
+                        last_root.setAttribute(name_1, value);
+                    }
                     break;
                 case 2:
                     // simple content template was the last type...
@@ -327,15 +332,24 @@ var drmfTemplate = /** @class */ (function () {
         var nodetree = [];
         var activeNode;
         // let activeComponent:drmfComponent
+        var is_svg = false;
         var me = this;
+        var svgNS = "http://www.w3.org/2000/svg";
         var callbacks = {
             beginNode: function (name, index) {
                 var new_node;
-                if (name == 'script') {
-                    new_node = document.createElement('pre');
-                }
-                else {
-                    new_node = document.createElement(name);
+                switch (name) {
+                    case "svg":
+                        new_node = document.createElementNS(svgNS, "svg");
+                        is_svg = true;
+                        break;
+                    default:
+                        if (is_svg) {
+                            new_node = document.createElementNS(svgNS, name);
+                        }
+                        else {
+                            new_node = document.createElement(name);
+                        }
                 }
                 if (activeNode instanceof Node && activeNode) {
                     activeNode.appendChild(new_node);
@@ -359,7 +373,9 @@ var drmfTemplate = /** @class */ (function () {
                 if (typeof (value) == 'function') {
                     // console.log('Binding function')
                     if (activeNode instanceof Node) {
-                        activeNode.addEventListener(name, value);
+                        activeNode.addEventListener(name, function (e) {
+                            value(e, me);
+                        });
                     }
                     if (activeNode instanceof drmfComponent) {
                         activeNode.addEventListener(name, value);
@@ -367,9 +383,40 @@ var drmfTemplate = /** @class */ (function () {
                     return;
                 }
                 var node = activeNode;
-                node.setAttribute(name, value);
+                if (is_svg) {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttributeNS(null, name, '');
+                        }
+                    }
+                    else {
+                        node.setAttributeNS(null, name, value);
+                    }
+                }
+                else {
+                    if (value === 'false' || value === 'true') {
+                        var t = value === 'true';
+                        if (t) {
+                            node.setAttribute(name, '');
+                        }
+                    }
+                    else {
+                        node.setAttribute(name, value);
+                    }
+                }
+                if (name === 'id')
+                    me.ids[value] = node;
+                if (name === 'list') {
+                    if (!me.list[value])
+                        me.list[value] = [];
+                    me.list[value].push(node);
+                }
             },
             closeNode: function (name) {
+                if (name == 'svg') {
+                    is_svg = false;
+                }
                 nodetree.pop();
                 if (nodetree.length > 0) {
                     activeNode = nodetree[nodetree.length - 1];
@@ -470,24 +517,6 @@ var drmfTemplate = /** @class */ (function () {
         this.templateStr = parts.join('');
         this.templateDom = this.createDOM();
     };
-    drmfTemplate.prototype.replaceNodes = function (index, elems) {
-        if (!this.nodesForValues[index])
-            this.nodesForValues[index] = [];
-        for (var i = 0; i < elems.length; i++) {
-        }
-    };
-    drmfTemplate.prototype.render = function () {
-        for (var i = 0; i < this.values.length; i++) {
-            var value = this.values[i];
-            if (typeof (value) === 'string' || !isNaN(value)) {
-                // this is going to be a constant, so if rendered do not render again
-                if (!this.nodesForValues[i]) {
-                    var txtNode = document.createTextNode(value);
-                    this.replaceNodes(i, [txtNode]);
-                }
-            }
-        }
-    };
     return drmfTemplate;
 }());
 exports.drmfTemplate = drmfTemplate;
@@ -500,7 +529,7 @@ function html(strings) {
     t.key = strings.join('<>');
     t.strings = strings;
     t.values = values.map(function (value) {
-        if (!isNaN(value))
+        if (!isNaN(value) && (!Array.isArray(value)))
             return value.toString();
         return value;
     });
@@ -517,42 +546,6 @@ function html(strings) {
 }
 exports.html = html;
 exports.drmf = html;
-function getelem(parent, id) {
-    var matches = parent.querySelectorAll("#" + id);
-    return matches.item(0);
-}
-function _forElem(parent, fn) {
-    var res = {};
-    var lists = {};
-    var walk_tree = function (elem) {
-        if (!elem)
-            return;
-        if (!elem.getAttribute)
-            return;
-        var elem_id = elem.getAttribute('id');
-        var list_id = elem.getAttribute('list');
-        if (elem_id) {
-            res[elem_id] = elem;
-        }
-        if (list_id) {
-            (lists[list_id] = lists[list_id] || []).push(elem);
-        }
-        var list = Array.prototype.slice.call(elem.childNodes);
-        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-            var ch = list_1[_i];
-            walk_tree(ch);
-        }
-    };
-    walk_tree(parent);
-    res = __assign({}, res, lists, { elem: parent });
-    fn(res);
-    return parent;
-}
-function forElem(parent, fn) {
-    setTimeout(function () { return _forElem(parent, fn); }, 1);
-    return parent;
-}
-exports.forElem = forElem;
 // the application state for doremifa
 var app = {
     state: {

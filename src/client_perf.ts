@@ -1,6 +1,6 @@
 
 
-import { mount, router, getState, setState, forElem, html, drmf, drmfComponent, drmfTemplate, key } from './index';
+import { mount, router, getState, setState, html, drmf, drmfComponent, drmfTemplate, key } from './index';
 
 import { XMLBuilder, XMLParser} from './xmlparser'
 
