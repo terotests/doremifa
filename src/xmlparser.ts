@@ -89,7 +89,7 @@ export class XMLParser  {
     this.buff_index = 0
     this.used_index = 0
     this.eof = false
-    if(!this.buff) this.eof = true
+    if(typeof(this.buff)==='undefined') this.eof = true
   }
 
   code ( index:number ) : number {
@@ -306,6 +306,13 @@ export class XMLParser  {
     let cc1 = 0;
     let cc2 = 0;
     while (!this.eof) {
+
+      if(typeof(this.buff) === 'string' && this.buff.length === 0 ) {
+        const idx = this.buff_index  
+        callback.addTextNode( '', idx )
+        this.stepBuffer()          
+        continue
+      }
 
       cc1 = this.here()
       if(this.in_tagdef) {

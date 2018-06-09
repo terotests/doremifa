@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
+var Doremifa = require("./index");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
     return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
@@ -158,10 +159,108 @@ index_1.setState({
 var ww = new WestWorld();
 var hello = new HelloWorld();
 var cnt = 0;
-index_1.mount(document.body, function (state) {
-    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "], ["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "])));
+// initial state
+index_1.setState({
+    time: (new Date).toTimeString(),
+    items: [1, 2, 3, 4].map(function (id) { return ({ id: id, name: 'item ' + id }); })
 });
-setTimeout(add100Tasks, 100);
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+var idcnt = 4;
+var add_item = function () {
+    var state = index_1.getState();
+    idcnt++;
+    index_1.setState({
+        items: state.items.concat([{ id: idcnt, name: 'item ' + idcnt }])
+    });
+};
+var delete_item = function (item) {
+    var state = index_1.getState();
+    index_1.setState({
+        items: state.items.filter(function (i) { return i.id != item.id; }).slice()
+    });
+};
+// mount application into some node
+Doremifa.mount(document.body, function (state) {
+    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n\n"], ["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
+        "\n\n"])), state.time, Doremifa.router({
+        default: function (state) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ", "\n  <div>\n    ", "\n  </div>\n</div>\n    "], ["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ",
+            "\n  <div>\n    ", "\n  </div>\n</div>\n    "])), state
+            .items.map(function (item, i) {
+            return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["", " ", ""], ["", " ", ""])), i > 0 ? ', ' : '', item.name);
+        }), state.items.length === 4 ? 'Four' : index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<b>NOT FOUR!</b>"], ["<b>NOT FOUR!</b>"])))); },
+        // route for #page2 
+        page2: function () { return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"])), JSON.stringify(state, null, 2)); },
+        // route for #itemlist
+        itemlist: function () {
+            return index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ", "\n        </div>\n      "], ["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ",
+                "\n        </div>\n      "])), add_item, state.items.map(function (item) {
+                return index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject(["<div>", "<a href=", ">Edit</div>"], ["<div>", "<a href=", ">Edit</div>"])), item.name, "#details/id/" + item.id);
+            }));
+        },
+        // route for #details/id/xxxx  
+        details: function (state) {
+            var item = state
+                .items.filter(function (item) { return item.id == state.params.id; }).pop();
+            return index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=", ">Save</button>\n        <button click=", ">Delete</button>\n      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=",
+                ">Save</button>\n        <button click=",
+                ">Delete</button>\n      "])), item.id, item.name, function (e, tpl) {
+                item.name = tpl.ids.name.value;
+                window.location.hash = "#itemlist";
+            }, function (_) {
+                delete_item(item);
+                window.location.hash = "#itemlist";
+            });
+        }
+    }));
+});
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_17, templateObject_16, templateObject_18, templateObject_11;
+// update the clock
+/*
+setInterval( _ => {
+  setState({time:(new Date).toTimeString()})
+},1000)
+*/
+/*
+mount( document.body, (state) => {
+  return html`
+
+  <header class="mui-appbar mui--z1">
+  <div class="mui-container">
+    <table>
+      <tr class="mui--appbar-height">
+        <td class="mui--text-title">Brand.io</td>
+        <td class="mui--text-right">
+          <ul class="mui-list--inline mui--text-body2">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Login</a></li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+  </header>
+  <!-- the actual page content comes in here -->
+  <div id="content-wrapper" class="mui--text-center">
+    <div class="mui--appbar-height"></div>
+    <br>
+    <br>
+    <div class="mui--text-display3">Brand.io ... comment ?? </div>
+    <br>
+    <br>
+    <button class="mui-btn mui-btn--raised">Get started</button>
+    <!--
+    <img width="200" height="200" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png">
+    -->
+  </div>
+  <footer>
+    <div class="mui-container mui--text-center mui--text-bottom">
+      Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
+    </div>
+  </footer>
+  
+  `
+})
+*/
+// setTimeout(add100Tasks,100)
 // setInterval( _ => setState({}), 20)
 //# sourceMappingURL=client.js.map

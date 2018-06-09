@@ -10,7 +10,8 @@
     "build:hyper": "browserify ./dist/src/hyper.js -o ./static/hyper.js",
     "build:perf": "browserify ./dist/src/perf.js -o ./static/perf.js",
     "build:browserify": "browserify ./dist/src/client.js -o ./static/bundle.js",
-    "build": "npm run build:ts && npm run build:browserify",
+    "build:browserpackage": "browserify ./dist/src/index.js --standalone Doremifa -o ./static/Doremifa.js && uglifyjs ./static/Doremifa.js > ./static/Doremifa-min.js",
+    "build": "npm run build:ts && npm run build:browserify && npm run build:browserpackage",
     "start": "npm run build && node dist/src/server.js"
   },
   "repository": {

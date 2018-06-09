@@ -2,6 +2,8 @@
 
 import { mount, router, getState, setState, html, drmfComponent, drmfTemplate } from './index';
 
+import * as Doremifa from './index';
+
 import { XMLBuilder, XMLParser} from './xmlparser'
 import { setInterval } from 'timers';
 
@@ -231,6 +233,101 @@ setState({
 const ww = new WestWorld()
 const hello = new HelloWorld()
 let cnt = 0
+
+
+// initial state
+setState({
+  time:(new Date).toTimeString(),
+  items : [1,2,3,4].map( id => ({ id : id, name : 'item ' + id}))
+})
+let idcnt = 4
+const add_item = () =>{
+  const state = getState()
+  idcnt++
+  setState({
+    items : [...state.items, { id : idcnt, name : 'item '+idcnt}]
+  })
+}
+const delete_item = (item) =>{
+  const state = getState()
+  setState({
+    items : [...state.items.filter( i => i.id != item.id)]
+  })
+}
+
+// mount application into some node
+Doremifa.mount(document.body,
+ (state) => 
+    html`Fooo...
+
+  <div>${state.time}</div>
+  <!-- navigation -->
+  <a href="#">Default</a> 
+  <a href="#itemlist">Show List</a> 
+  <a href="#page2">Show Page 2</a>
+  ${Doremifa.router({   
+  
+    default : (state) => html`
+<div>
+  This is the default route. Click show list to edit list of items.
+  Currently the list of items is ${state
+    .items.map( (item,i) => 
+               html`${i > 0 ? ', ' : ''} ${item.name}`)}
+  <div>
+    ${state.items.length === 4 ? 'Four' : html`<b>NOT FOUR!</b>`}
+  </div>
+</div>
+    `,
+
+    // route for #page2 
+    page2 : () =>html`
+  <h2>Route for page 2</h2>
+  <hr>
+  <div>
+    The state is now 
+    <pre>${JSON.stringify(state,null,2)}</pre>
+  </div>
+`,
+  
+    // route for #itemlist
+    itemlist : () => 
+      html`
+        <h2>Items</h2>
+        <button click=${add_item}>+ item</button>
+        <div>
+          ${state.items.map( item => 
+            html`<div>${item.name}<a href=${`#details/id/${item.id}`}>Edit</div>`)}
+        </div>
+      `,
+  
+    // route for #details/id/xxxx  
+    details(state) {
+      const item = state
+        .items.filter( item => item.id == state.params.id).pop()
+      return html`<h2>Item ${item.id}</h2>
+        <input value=${item.name} id="name">
+        <button click=${(e,tpl)=>{
+          item.name = tpl.ids.name.value
+          window.location.hash = "#itemlist"
+        }}>Save</button>
+        <button click=${_ => {
+          delete_item(item)
+          window.location.hash = "#itemlist"
+        }}>Delete</button>
+      `
+     }
+    })}
+
+`       
+ )
+
+// update the clock
+/*
+setInterval( _ => {
+  setState({time:(new Date).toTimeString()})
+},1000)
+*/
+/*
 mount( document.body, (state) => {
   return html`  
 
@@ -271,7 +368,8 @@ mount( document.body, (state) => {
   
   `
 })
-setTimeout(add100Tasks,100)
+*/
+// setTimeout(add100Tasks,100)
 // setInterval( _ => setState({}), 20)
 
 
