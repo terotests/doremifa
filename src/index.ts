@@ -1,24 +1,6 @@
  
 import { XMLParser, bufferType } from './xmlparser'
 
-let component_registry : { [key:string] : typeof drmfComponent }
-
-function escapeXml(unsafe) {
-  return unsafe.replace(/[<>&'"]/g, function (c) {
-      switch (c) {
-          case '<': return '&lt;';
-          case '>': return '&gt;';
-          case '&': return '&amp;';
-          case '\'': return '&apos;';
-          case '"': return '&quot;';
-      }
-  });
-}
-
-export function registerComponent(name:string, component:any) {
-  component_registry[name] = component
-}
-
 export class drfmKey {
   value:string
 }
@@ -29,15 +11,16 @@ export function key(value:string|number) : drfmKey {
   return o
 }
 
-export class escapedHtml {
-  str:string
-  constructor( value ) {
-    this.str = value
-  }
-}
+const svgNS = "http://www.w3.org/2000/svg"; 
+let tickFunctions = []
 
 export class drmfComponent {
   lastRender : drmfTemplate
+
+  tpl() : drmfTemplate {
+    return this.lastRender
+  }
+
   toDom() : Node[] {
     const tpl = this.render()    
     // if not rendered at all or different template
@@ -66,7 +49,7 @@ export class drmfTemplate {
   key:string
   strings:string[]
   values:any[]
-  valustream:bufferType[]
+  valuestream:bufferType[]
   children : { [key: string]: any } = {}
   doms : { [key: string]: Element[] } = {}
 
@@ -80,6 +63,13 @@ export class drmfTemplate {
 
   ids : { [key: string]: Element } = {}
   list : { [key: string]: Element[] } = {}
+
+  _ready : (tpl:drmfTemplate) => void
+
+  onReady( fn: (tpl:drmfTemplate) => void) : drmfTemplate {
+    this._ready = fn
+    return this
+  }
 
   replaceWith(renderedTpl:drmfTemplate) : drmfTemplate {
 
@@ -117,18 +107,25 @@ export class drmfTemplate {
       switch(last_type) {
         case 1:
           const name = last_slot[2]
-
+          const is_svg = last_slot[4]
           if(value==='false' || value==='true') {
             const t = value==='true'
             if(t) {
-              last_root.setAttribute(name, '')
+              if(is_svg) {
+                last_root.setAttributeNS(null, name, '')
+              } else {
+                last_root.setAttribute(name, '')
+              }
             } else {
               last_root.removeAttribute(name)
             }
           } else {
-            last_root.setAttribute( name, value )
+            if(is_svg) {
+              last_root.setAttributeNS( null, name, value )
+            } else {
+              last_root.setAttribute( name, value )
+            }
           }          
-          
         break;
         case 2:
           // simple content template was the last type...
@@ -209,7 +206,7 @@ export class drmfTemplate {
           let list = []
           for(let ii = 0 ; ii <len ; ii++) {
             const ct = curr_tpls[ii]
-            const rt = tpls[ii]
+            let rt = tpls[ii]
             if(ct && rt) {
               const p = ct.replaceWith( rt )
               list[ii] = p
@@ -284,15 +281,14 @@ export class drmfTemplate {
 
   createDOM() : Node[] {
 
-    const parser = new XMLParser(this.valustream)
+    const parser = new XMLParser(this.valuestream)
     let eof = false
     const nodetree:Node[] = []
     
     let activeNode:Node 
-    // let activeComponent:drmfComponent
     let is_svg = false
     const me = this
-    const svgNS = "http://www.w3.org/2000/svg";  
+     
     const callbacks = {
       beginNode(name, index:number) {
         let new_node
@@ -301,6 +297,15 @@ export class drmfTemplate {
             new_node= document.createElementNS(svgNS, "svg");
             is_svg = true
           break
+          // TODO: add full set of SVG elements
+          case "g":
+          case "rect":
+          case "path":
+          case "image":
+          case "line":
+          case "ellipse":
+          case "circle":
+            is_svg = true
           default:
             if(is_svg) {
               new_node= document.createElementNS(svgNS, name);
@@ -322,11 +327,9 @@ export class drmfTemplate {
           return
         }        
         if( index & 1 ) {
-          me.slotTypes[( index - 1 ) >> 1] = [1, activeNode, name, value] 
+          me.slotTypes[( index - 1 ) >> 1] = [1, activeNode, name, value, is_svg] 
         }              
-        // console.log('attribute', name, index)
         if(typeof(value) == 'function') {
-          // console.log('Binding function')
           if(activeNode instanceof Node) {
             activeNode.addEventListener(name, (e)=>{
               value(e,me)
@@ -357,8 +360,6 @@ export class drmfTemplate {
             node.setAttribute(name, value)
           }
         }        
-
-
         if(name==='id') me.ids[value] = node        
         if(name==='list') {
           if(!me.list[value]) me.list[value] = []
@@ -404,7 +405,7 @@ export class drmfTemplate {
               snodes.push( it )
             }
             // render template
-            me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]           
+            me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]               
             return
           }            
           if(Array.isArray( value )) {
@@ -416,7 +417,11 @@ export class drmfTemplate {
             const tpls = value as drmfTemplate[]
             coll.list = tpls
             const snodes = []
-            for( let cont of tpls ) {
+            for(let idx=0; idx < tpls.length; idx++) {
+              let cont = tpls[idx]
+              if(!cont || !cont.createDOM) {
+                throw `Array or result of map must contain valid template elements:\n ${value} \n----------------------------\n ${me.valuestream}`
+              }
               const items = cont.createDOM()
               for( let it of items ) {
                 activeNode.appendChild( it )
@@ -446,11 +451,16 @@ export class drmfTemplate {
         eof = true
       }
     }  
-    let max_cnt = 10000
+    let max_cnt = 100000
     while(!parser.eof) {
       parser.parse(callbacks)
       if(max_cnt-- < 0 ) break
     }  
+    if(this._ready) {
+      tickFunctions.push( () => {
+        this._ready(this)
+      })  
+    }
     return this.rootNodes
   }  
 
@@ -479,10 +489,10 @@ export function html(strings, ...values) : drmfTemplate {
   const kk = t.values.filter( _ => _ instanceof drfmKey).map( _ => 'key=' + _.value ).join('&')
   t.key = t.key + kk
   const len = strings.length + values.length
-  t.valustream = new Array(len);
+  t.valuestream = new Array(len);
   let i = 0, si = 0, vi = 0;
   while(i<len) {
-    t.valustream[i] = i&1 ? t.values[vi++] : t.strings[si++]
+    t.valuestream[i] = i&1 ? t.values[vi++] : t.strings[si++]
     i++;
   }  
   return t
@@ -532,9 +542,6 @@ class drmfRouter extends drmfComponent {
     if(page) {
       if( page_name != app.last_page_name ) {
         const last_page = routermap[app.last_page_name]
-        //if(last_page) {
-        //  last_page({...app.state, phase:'close'})
-        //}
         phase = 'init'
       }
       app.last_page_name = page_name
@@ -571,11 +578,13 @@ let interval = null
 let current_node = null
 let is_registered = false
 let last_items = null
+let lastTpl:drmfTemplate
 
+export type drmfFunction = (state:any)=>drmfTemplate
 
 // initialize app using init function...
 export function mount ( root:Element, 
-  comp:drmfComponent,
+  comp:drmfComponent|drmfFunction,
   // renderFn : (state:any) => Promise<drmfTemplate>, 
   state? :any, 
   options?:DoremifaOptions ) {
@@ -599,25 +608,45 @@ export function mount ( root:Element,
       if(last_state != app.state) {
         last_state = app.state
         b_render_on = true
-        const items = comp.toDom()
-        for( let item of items ) {
-          if(!item.parentNode) document.body.appendChild( item )
-        } 
-        if(last_items) {
-          for( let last of last_items ) {
-            if( last.parentNode && items.indexOf(last) < 0 ) {
-              last.parentNode.removeChild( last )
-            }
-          }  
+        if( typeof(comp) == 'function') {
+          const tpl = comp(app.state)
+          if(lastTpl) {
+            lastTpl = lastTpl.replaceWith( tpl )
+          } else {
+            const items = tpl.createDOM()
+            for( let item of items ) {
+              if(!item.parentNode) document.body.appendChild( item )
+            } 
+            lastTpl = tpl
+          }
         }
-        last_items = items
+        if( comp instanceof drmfComponent) {
+          const items = comp.toDom()
+          for( let item of items ) {
+            if(!item.parentNode) document.body.appendChild( item )
+          } 
+          if(last_items) {
+            for( let last of last_items ) {
+              if( last.parentNode && items.indexOf(last) < 0 ) {
+                last.parentNode.removeChild( last )
+              }
+            }  
+          }
+          last_items = items  
+        }
         b_render_on = false
       }
     } catch(e) {
       console.error(e)
     }
+    window.requestAnimationFrame( update_application)
+    for(let f of tickFunctions) {
+      if(f) f()
+    }
+    tickFunctions.length = 0
   }
-  interval = setInterval( update_application, update_delay);
+  window.requestAnimationFrame( update_application )
+  // interval = setInterval( update_application, update_delay);
 }
 
 

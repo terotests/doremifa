@@ -1,3 +1,4 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
@@ -70,14 +71,16 @@ function key(value) {
     return o;
 }
 exports.key = key;
-var svgNS = "http://www.w3.org/2000/svg";
-var tickFunctions = [];
+var escapedHtml = /** @class */ (function () {
+    function escapedHtml(value) {
+        this.str = value;
+    }
+    return escapedHtml;
+}());
+exports.escapedHtml = escapedHtml;
 var drmfComponent = /** @class */ (function () {
     function drmfComponent() {
     }
-    drmfComponent.prototype.tpl = function () {
-        return this.lastRender;
-    };
     drmfComponent.prototype.toDom = function () {
         var tpl = this.render();
         // if not rendered at all or different template
@@ -112,10 +115,6 @@ var drmfTemplate = /** @class */ (function () {
         this.ids = {};
         this.list = {};
     }
-    drmfTemplate.prototype.onReady = function (fn) {
-        this._ready = fn;
-        return this;
-    };
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
             this.updateValues(renderedTpl.values);
@@ -324,13 +323,14 @@ var drmfTemplate = /** @class */ (function () {
         }
     };
     drmfTemplate.prototype.createDOM = function () {
-        var _this = this;
-        var parser = new xmlparser_1.XMLParser(this.valuestream);
+        var parser = new xmlparser_1.XMLParser(this.valustream);
         var eof = false;
         var nodetree = [];
         var activeNode;
+        // let activeComponent:drmfComponent
         var is_svg = false;
         var me = this;
+        var svgNS = "http://www.w3.org/2000/svg";
         var callbacks = {
             beginNode: function (name, index) {
                 var new_node;
@@ -339,14 +339,12 @@ var drmfTemplate = /** @class */ (function () {
                         new_node = document.createElementNS(svgNS, "svg");
                         is_svg = true;
                         break;
-                    // TODO: add full set of SVG elements
                     case "g":
                     case "rect":
                     case "path":
                     case "image":
                     case "line":
                     case "ellipse":
-                    case "circle":
                         is_svg = true;
                     default:
                         if (is_svg) {
@@ -374,7 +372,9 @@ var drmfTemplate = /** @class */ (function () {
                 if (index & 1) {
                     me.slotTypes[(index - 1) >> 1] = [1, activeNode, name, value, is_svg];
                 }
+                // console.log('attribute', name, index)
                 if (typeof (value) == 'function') {
+                    // console.log('Binding function')
                     if (activeNode instanceof Node) {
                         activeNode.addEventListener(name, function (e) {
                             value(e, me);
@@ -470,9 +470,6 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var idx = 0; idx < tpls.length; idx++) {
                             var cont = tpls[idx];
-                            if (!cont || !cont.createDOM) {
-                                throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
-                            }
                             var items = cont.createDOM();
                             for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
                                 var it = items_3[_b];
@@ -504,16 +501,11 @@ var drmfTemplate = /** @class */ (function () {
                 eof = true;
             }
         };
-        var max_cnt = 100000;
+        var max_cnt = 10000;
         while (!parser.eof) {
             parser.parse(callbacks);
             if (max_cnt-- < 0)
                 break;
-        }
-        if (this._ready) {
-            tickFunctions.push(function () {
-                _this._ready(_this);
-            });
         }
         return this.rootNodes;
     };
@@ -547,10 +539,10 @@ function html(strings) {
     var kk = t.values.filter(function (_) { return _ instanceof drfmKey; }).map(function (_) { return 'key=' + _.value; }).join('&');
     t.key = t.key + kk;
     var len = strings.length + values.length;
-    t.valuestream = new Array(len);
+    t.valustream = new Array(len);
     var i = 0, si = 0, vi = 0;
     while (i < len) {
-        t.valuestream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
+        t.valustream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
         i++;
     }
     return t;
@@ -599,6 +591,9 @@ var drmfRouter = /** @class */ (function (_super) {
         if (page) {
             if (page_name != app.last_page_name) {
                 var last_page = routermap[app.last_page_name];
+                //if(last_page) {
+                //  last_page({...app.state, phase:'close'})
+                //}
                 phase = 'init';
             }
             app.last_page_name = page_name;
@@ -646,8 +641,8 @@ state, options) {
     if (state)
         app.state = __assign({}, app.state, state);
     var update_application = function () { return __awaiter(_this, void 0, void 0, function () {
-        var tpl, items, _i, items_4, item, items, _a, items_5, item, _b, last_items_1, last, _c, tickFunctions_1, f;
-        return __generator(this, function (_d) {
+        var tpl, items, _i, items_4, item, items, _a, items_5, item, _b, last_items_1, last;
+        return __generator(this, function (_c) {
             if (b_render_on && (retry_cnt < 5)) {
                 retry_cnt++;
                 return [2 /*return*/];
@@ -696,12 +691,6 @@ state, options) {
                 console.error(e);
             }
             window.requestAnimationFrame(update_application);
-            for (_c = 0, tickFunctions_1 = tickFunctions; _c < tickFunctions_1.length; _c++) {
-                f = tickFunctions_1[_c];
-                if (f)
-                    f();
-            }
-            tickFunctions.length = 0;
             return [2 /*return*/];
         });
     }); };
@@ -710,4 +699,329 @@ state, options) {
 }
 exports.mount = mount;
 var templateObject_1, templateObject_2;
-//# sourceMappingURL=index.js.map
+
+},{"./xmlparser":3}],2:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var index_1 = require("./index");
+var myList = [];
+this.state = { myList: myList };
+for (var i = 0; i < 1000; i++) {
+    myList.push(i);
+}
+index_1.setState({ myList: myList });
+setInterval(function () {
+    myList.splice(0, 1);
+    myList.reverse();
+    index_1.setState({ myList: myList });
+}, 60);
+var Benchmark = /** @class */ (function (_super) {
+    __extends(Benchmark, _super);
+    function Benchmark() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Benchmark.prototype.render = function () {
+        var state = index_1.getState();
+        return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<ul>", "</ul>"], ["<ul>", "</ul>"])), state.myList.map(function (item) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<li>Item ", "</li>"], ["<li>Item ", "</li>"])), item); }));
+    };
+    return Benchmark;
+}(index_1.drmfComponent));
+index_1.mount(document.body, new Benchmark());
+var templateObject_2, templateObject_1;
+
+},{"./index":1}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var index_1 = require("./index");
+var XMLParser = /** @class */ (function () {
+    function XMLParser(initWith) {
+        this.__len = 0;
+        this.buff_index = 0;
+        this.used_index = 0;
+        this.parents = [];
+        this.tag_depth = 0;
+        this.i = 0;
+        this.eof = false;
+        this.last_finished = null;
+        this.in_tagdef = false;
+        this.last_tag_name = '';
+        this.buffers = initWith;
+        this.buff = initWith[0];
+        this.i = 0;
+        this.buff_index = 0;
+        this.used_index = 0;
+        this.eof = false;
+        if (!this.buff)
+            this.eof = true;
+    }
+    XMLParser.prototype.code = function (index) {
+        if ((this.buff_index & 1) && typeof (this.buff) != 'string') {
+            return 0;
+        }
+        if (this.buff.length <= this.i + index) {
+            var next = this.buffers[this.buff_index + 1];
+            if (typeof (next) != 'string') {
+                return 0;
+            }
+            if (next) {
+                return next.charCodeAt(this.i + index - this.buff.length);
+            }
+            return 0;
+        }
+        return this.buff.charCodeAt(this.i + index);
+    };
+    XMLParser.prototype.here = function () {
+        if (typeof (this.buff) != 'string')
+            return 0;
+        return this.buff.charCodeAt(this.i);
+    };
+    XMLParser.prototype.isValueBlock = function () {
+        return ((this.buff_index & 1) === 1);
+    };
+    XMLParser.prototype.isHere = function (value) {
+        return this.buff.charCodeAt(this.i) == value;
+    };
+    XMLParser.prototype.step = function (index) {
+        this.i += index;
+        this.used_index = this.buff_index;
+        if (this.buff.length <= this.i) {
+            this.i = this.i - this.buff.length;
+            this.buff_index = this.buff_index + 1;
+            this.used_index = this.buff_index;
+            this.buff = this.buffers[this.buff_index];
+            if (typeof (this.buff) === 'undefined') {
+                this.eof = true;
+                return 0;
+            }
+            else {
+                if (typeof (this.buff) != 'string')
+                    return 0;
+                return this.buff.charCodeAt(0);
+            }
+        }
+        return this.buff.charCodeAt(this.i);
+    };
+    XMLParser.prototype.stepBuffer = function () {
+        this.buff_index = this.buff_index + 1;
+        this.used_index = this.buff_index;
+        this.buff = this.buffers[this.buff_index];
+        this.i = 0;
+        if (typeof (this.buff) === 'undefined') {
+            this.eof = true;
+        }
+    };
+    XMLParser.prototype.skipspace = function () {
+        if (typeof (this.buff) != 'string')
+            return;
+        var c = this.here();
+        while (!this.eof) {
+            if (c > 32)
+                break;
+            c = this.step(1);
+            var b = this.buff;
+            if (b instanceof index_1.drfmKey) {
+                this.stepBuffer();
+            }
+        }
+    };
+    XMLParser.prototype.isTagChar = function (c, first) {
+        return (((c >= 65) && (c <= 90)) // A - Z
+            || ((c >= 97) && (c <= 122)) // a - z
+            || (c == 95) // _
+            || (c == 58) // :
+            || (!first && (c >= 48) && (c <= 57)) // 0 - 9
+            || (!first && c == 46) // .
+            || (!first && c == 45) // -
+        );
+    };
+    // collects a name like div or attribute name ( a bit simplified version )
+    XMLParser.prototype.collectXMLName = function () {
+        var sp = this.i;
+        var c = this.here();
+        var first = true;
+        var start_buff = this.buff;
+        while (!this.eof && this.isTagChar(c, first)) {
+            c = this.step(1);
+            first = false;
+        }
+        if (start_buff == this.buff) {
+            return this.buff.substring(sp, this.i);
+        }
+        return start_buff.substring(sp) + this.buff.substring(0, this.i);
+    };
+    XMLParser.prototype.colllectText = function () {
+        if (this.isValueBlock()) {
+            var v = this.buff;
+            this.used_index = this.buff_index;
+            this.buff_index++;
+            this.buff = this.buffers[this.buff_index];
+            if (typeof (this.buff) === 'undefined')
+                this.eof = true;
+            this.i = 0;
+            return v;
+        }
+        var sp = this.i;
+        var c1 = this.here();
+        var c2 = this.code(1);
+        var start_buff = this.buff;
+        var curr_buff = this.buff;
+        var intermediate = [];
+        // read text as long as not <c... or </...
+        while (!this.eof && (!(c1 == 60 && // "<"
+            ((c2 == 47) || // "/"
+                this.isTagChar(c2, true)))) // valid tag char
+        ) {
+            c1 = this.step(1);
+            if (this.eof)
+                break;
+            c2 = this.code(1);
+            if (curr_buff != this.buff) {
+                // collect only 
+                break;
+                // intermediate.push(this.buff)
+            }
+            curr_buff = this.buff;
+        }
+        if (typeof (this.buff) === 'undefined')
+            return '';
+        if (start_buff == this.buff) {
+            return this.buff.substring(sp, this.i);
+        }
+        return start_buff.substring(sp);
+        // the old, only return one buffer at time...
+        /*
+        intermediate.pop() // remove last intermediate because it is this.buff
+        return start_buff.substring( sp ) + intermediate.join('') + this.buff.substring( 0, this.i )
+        */
+    };
+    XMLParser.prototype.collectUntil = function (value) {
+        var sp = this.i;
+        var c = this.here();
+        var start_buff = this.buff;
+        var curr_buff = this.buff;
+        var intermediate = [];
+        while (c != value && !this.eof) {
+            c = this.step(1);
+            if (curr_buff != this.buff) {
+                intermediate.push(this.buff);
+            }
+            curr_buff = this.buff;
+        }
+        if (start_buff == this.buff) {
+            return this.buff.substring(sp, this.i);
+        }
+        intermediate.pop(); // remove last intermediate because it is this.buff
+        return start_buff.substring(sp) + intermediate.join('') + this.buff.substring(0, this.i);
+    };
+    XMLParser.prototype.collectXMLAttributeValue = function () {
+        this.skipspace();
+        if (this.isHere(61)) {
+            this.step(1);
+            this.skipspace();
+            // if the current buffer is...
+            // setAttributeFunction
+            if (typeof (this.buff) != 'string' || (this.isValueBlock())) {
+                var v = this.buff;
+                this.used_index = this.buff_index;
+                this.buff_index++;
+                this.buff = this.buffers[this.buff_index];
+                if (typeof (this.buff) === 'undefined')
+                    this.eof = true;
+                return v;
+            }
+            if (this.isHere(34)) {
+                this.step(1);
+                var value = this.collectUntil(34); // collect to the "
+                this.step(1);
+                return value;
+            }
+            else {
+                return this.collectXMLName();
+            }
+        }
+        return '';
+    };
+    // parse something that is meaningful imperatively and then create a callback
+    XMLParser.prototype.parse = function (callback) {
+        if (typeof (this.buff) === 'undefined') {
+            this.eof = true;
+            callback.eof();
+            return;
+        }
+        var cc1 = 0;
+        var cc2 = 0;
+        while (!this.eof) {
+            cc1 = this.here();
+            if (this.in_tagdef) {
+                // <div  something = "..."
+                this.skipspace();
+                cc1 = this.here();
+                // if tag ends immediately like <div/> or <br/>
+                if (cc1 == 47) {
+                    this.step(2);
+                    this.in_tagdef = false;
+                    callback.closeNode(this.last_tag_name, this.used_index);
+                    return;
+                }
+                if (cc1 != 62) {
+                    var name_1 = this.collectXMLName();
+                    var value = this.collectXMLAttributeValue();
+                    callback.setAttribute(name_1, value, this.used_index);
+                    return;
+                }
+                this.step(1);
+                this.in_tagdef = false;
+                continue;
+            }
+            if (this.isValueBlock()) {
+                var idx = this.buff_index;
+                callback.addTextNode(this.colllectText(), idx);
+                continue;
+            }
+            // <
+            if (cc1 == 60) {
+                cc2 = this.code(1);
+                // </ tag is closing
+                if (cc2 == 47) {
+                    this.step(2);
+                    var tag = this.collectXMLName();
+                    this.step(1);
+                    callback.closeNode(tag, this.used_index);
+                    return;
+                }
+                if (this.isTagChar(cc2, true)) {
+                    this.step(1);
+                    this.in_tagdef = true;
+                    this.last_tag_name = this.collectXMLName();
+                    callback.beginNode(this.last_tag_name, this.used_index);
+                    return;
+                }
+            }
+            // > the div can be closing....
+            if (!this.eof) {
+                var idx = this.buff_index;
+                callback.addTextNode(this.colllectText(), idx);
+            }
+            return;
+        }
+        callback.eof();
+    };
+    return XMLParser;
+}());
+exports.XMLParser = XMLParser;
+
+},{"./index":1}]},{},[2]);

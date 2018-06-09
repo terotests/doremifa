@@ -18,16 +18,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
-    return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n  "], ["\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
-        "\n</form>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=",
+    return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
+        "\n</form>\n<ul>\n  ", "\n</ul>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=",
         " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "])), state.color === color, function (e, tpl) {
         index_1.setState({ color: color });
-    }, color); }));
+    }, color); }), [1, 2, 3, 4, 5, 6].map(function (item) { return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<li>", "</li>"], ["<li>", "</li>"])), item); }));
 }
 function details(state) {
     var item = state.list.filter(function (item) { return item.id == state.params.id; }).pop();
     // could you just bind to the ID values directly...
-    return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=",
+    return index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=",
         ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=",
         ">Poista</a>      \n    </div>    \n    </form>\n  </div>"])), state.params.id, item.name, item.duration, function (e, tpl) {
         item.duration = tpl.ids.duration.value;
@@ -60,16 +60,15 @@ function addTask() {
     index_1.setState({ list: list });
     return task;
 }
-function addThousandTasks() {
-    var cnt = 1000;
+function add100Tasks() {
+    var cnt = 100;
     while (cnt--)
         addTask();
 }
 function listademo(state) {
     var item_list;
-    console.log('listademo called');
-    var res = index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 1000 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 1000 Tasks</a>\n    <div class=\"collection\">\n      ",
-        "\n    </div>    \n  </div>\n  "])), addTask, addThousandTasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"], ["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
+    var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
+        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"], ["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
         ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=",
         ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"])), item.id, function (e) {
         e.preventDefault();
@@ -82,10 +81,24 @@ function listademo(state) {
     }, item.duration > 3 ? 'new badge red' : 'new badge blue', item.duration, item.name); }));
     return res;
 }
+function createPoint(item) {
+    var time = (new Date).getTime() / 1000;
+    var value = item.id;
+    var r = 10 + Math.sin(value / 10) * 5;
+    var op = Math.abs(Math.cos(time));
+    var x = Math.floor(200 + Math.cos(time + value / 10) * (20 + value / 2) * Math.cos(time));
+    var y = Math.floor(200 + Math.sin(time + value / 10) * (20 + value / 2) * Math.cos(time));
+    return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<circle fill=\"red\" opacity=", " r=", " cx=", " cy=", "/>"], ["<circle fill=\"red\" opacity=", " r=", " cx=", " cy=", "/>"])), op, r, x, y);
+}
+function svgPart(state) {
+    return index_1.html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<svg height=\"600\" width=\"600\" viewBox=\"0 0 400 400\">\n                  ", "\n                </svg>"], ["<svg height=\"600\" width=\"600\" viewBox=\"0 0 400 400\">\n                  ", "\n                </svg>"])), state.list.map(createPoint));
+}
 var WestWorld = /** @class */ (function (_super) {
     __extends(WestWorld, _super);
     function WestWorld() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
+        console.log('West World was created!!!');
+        return _this;
     }
     WestWorld.prototype.removeItem = function () {
         var list = index_1.getState().list;
@@ -93,8 +106,9 @@ var WestWorld = /** @class */ (function (_super) {
         index_1.setState({ list: list });
     };
     WestWorld.prototype.render = function () {
-        return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <svg height  =  \"300\" width=\"300\">\n      <path id=\"lineAB\" d=\"M 100 350 l 150 -300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path id=\"lineBC\" d=\"M 250 50 l 150 300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 175 200 l 150 0\" stroke=\"green\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 100 350 q 150 -300 300 0\" stroke=\"blue\" stroke-width=\"5\" fill=\"none\" />\n        <!-- Mark relevant points -->\n        <g stroke=\"black\" stroke-width=\"3\" fill=\"black\">\n          <circle id=\"pointA\" cx=\"100\" cy=\"350\" r=\"3\" />\n          <circle id=\"pointB\" cx=\"250\" cy=\"50\" r=\"3\" />\n          <circle id=\"pointC\" cx=\"400\" cy=\"350\" r=\"3\" />\n        </g>\n        <!-- Label the points -->\n        <g font-size=\"30\" font-family=\"sans-serif\" fill=\"black\" stroke=\"none\" text-anchor=\"middle\">\n          <text x=\"100\" y=\"350\" dx=\"-30\">A</text>\n          <text x=\"250\" y=\"50\" dy=\"-10\">B</text>\n          <text x=\"400\" y=\"350\" dx=\"30\">C</text>\n        </g>\n        Sorry, your browser does not support inline SVG.\n      </svg>\n\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=",
-            ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <svg height  =  \"300\" width=\"300\">\n      <path id=\"lineAB\" d=\"M 100 350 l 150 -300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path id=\"lineBC\" d=\"M 250 50 l 150 300\" stroke=\"red\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 175 200 l 150 0\" stroke=\"green\" stroke-width=\"3\" fill=\"none\" />\n        <path d=\"M 100 350 q 150 -300 300 0\" stroke=\"blue\" stroke-width=\"5\" fill=\"none\" />\n        <!-- Mark relevant points -->\n        <g stroke=\"black\" stroke-width=\"3\" fill=\"black\">\n          <circle id=\"pointA\" cx=\"100\" cy=\"350\" r=\"3\" />\n          <circle id=\"pointB\" cx=\"250\" cy=\"50\" r=\"3\" />\n          <circle id=\"pointC\" cx=\"400\" cy=\"350\" r=\"3\" />\n        </g>\n        <!-- Label the points -->\n        <g font-size=\"30\" font-family=\"sans-serif\" fill=\"black\" stroke=\"none\" text-anchor=\"middle\">\n          <text x=\"100\" y=\"350\" dx=\"-30\">A</text>\n          <text x=\"250\" y=\"50\" dy=\"-10\">B</text>\n          <text x=\"400\" y=\"350\" dx=\"30\">C</text>\n        </g>\n        Sorry, your browser does not support inline SVG.\n      </svg>\n\n      <div class=\"container\">\n        ",
+        var state = index_1.getState();
+        return index_1.html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=",
+            ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ",
             "\n      </div>        \n    </div>   \n    "])), index_1.getState().list.length, function (e) {
             e.preventDefault();
             addTask();
@@ -102,19 +116,34 @@ var WestWorld = /** @class */ (function (_super) {
             intro: intropage,
             lista: listademo,
             details: details,
-            default: intropage,
+            default: listademo,
+            svg: svgPart,
         }));
     };
     return WestWorld;
 }(index_1.drmfComponent));
 exports.WestWorld = WestWorld;
+var had_it = false;
 var HelloWorld = /** @class */ (function (_super) {
     __extends(HelloWorld, _super);
     function HelloWorld() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
+        var c = _this.myCanvas = document.createElement("canvas");
+        c.setAttribute('width', '200px');
+        c.setAttribute('height', '200px');
+        var ctx = c.getContext("2d");
+        ctx.moveTo(0, 0);
+        ctx.lineTo(200, 100);
+        ctx.stroke();
+        return _this;
     }
     HelloWorld.prototype.render = function () {
-        return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<h4>Hello World, it is ", "</h4>"], ["<h4>Hello World, it is ", "</h4>"])), (new Date).toString());
+        var _this = this;
+        return index_1.html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["\n      <h4 id='head'>Hello World, it is ", "</h4>\n      <div id='canvasContainer'/>\n      Very nice...\n      "], ["\n      <h4 id='head'>Hello World, it is ", "</h4>\n      <div id='canvasContainer'/>\n      Very nice...\n      "])), (new Date).toString()).onReady(function (tpl) {
+            console.log('Binded ');
+            tpl.ids.head.setAttribute('style', 'color:green;');
+            tpl.ids.canvasContainer.appendChild(_this.myCanvas);
+        });
     };
     return HelloWorld;
 }(index_1.drmfComponent));
@@ -127,8 +156,15 @@ index_1.setState({
         duration: Math.floor(1 + Math.random() * 8)
     }); })
 });
-index_1.mount(document.body, new WestWorld());
-var templateObject_2, templateObject_1, templateObject_3, templateObject_5, templateObject_4, templateObject_6, templateObject_7;
+var ww = new WestWorld();
+var hello = new HelloWorld();
+var cnt = 0;
+index_1.mount(document.body, function (state) {
+    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "], ["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "])));
+});
+setTimeout(add100Tasks, 100);
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+// setInterval( _ => setState({}), 20)
 
 },{"./index":2}],2:[function(require,module,exports){
 "use strict";
@@ -191,22 +227,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var xmlparser_1 = require("./xmlparser");
-var component_registry;
-function escapeXml(unsafe) {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
-        }
-    });
-}
-function registerComponent(name, component) {
-    component_registry[name] = component;
-}
-exports.registerComponent = registerComponent;
 var drfmKey = /** @class */ (function () {
     function drfmKey() {
     }
@@ -219,16 +239,14 @@ function key(value) {
     return o;
 }
 exports.key = key;
-var escapedHtml = /** @class */ (function () {
-    function escapedHtml(value) {
-        this.str = value;
-    }
-    return escapedHtml;
-}());
-exports.escapedHtml = escapedHtml;
+var svgNS = "http://www.w3.org/2000/svg";
+var tickFunctions = [];
 var drmfComponent = /** @class */ (function () {
     function drmfComponent() {
     }
+    drmfComponent.prototype.tpl = function () {
+        return this.lastRender;
+    };
     drmfComponent.prototype.toDom = function () {
         var tpl = this.render();
         // if not rendered at all or different template
@@ -263,6 +281,10 @@ var drmfTemplate = /** @class */ (function () {
         this.ids = {};
         this.list = {};
     }
+    drmfTemplate.prototype.onReady = function (fn) {
+        this._ready = fn;
+        return this;
+    };
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
             this.updateValues(renderedTpl.values);
@@ -299,17 +321,28 @@ var drmfTemplate = /** @class */ (function () {
             switch (last_type) {
                 case 1:
                     var name_1 = last_slot[2];
+                    var is_svg = last_slot[4];
                     if (value === 'false' || value === 'true') {
                         var t = value === 'true';
                         if (t) {
-                            last_root.setAttribute(name_1, '');
+                            if (is_svg) {
+                                last_root.setAttributeNS(null, name_1, '');
+                            }
+                            else {
+                                last_root.setAttribute(name_1, '');
+                            }
                         }
                         else {
                             last_root.removeAttribute(name_1);
                         }
                     }
                     else {
-                        last_root.setAttribute(name_1, value);
+                        if (is_svg) {
+                            last_root.setAttributeNS(null, name_1, value);
+                        }
+                        else {
+                            last_root.setAttribute(name_1, value);
+                        }
                     }
                     break;
                 case 2:
@@ -460,14 +493,13 @@ var drmfTemplate = /** @class */ (function () {
         }
     };
     drmfTemplate.prototype.createDOM = function () {
-        var parser = new xmlparser_1.XMLParser(this.valustream);
+        var _this = this;
+        var parser = new xmlparser_1.XMLParser(this.valuestream);
         var eof = false;
         var nodetree = [];
         var activeNode;
-        // let activeComponent:drmfComponent
         var is_svg = false;
         var me = this;
-        var svgNS = "http://www.w3.org/2000/svg";
         var callbacks = {
             beginNode: function (name, index) {
                 var new_node;
@@ -476,6 +508,15 @@ var drmfTemplate = /** @class */ (function () {
                         new_node = document.createElementNS(svgNS, "svg");
                         is_svg = true;
                         break;
+                    // TODO: add full set of SVG elements
+                    case "g":
+                    case "rect":
+                    case "path":
+                    case "image":
+                    case "line":
+                    case "ellipse":
+                    case "circle":
+                        is_svg = true;
                     default:
                         if (is_svg) {
                             new_node = document.createElementNS(svgNS, name);
@@ -500,11 +541,9 @@ var drmfTemplate = /** @class */ (function () {
                     return;
                 }
                 if (index & 1) {
-                    me.slotTypes[(index - 1) >> 1] = [1, activeNode, name, value];
+                    me.slotTypes[(index - 1) >> 1] = [1, activeNode, name, value, is_svg];
                 }
-                // console.log('attribute', name, index)
                 if (typeof (value) == 'function') {
-                    // console.log('Binding function')
                     if (activeNode instanceof Node) {
                         activeNode.addEventListener(name, function (e) {
                             value(e, me);
@@ -598,11 +637,14 @@ var drmfTemplate = /** @class */ (function () {
                         var tpls = value;
                         coll.list = tpls;
                         var snodes = [];
-                        for (var _b = 0, tpls_1 = tpls; _b < tpls_1.length; _b++) {
-                            var cont = tpls_1[_b];
+                        for (var idx = 0; idx < tpls.length; idx++) {
+                            var cont = tpls[idx];
+                            if (!cont || !cont.createDOM) {
+                                throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
+                            }
                             var items = cont.createDOM();
-                            for (var _c = 0, items_3 = items; _c < items_3.length; _c++) {
-                                var it = items_3[_c];
+                            for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
+                                var it = items_3[_b];
                                 activeNode.appendChild(it);
                                 snodes.push(it);
                             }
@@ -631,11 +673,16 @@ var drmfTemplate = /** @class */ (function () {
                 eof = true;
             }
         };
-        var max_cnt = 10000;
+        var max_cnt = 100000;
         while (!parser.eof) {
             parser.parse(callbacks);
             if (max_cnt-- < 0)
                 break;
+        }
+        if (this._ready) {
+            tickFunctions.push(function () {
+                _this._ready(_this);
+            });
         }
         return this.rootNodes;
     };
@@ -669,10 +716,10 @@ function html(strings) {
     var kk = t.values.filter(function (_) { return _ instanceof drfmKey; }).map(function (_) { return 'key=' + _.value; }).join('&');
     t.key = t.key + kk;
     var len = strings.length + values.length;
-    t.valustream = new Array(len);
+    t.valuestream = new Array(len);
     var i = 0, si = 0, vi = 0;
     while (i < len) {
-        t.valustream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
+        t.valuestream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
         i++;
     }
     return t;
@@ -721,9 +768,6 @@ var drmfRouter = /** @class */ (function (_super) {
         if (page) {
             if (page_name != app.last_page_name) {
                 var last_page = routermap[app.last_page_name];
-                //if(last_page) {
-                //  last_page({...app.state, phase:'close'})
-                //}
                 phase = 'init';
             }
             app.last_page_name = page_name;
@@ -752,6 +796,7 @@ var interval = null;
 var current_node = null;
 var is_registered = false;
 var last_items = null;
+var lastTpl;
 // initialize app using init function...
 function mount(root, comp, 
 // renderFn : (state:any) => Promise<drmfTemplate>, 
@@ -770,8 +815,8 @@ state, options) {
     if (state)
         app.state = __assign({}, app.state, state);
     var update_application = function () { return __awaiter(_this, void 0, void 0, function () {
-        var items, _i, items_4, item, _a, last_items_1, last;
-        return __generator(this, function (_b) {
+        var tpl, items, _i, items_4, item, items, _a, items_5, item, _b, last_items_1, last, _c, tickFunctions_1, f;
+        return __generator(this, function (_d) {
             if (b_render_on && (retry_cnt < 5)) {
                 retry_cnt++;
                 return [2 /*return*/];
@@ -781,31 +826,56 @@ state, options) {
                 if (last_state != app.state) {
                     last_state = app.state;
                     b_render_on = true;
-                    items = comp.toDom();
-                    for (_i = 0, items_4 = items; _i < items_4.length; _i++) {
-                        item = items_4[_i];
-                        if (!item.parentNode)
-                            document.body.appendChild(item);
-                    }
-                    if (last_items) {
-                        for (_a = 0, last_items_1 = last_items; _a < last_items_1.length; _a++) {
-                            last = last_items_1[_a];
-                            if (last.parentNode && items.indexOf(last) < 0) {
-                                last.parentNode.removeChild(last);
+                    if (typeof (comp) == 'function') {
+                        tpl = comp(app.state);
+                        if (lastTpl) {
+                            lastTpl = lastTpl.replaceWith(tpl);
+                        }
+                        else {
+                            items = tpl.createDOM();
+                            for (_i = 0, items_4 = items; _i < items_4.length; _i++) {
+                                item = items_4[_i];
+                                if (!item.parentNode)
+                                    document.body.appendChild(item);
                             }
+                            lastTpl = tpl;
                         }
                     }
-                    last_items = items;
+                    if (comp instanceof drmfComponent) {
+                        items = comp.toDom();
+                        for (_a = 0, items_5 = items; _a < items_5.length; _a++) {
+                            item = items_5[_a];
+                            if (!item.parentNode)
+                                document.body.appendChild(item);
+                        }
+                        if (last_items) {
+                            for (_b = 0, last_items_1 = last_items; _b < last_items_1.length; _b++) {
+                                last = last_items_1[_b];
+                                if (last.parentNode && items.indexOf(last) < 0) {
+                                    last.parentNode.removeChild(last);
+                                }
+                            }
+                        }
+                        last_items = items;
+                    }
                     b_render_on = false;
                 }
             }
             catch (e) {
                 console.error(e);
             }
+            window.requestAnimationFrame(update_application);
+            for (_c = 0, tickFunctions_1 = tickFunctions; _c < tickFunctions_1.length; _c++) {
+                f = tickFunctions_1[_c];
+                if (f)
+                    f();
+            }
+            tickFunctions.length = 0;
             return [2 /*return*/];
         });
     }); };
-    interval = setInterval(update_application, update_delay);
+    window.requestAnimationFrame(update_application);
+    // interval = setInterval( update_application, update_delay);
 }
 exports.mount = mount;
 var templateObject_1, templateObject_2;
@@ -814,6 +884,58 @@ var templateObject_1, templateObject_2;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
+function createDetector(strs) {
+    var cached_detectors = new Array(256);
+    function cacheDetector(str) {
+        var cache_index = str.charCodeAt(0);
+        if (!cached_detectors[cache_index])
+            cached_detectors[cache_index] = [];
+        cached_detectors[cache_index].push(function (buff, index) {
+            if ((buff.length - index) < str.length)
+                return false;
+            for (var i = 0; i < str.length; i++) {
+                if (str.charCodeAt(i) != buff.charCodeAt(index + i))
+                    return false;
+            }
+            return true;
+        });
+    }
+    for (var _i = 0, strs_1 = strs; _i < strs_1.length; _i++) {
+        var s = strs_1[_i];
+        cacheDetector(s);
+    }
+    return function (buff, index) {
+        var detectors = cached_detectors[buff.charCodeAt(index)];
+        if (detectors) {
+            for (var _i = 0, detectors_1 = detectors; _i < detectors_1.length; _i++) {
+                var fn = detectors_1[_i];
+                if (fn(buff, index))
+                    return true;
+            }
+        }
+        return false;
+    };
+}
+var isSelfClosingTag = createDetector(['area',
+    'base',
+    'br',
+    'col',
+    'command',
+    'embd',
+    'hr',
+    'img',
+    'input',
+    'keygen ',
+    'link',
+    'menuitem',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
+]);
+var isCommentStart = createDetector(['<!--']);
+var isCommentEnd = createDetector(['-->']);
 var XMLParser = /** @class */ (function () {
     function XMLParser(initWith) {
         this.__len = 0;
@@ -825,6 +947,7 @@ var XMLParser = /** @class */ (function () {
         this.eof = false;
         this.last_finished = null;
         this.in_tagdef = false;
+        this.is_selfclosing = false;
         this.last_tag_name = '';
         this.buffers = initWith;
         this.buff = initWith[0];
@@ -950,7 +1073,8 @@ var XMLParser = /** @class */ (function () {
         // read text as long as not <c... or </...
         while (!this.eof && (!(c1 == 60 && // "<"
             ((c2 == 47) || // "/"
-                this.isTagChar(c2, true)))) // valid tag char
+                this.isTagChar(c2, true) || // valid tag char
+                (c2 == 33)))) // <! comment start...
         ) {
             c1 = this.step(1);
             if (this.eof)
@@ -963,17 +1087,22 @@ var XMLParser = /** @class */ (function () {
             }
             curr_buff = this.buff;
         }
-        if (typeof (this.buff) === 'undefined')
-            return '';
         if (start_buff == this.buff) {
             return this.buff.substring(sp, this.i);
         }
         return start_buff.substring(sp);
-        // the old, only return one buffer at time...
-        /*
-        intermediate.pop() // remove last intermediate because it is this.buff
-        return start_buff.substring( sp ) + intermediate.join('') + this.buff.substring( 0, this.i )
-        */
+    };
+    XMLParser.prototype.skipUntil = function (fn) {
+        var curr_buff = this.buff;
+        while ((false === fn(this.buff, this.i)) && !this.eof) {
+            this.step(1);
+            if (curr_buff != this.buff) {
+                if (this.isValueBlock()) {
+                    this.stepBuffer();
+                }
+            }
+            curr_buff = this.buff;
+        }
     };
     XMLParser.prototype.collectUntil = function (value) {
         var sp = this.i;
@@ -1010,9 +1139,10 @@ var XMLParser = /** @class */ (function () {
                     this.eof = true;
                 return v;
             }
-            if (this.isHere(34)) {
+            var quoteChar = this.here();
+            if (quoteChar == 34 || quoteChar == 39) {
                 this.step(1);
-                var value = this.collectUntil(34); // collect to the "
+                var value = this.collectUntil(quoteChar); // collect to the "
                 this.step(1);
                 return value;
             }
@@ -1050,6 +1180,12 @@ var XMLParser = /** @class */ (function () {
                     callback.setAttribute(name_1, value, this.used_index);
                     return;
                 }
+                // if ">", check if self closing
+                if (this.is_selfclosing) {
+                    this.step(1);
+                    this.in_tagdef = false;
+                    callback.closeNode(this.last_tag_name, this.used_index);
+                }
                 this.step(1);
                 this.in_tagdef = false;
                 continue;
@@ -1071,11 +1207,17 @@ var XMLParser = /** @class */ (function () {
                     return;
                 }
                 if (this.isTagChar(cc2, true)) {
+                    this.is_selfclosing = isSelfClosingTag(this.buff, this.i + 1);
                     this.step(1);
                     this.in_tagdef = true;
                     this.last_tag_name = this.collectXMLName();
                     callback.beginNode(this.last_tag_name, this.used_index);
                     return;
+                }
+                if (isCommentStart(this.buff, this.i)) {
+                    this.skipUntil(isCommentEnd);
+                    this.step(3); // -->
+                    continue;
                 }
             }
             // > the div can be closing....

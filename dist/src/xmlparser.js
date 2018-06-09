@@ -1,6 +1,58 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
+function createDetector(strs) {
+    var cached_detectors = new Array(256);
+    function cacheDetector(str) {
+        var cache_index = str.charCodeAt(0);
+        if (!cached_detectors[cache_index])
+            cached_detectors[cache_index] = [];
+        cached_detectors[cache_index].push(function (buff, index) {
+            if ((buff.length - index) < str.length)
+                return false;
+            for (var i = 0; i < str.length; i++) {
+                if (str.charCodeAt(i) != buff.charCodeAt(index + i))
+                    return false;
+            }
+            return true;
+        });
+    }
+    for (var _i = 0, strs_1 = strs; _i < strs_1.length; _i++) {
+        var s = strs_1[_i];
+        cacheDetector(s);
+    }
+    return function (buff, index) {
+        var detectors = cached_detectors[buff.charCodeAt(index)];
+        if (detectors) {
+            for (var _i = 0, detectors_1 = detectors; _i < detectors_1.length; _i++) {
+                var fn = detectors_1[_i];
+                if (fn(buff, index))
+                    return true;
+            }
+        }
+        return false;
+    };
+}
+var isSelfClosingTag = createDetector(['area',
+    'base',
+    'br',
+    'col',
+    'command',
+    'embd',
+    'hr',
+    'img',
+    'input',
+    'keygen ',
+    'link',
+    'menuitem',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
+]);
+var isCommentStart = createDetector(['<!--']);
+var isCommentEnd = createDetector(['-->']);
 var XMLParser = /** @class */ (function () {
     function XMLParser(initWith) {
         this.__len = 0;
@@ -12,6 +64,7 @@ var XMLParser = /** @class */ (function () {
         this.eof = false;
         this.last_finished = null;
         this.in_tagdef = false;
+        this.is_selfclosing = false;
         this.last_tag_name = '';
         this.buffers = initWith;
         this.buff = initWith[0];
@@ -137,7 +190,8 @@ var XMLParser = /** @class */ (function () {
         // read text as long as not <c... or </...
         while (!this.eof && (!(c1 == 60 && // "<"
             ((c2 == 47) || // "/"
-                this.isTagChar(c2, true)))) // valid tag char
+                this.isTagChar(c2, true) || // valid tag char
+                (c2 == 33)))) // <! comment start...
         ) {
             c1 = this.step(1);
             if (this.eof)
@@ -150,17 +204,22 @@ var XMLParser = /** @class */ (function () {
             }
             curr_buff = this.buff;
         }
-        if (typeof (this.buff) === 'undefined')
-            return '';
         if (start_buff == this.buff) {
             return this.buff.substring(sp, this.i);
         }
         return start_buff.substring(sp);
-        // the old, only return one buffer at time...
-        /*
-        intermediate.pop() // remove last intermediate because it is this.buff
-        return start_buff.substring( sp ) + intermediate.join('') + this.buff.substring( 0, this.i )
-        */
+    };
+    XMLParser.prototype.skipUntil = function (fn) {
+        var curr_buff = this.buff;
+        while ((false === fn(this.buff, this.i)) && !this.eof) {
+            this.step(1);
+            if (curr_buff != this.buff) {
+                if (this.isValueBlock()) {
+                    this.stepBuffer();
+                }
+            }
+            curr_buff = this.buff;
+        }
     };
     XMLParser.prototype.collectUntil = function (value) {
         var sp = this.i;
@@ -197,9 +256,10 @@ var XMLParser = /** @class */ (function () {
                     this.eof = true;
                 return v;
             }
-            if (this.isHere(34)) {
+            var quoteChar = this.here();
+            if (quoteChar == 34 || quoteChar == 39) {
                 this.step(1);
-                var value = this.collectUntil(34); // collect to the "
+                var value = this.collectUntil(quoteChar); // collect to the "
                 this.step(1);
                 return value;
             }
@@ -237,6 +297,12 @@ var XMLParser = /** @class */ (function () {
                     callback.setAttribute(name_1, value, this.used_index);
                     return;
                 }
+                // if ">", check if self closing
+                if (this.is_selfclosing) {
+                    this.step(1);
+                    this.in_tagdef = false;
+                    callback.closeNode(this.last_tag_name, this.used_index);
+                }
                 this.step(1);
                 this.in_tagdef = false;
                 continue;
@@ -258,11 +324,17 @@ var XMLParser = /** @class */ (function () {
                     return;
                 }
                 if (this.isTagChar(cc2, true)) {
+                    this.is_selfclosing = isSelfClosingTag(this.buff, this.i + 1);
                     this.step(1);
                     this.in_tagdef = true;
                     this.last_tag_name = this.collectXMLName();
                     callback.beginNode(this.last_tag_name, this.used_index);
                     return;
+                }
+                if (isCommentStart(this.buff, this.i)) {
+                    this.skipUntil(isCommentEnd);
+                    this.step(3); // -->
+                    continue;
                 }
             }
             // > the div can be closing....

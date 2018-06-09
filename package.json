@@ -7,6 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ts": "tsc --declaration false",
+    "build:hyper": "browserify ./dist/src/hyper.js -o ./static/hyper.js",
+    "build:perf": "browserify ./dist/src/perf.js -o ./static/perf.js",
     "build:browserify": "browserify ./dist/src/client.js -o ./static/bundle.js",
     "build": "npm run build:ts && npm run build:browserify",
     "start": "npm run build && node dist/src/server.js"
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "express": "^4.16.3",
+    "hyperhtml": "^2.10.8",
     "react": "^16.4.0",
     "react-dom": "^16.4.0"
   }

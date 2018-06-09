@@ -9,6 +9,7 @@ function intropage(state) {
 
   const colorList = ['red', 'yellow', 'green', 'brown']
   return html`
+
 <h1>Hello! This is the introduction page</h1>
 <p>Hello World, it is ${(new Date).toString()}</p>
 <div>Color is now ${state.color}</div>
@@ -27,6 +28,9 @@ ${
   `)
 }
 </form>
+<ul>
+  ${[1,2,3,4,5,6].map( item => html`<li>${item}</li>`)}
+</ul>
   `  
 }
 
@@ -89,19 +93,18 @@ function addTask() {
   return task 
 }
 
-function addThousandTasks() {
-  let cnt = 1000
+function add100Tasks() {
+  let cnt = 100
   while(cnt--) addTask()
 }
 
 
 function listademo(state) {
   let item_list
-  console.log('listademo called')
   const res = html`
   <div>
     <a class="waves-effect waves-light btn" click=${addTask}>+ Task</a>
-    <a class="waves-effect waves-light btn" click=${addThousandTasks}>+ 1000 Tasks</a>
+    <a class="waves-effect waves-light btn" click=${add100Tasks}>+ 100 Tasks</a>
     <div class="collection">
       ${item_list = state.list.sort( (a,b) => a.id - b.id
       ).map( item => html`<a href="#details/id/${item.id}" class="collection-item" id="link">
@@ -129,13 +132,34 @@ function listademo(state) {
   return res;
 }
 
+function createPoint(item) : drmfTemplate {
+  const time = (new Date).getTime() / 1000
+  const value = item.id
+  const r = 10 + Math.sin(value/10)*5 
+  const op = Math.abs( Math.cos(time) )
+  const x = Math.floor( 200 + Math.cos(time + value/10) * (20 + value/2) * Math.cos( time ) )
+  const y = Math.floor( 200 + Math.sin(time + value/10) * (20 + value/2) * Math.cos( time ) )
+  return html`<circle fill="red" opacity=${op} r=${r} cx=${x} cy=${y}/>`
+}
+
+function svgPart(state) : drmfTemplate {
+  return html `<svg height="600" width="600" viewBox="0 0 400 400">
+                  ${state.list.map(createPoint)}
+                </svg>` 
+}
+
 export class WestWorld extends drmfComponent {
+  constructor() {
+    super()
+    console.log('West World was created!!!')
+  }
   removeItem(){
     const list = getState().list
     list.push( Math.floor( Math.random()*100) )
     setState({list})    
   }  
   render() {
+    const state = getState()
     return html`
     <div>
       <nav>
@@ -144,6 +168,7 @@ export class WestWorld extends drmfComponent {
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="#intro">Intro</a></li>
             <li><a href="#lista">Listademo</a></li>
+            <li><a href="#svg">SVG</a></li>
             <li><a class="waves-effect waves-light btn" click=${e=> {
               e.preventDefault()
               addTask()
@@ -151,43 +176,49 @@ export class WestWorld extends drmfComponent {
           </ul>
         </div>
       </nav>    
-      <svg height="300" width="300">
-      <path id="lineAB" d="M 100 350 l 150 -300" stroke="red" stroke-width="3" fill="none" />
-        <path id="lineBC" d="M 250 50 l 150 300" stroke="red" stroke-width="3" fill="none" />
-        <path d="M 175 200 l 150 0" stroke="green" stroke-width="3" fill="none" />
-        <path d="M 100 350 q 150 -300 300 0" stroke="blue" stroke-width="5" fill="none" />
-        <!-- Mark relevant points -->
-        <g stroke="black" stroke-width="3" fill="black">
-          <circle id="pointA" cx="100" cy="350" r="3" />
-          <circle id="pointB" cx="250" cy="50" r="3" />
-          <circle id="pointC" cx="400" cy="350" r="3" />
-        </g>
-        <!-- Label the points -->
-        <g font-size="30" font-family="sans-serif" fill="black" stroke="none" text-anchor="middle">
-          <text x="100" y="350" dx="-30">A</text>
-          <text x="250" y="50" dy="-10">B</text>
-          <text x="400" y="350" dx="30">C</text>
-        </g>
-        Sorry, your browser does not support inline SVG.
-      </svg>
-
+      <div>     
+      </div>
       <div class="container">
         ${router({
           intro : intropage,
           lista : listademo,
           details : details,
-          default : intropage,           
+          default : listademo,    
+          svg : svgPart,       
         })}
       </div>        
     </div>   
     `
   }
 }
+
+let had_it = false
 export class HelloWorld extends drmfComponent {
+  myContent:drmfTemplate
+  myCanvas:any
+  constructor() {
+    super()
+    const c = this.myCanvas = document.createElement("canvas")
+    c.setAttribute('width', '200px')
+    c.setAttribute('height', '200px')
+    var ctx = c.getContext("2d");
+    ctx.moveTo(0, 0);
+    ctx.lineTo(200, 100);
+    ctx.stroke();
+  }  
   render() {
-    return html`<h4>Hello World, it is ${(new Date).toString()}</h4>`
+    return html`
+      <h4 id='head'>Hello World, it is ${(new Date).toString()}</h4>
+      <div id='canvasContainer'/>
+      Very nice...
+      `.onReady( tpl => {
+        console.log('Binded ')
+        tpl.ids.head.setAttribute('style', 'color:green;')
+        tpl.ids.canvasContainer.appendChild(this.myCanvas)
+      })
   }
 }
+
 setState({
   color:'red',
   list : [1,2,3,4].map( item => ({
@@ -196,7 +227,52 @@ setState({
     duration : Math.floor( 1 + Math.random()*8 )
   }) )
 })
-mount( document.body, new WestWorld() )
+
+const ww = new WestWorld()
+const hello = new HelloWorld()
+let cnt = 0
+mount( document.body, (state) => {
+  return html`  
+
+  <header class="mui-appbar mui--z1">
+  <div class="mui-container">
+    <table>
+      <tr class="mui--appbar-height">
+        <td class="mui--text-title">Brand.io</td>
+        <td class="mui--text-right">
+          <ul class="mui-list--inline mui--text-body2">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Login</a></li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+  </header>
+  <!-- the actual page content comes in here -->
+  <div id="content-wrapper" class="mui--text-center">
+    <div class="mui--appbar-height"></div>
+    <br>
+    <br>
+    <div class="mui--text-display3">Brand.io ... comment ?? </div>
+    <br>
+    <br>
+    <button class="mui-btn mui-btn--raised">Get started</button>
+    <!--
+    <img width="200" height="200" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png">
+    -->
+  </div>
+  <footer>
+    <div class="mui-container mui--text-center mui--text-bottom">
+      Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
+    </div>
+  </footer>
+  
+  `
+})
+setTimeout(add100Tasks,100)
+// setInterval( _ => setState({}), 20)
 
 
 
