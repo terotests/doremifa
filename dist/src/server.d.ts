@@ -1,2 +1,1 @@
-declare const express: any;
-declare const app: any;
+declare function start_server(): void;
