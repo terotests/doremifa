@@ -16,6 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
+var Doremifa = require("./index");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
     return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
@@ -160,10 +161,61 @@ var ww = new WestWorld();
 var hello = new HelloWorld();
 var cnt = 0;
 index_1.mount(document.body, function (state) {
-    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "], ["  \n\n  <header class=\"mui-appbar mui--z1\">\n  <div class=\"mui-container\">\n    <table>\n      <tr class=\"mui--appbar-height\">\n        <td class=\"mui--text-title\">Brand.io</td>\n        <td class=\"mui--text-right\">\n          <ul class=\"mui-list--inline mui--text-body2\">\n            <li><a href=\"#\">About</a></li>\n            <li><a href=\"#\">Pricing</a></li>\n            <li><a href=\"#\">Login</a></li>\n          </ul>\n        </td>\n      </tr>\n    </table>\n  </div>\n  </header>\n  <!-- the actual page content comes in here -->\n  <div id=\"content-wrapper\" class=\"mui--text-center\">\n    <div class=\"mui--appbar-height\"></div>\n    <br>\n    <br>\n    <div class=\"mui--text-display3\">Brand.io ... comment ?? </div>\n    <br>\n    <br>\n    <button class=\"mui-btn mui-btn--raised\">Get started</button>\n    <!--\n    <img width=\"200\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png\">\n    -->\n  </div>\n  <footer>\n    <div class=\"mui-container mui--text-center mui--text-bottom\">\n      Made with \u2665 by <a href=\"https://www.muicss.com\">MUICSS</a>\n    </div>\n  </footer>\n  \n  "])));
+    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["\n  <div>\n  <h1>State : ", "</h1>\n  <!-- navigation -->\n  <a href=\"#page1/id/1\">Page1</a><a href=\"#page2\">Page2</a>\n  <div>", "</div>\n  <input id=\"myInput\">\n  <button id=\"btn\" click=", " >Set state</button>\n  ", "\n  <div>\n  The state is actually now \n  <pre>", "</pre>\n  </div>\n  </div>\n"], ["\n  <div>\n  <h1>State : ", "</h1>\n  <!-- navigation -->\n  <a href=\"#page1/id/1\">Page1</a><a href=\"#page2\">Page2</a>\n  <div>", "</div>\n  <input id=\"myInput\">\n  <button id=\"btn\" click=",
+        " >Set state</button>\n  ",
+        "\n  <div>\n  The state is actually now \n  <pre>", "</pre>\n  </div>\n  </div>\n"])), state.msg, state.time, function (e, tpl) {
+        index_1.setState({ msg: tpl.ids.myInput.value });
+    }, Doremifa.router({
+        page1: function () { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<h2>Page1</h2>"], ["<h2>Page1</h2>"]))); },
+        page2: function () {
+            return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n      <h2>Page 2</h2>\n      <ul>", "</ul>"], ["\n      <h2>Page 2</h2>\n      <ul>", "</ul>"])), [1, 2, 3, 4].map(function (_) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<li>item", "</li>"], ["<li>item", "</li>"])), _); }));
+        }
+    }), JSON.stringify(state, null, 2));
 });
-setTimeout(add100Tasks, 100);
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_12, templateObject_14, templateObject_13, templateObject_11;
+/*
+mount( document.body, (state) => {
+  return html`
+
+  <header class="mui-appbar mui--z1">
+  <div class="mui-container">
+    <table>
+      <tr class="mui--appbar-height">
+        <td class="mui--text-title">Brand.io</td>
+        <td class="mui--text-right">
+          <ul class="mui-list--inline mui--text-body2">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Login</a></li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+  </header>
+  <!-- the actual page content comes in here -->
+  <div id="content-wrapper" class="mui--text-center">
+    <div class="mui--appbar-height"></div>
+    <br>
+    <br>
+    <div class="mui--text-display3">Brand.io ... comment ?? </div>
+    <br>
+    <br>
+    <button class="mui-btn mui-btn--raised">Get started</button>
+    <!--
+    <img width="200" height="200" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png">
+    -->
+  </div>
+  <footer>
+    <div class="mui-container mui--text-center mui--text-bottom">
+      Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
+    </div>
+  </footer>
+  
+  `
+})
+*/
+// setTimeout(add100Tasks,100)
 // setInterval( _ => setState({}), 20)
 
 },{"./index":2}],2:[function(require,module,exports){
@@ -310,7 +362,7 @@ var drmfTemplate = /** @class */ (function () {
     drmfTemplate.prototype.updateValues = function (values) {
         var _loop_1 = function (i) {
             var value = values[i];
-            if (!value)
+            if (typeof (value) === 'undefined')
                 return "continue";
             var last_slot = this_1.slotTypes[i];
             if (!last_slot)
