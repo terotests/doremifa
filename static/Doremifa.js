@@ -142,7 +142,7 @@ var drmfTemplate = /** @class */ (function () {
     drmfTemplate.prototype.updateValues = function (values) {
         var _loop_1 = function (i) {
             var value = values[i];
-            if (!value)
+            if (typeof (value) === 'undefined')
                 return "continue";
             var last_slot = this_1.slotTypes[i];
             if (!last_slot)
