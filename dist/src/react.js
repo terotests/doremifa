@@ -12,9 +12,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var ReactDOM = require("react-dom");
-var Clock = /** @class */ (function (_super) {
-    __extends(Clock, _super);
-    function Clock(props) {
+var PerfTest = /** @class */ (function (_super) {
+    __extends(PerfTest, _super);
+    function PerfTest(props) {
         var _this = _super.call(this, props) || this;
         var myList = [];
         _this.state = { myList: myList };
@@ -28,17 +28,48 @@ var Clock = /** @class */ (function (_super) {
         }, 60);
         return _this;
     }
-    Clock.prototype.render = function () {
+    PerfTest.prototype.render = function () {
         return (React.createElement("div", null,
             React.createElement("h1", null, "Hello, world!"),
             React.createElement("div", null, this.state.myList.map(function (item) { return React.createElement("li", { key: item },
                 "Item ",
                 item); }))));
     };
+    return PerfTest;
+}(React.Component));
+var Clock = /** @class */ (function (_super) {
+    __extends(Clock, _super);
+    function Clock(params) {
+        var _this = _super.call(this, params) || this;
+        _this.props = {
+            date: null
+        };
+        console.log('Clock was created...');
+        _this.state = Math.random();
+        return _this;
+    }
+    Clock.prototype.componentDidMount = function () {
+        console.log('Clock did mount');
+    };
+    Clock.prototype.render = function () {
+        return React.createElement("div", null,
+            this.props.date.toLocaleTimeString(),
+            " ",
+            this.state);
+    };
     return Clock;
 }(React.Component));
+var cnt = 0;
+setInterval(function (_) { return cnt++; }, 1000);
 function tick() {
-    ReactDOM.render(React.createElement(Clock, { date: new Date() }), document.body);
+    ReactDOM.render(cnt & 1 ? React.createElement(Clock, { date: new Date() }) : React.createElement("div", null,
+        React.createElement(Clock, { date: new Date() })), document.getElementById('content'));
 }
 setInterval(tick, 1000);
+/*
+ReactDOM.render(
+  cnt & 1 ? <Clock date={new Date()} /> : <Clock date={new Date()} /> ,
+  document.getElementById('content')
+);
+*/ 
 //# sourceMappingURL=react.js.map

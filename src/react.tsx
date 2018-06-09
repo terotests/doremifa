@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-class Clock extends React.Component {
+class PerfTest extends React.Component {
   props: {
     date
   }
@@ -33,12 +33,38 @@ class Clock extends React.Component {
   }
 }
 
+class Clock extends React.Component {
+  props = {
+    date : null
+  }
+  componentDidMount() {
+    console.log('Clock did mount')
+  }
+  constructor(params) {
+    super(params)
+    console.log('Clock was created...')
+    this.state = Math.random()
+  } 
+  render() {
+    return <div>{this.props.date.toLocaleTimeString()} {this.state}</div>
+  }
+}
+
+let cnt = 0
+setInterval( _ => cnt++, 1000)
+
 function tick() {
   ReactDOM.render(
-    <Clock date={new Date()} />,
-    document.body
+    cnt & 1 ? <Clock date={new Date()} /> : <div><Clock date={new Date()} /></div>, 
+    document.getElementById('content')
   );
 }
 
 setInterval(tick, 1000);
 
+/*
+ReactDOM.render(
+  cnt & 1 ? <Clock date={new Date()} /> : <Clock date={new Date()} /> , 
+  document.getElementById('content')
+);
+*/

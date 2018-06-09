@@ -1,5 +1,9 @@
 import { drfmKey } from "./index";
 
+// TODO:
+// - support self closing tags
+// http://xahlee.info/js/html5_non-closing_tag.html
+
 export type bufferType = string | any
 
 export interface XMLBuilder {
@@ -9,6 +13,54 @@ export interface XMLBuilder {
   closeNode( name:string, buffer_index?:number )
   eof()
 }
+
+function createDetector( strs:string[]) : (buff:string, index:number) => boolean {
+  let cached_detectors = new Array(256)
+  function cacheDetector(str) {
+    const cache_index = str.charCodeAt(0)
+    if(!cached_detectors[cache_index]) cached_detectors[cache_index] = []
+    cached_detectors[cache_index].push((buff:string, index:number) : boolean => {
+      if((buff.length - index) < str.length) return false
+      for(let i=0; i<str.length; i++) {
+        if(str.charCodeAt(i) != buff.charCodeAt(index + i)) return false
+      }
+      return true
+    })
+  }  
+  for( let s of strs ) {
+    cacheDetector(s)
+  }
+  return (buff:string, index:number) : boolean => {
+    const detectors = cached_detectors[buff.charCodeAt(index)]
+    if(detectors) {
+      for( let fn of detectors) {
+        if(fn(buff,index)) return true        
+      }
+    }
+    return false
+  }
+}
+const isSelfClosingTag = createDetector(['area',
+  'base',
+  'br',
+  'col', 
+  'command',
+  'embd',
+  'hr', 
+  'img',
+  'input',
+  'keygen ',
+  'link',
+  'menuitem',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',  
+])
+
+const isCommentStart = createDetector(['<!--'])
+const isCommentEnd = createDetector(['-->'])
 
 export class XMLParser  {
 
@@ -27,6 +79,7 @@ export class XMLParser  {
   last_finished = null
 
   in_tagdef = false
+  is_selfclosing = false
   last_tag_name = ''
 
   constructor(initWith:string[]) {
@@ -160,7 +213,8 @@ export class XMLParser  {
     // read text as long as not <c... or </...
     while( !this.eof && ( !(  c1 == 60 &&  // "<"
               ( (c2 == 47) || // "/"
-                this.isTagChar( c2, true ) ) ) )  // valid tag char
+                this.isTagChar( c2, true ) || // valid tag char
+                (c2 == 33) ) ) )  // <! comment start...
           ) {
       c1 = this.step(1)
       if(this.eof) break;
@@ -171,18 +225,25 @@ export class XMLParser  {
         // intermediate.push(this.buff)
       }
       curr_buff = this.buff
-    }    
-    if(typeof(this.buff) === 'undefined') return ''
+    }
     if(start_buff == this.buff) {
       return this.buff.substring( sp, this.i )
     }
     return start_buff.substring( sp )
-    // the old, only return one buffer at time...
-    /*
-    intermediate.pop() // remove last intermediate because it is this.buff
-    return start_buff.substring( sp ) + intermediate.join('') + this.buff.substring( 0, this.i )
-    */
   }   
+
+  skipUntil (fn) {
+    let curr_buff = this.buff
+    while( (false === fn(this.buff,this.i)) && !this.eof ) {
+      this.step(1)
+      if(curr_buff != this.buff) {
+        if(this.isValueBlock()) {
+          this.stepBuffer()
+        }
+      }
+      curr_buff = this.buff
+    }
+  }    
 
   collectUntil (value) : string {
     let sp = this.i;
@@ -221,10 +282,10 @@ export class XMLParser  {
         if(typeof(this.buff) === 'undefined') this.eof = true
         return v
       }
-
-      if(this.isHere(34)) { // "
+      const quoteChar = this.here()
+      if(quoteChar == 34 || quoteChar == 39) { // "
         this.step(1) 
-        const value = this.collectUntil(34) // collect to the "
+        const value = this.collectUntil(quoteChar) // collect to the "
         this.step(1)
         return value
       } else {
@@ -265,6 +326,12 @@ export class XMLParser  {
           callback.setAttribute( name, value, this.used_index )
           return
         }
+        // if ">", check if self closing
+        if(this.is_selfclosing) {
+          this.step(1)
+          this.in_tagdef = false
+          callback.closeNode( this.last_tag_name, this.used_index )          
+        }
         this.step(1)
         this.in_tagdef = false
         continue
@@ -287,12 +354,18 @@ export class XMLParser  {
           return
         }
         if( this.isTagChar( cc2, true )) {
+          this.is_selfclosing = isSelfClosingTag(this.buff, this.i+1)
           this.step(1)
           this.in_tagdef = true
           this.last_tag_name = this.collectXMLName()
           callback.beginNode( this.last_tag_name, this.used_index )
           return
         }
+        if(isCommentStart(this.buff, this.i)) {
+          this.skipUntil( isCommentEnd )
+          this.step(3) // -->
+          continue
+        } 
       }
       // > the div can be closing....
       if(!this.eof) {
@@ -300,7 +373,7 @@ export class XMLParser  {
         callback.addTextNode( this.colllectText(), idx )
       }
       return
-    }
+    }    
     callback.eof()
   }
 }
