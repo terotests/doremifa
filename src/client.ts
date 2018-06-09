@@ -255,6 +255,15 @@ const delete_item = (item) =>{
   })
 }
 
+class Hello extends drmfComponent {
+  msg = 'World'
+  render() {
+    return html`<div>Hello ${this.msg}</div>`
+  }
+}
+Doremifa.mount(document.body, new Hello() )
+
+/*
 // mount application into some node
 Doremifa.mount(document.body,
  (state) => 
@@ -321,7 +330,7 @@ Doremifa.mount(document.body,
 
 `       
  )
-
+*/
 // update the clock
 /*
 setInterval( _ => {

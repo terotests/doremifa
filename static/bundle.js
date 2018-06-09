@@ -179,41 +179,88 @@ var delete_item = function (item) {
         items: state.items.filter(function (i) { return i.id != item.id; }).slice()
     });
 };
+var Hello = /** @class */ (function (_super) {
+    __extends(Hello, _super);
+    function Hello() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.msg = 'World';
+        return _this;
+    }
+    Hello.prototype.render = function () {
+        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", "</div>"], ["<div>Hello ", "</div>"])), this.msg);
+    };
+    return Hello;
+}(index_1.drmfComponent));
+Doremifa.mount(document.body, new Hello());
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+/*
 // mount application into some node
-Doremifa.mount(document.body, function (state) {
-    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n\n"], ["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
-        "\n\n"])), state.time, Doremifa.router({
-        default: function (state) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n<div>\n  <hr><br><br>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ", "\n  <div>\n    ", "\n  </div>\n</div>\n    "], ["\n<div>\n  <hr><br><br>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ",
-            "\n  <div>\n    ", "\n  </div>\n</div>\n    "])), state
-            .items.map(function (item, i) {
-            return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["", " ", ""], ["", " ", ""])), i > 0 ? ', ' : '', item.name);
-        }), state.items.length === 4 ? 'Four' : index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<b>NOT FOUR!</b>"], ["<b>NOT FOUR!</b>"])))); },
-        // route for #page2 
-        page2: function () { return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"])), JSON.stringify(state, null, 2)); },
-        // route for #itemlist
-        itemlist: function () {
-            return index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ", "\n        </div>\n      "], ["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ",
-                "\n        </div>\n      "])), add_item, state.items.map(function (item) {
-                return index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject(["<div>", "<a href=", ">Edit</div>"], ["<div>", "<a href=", ">Edit</div>"])), item.name, "#details/id/" + item.id);
-            }));
-        },
-        // route for #details/id/xxxx  
-        details: function (state) {
-            var item = state
-                .items.filter(function (item) { return item.id == state.params.id; }).pop();
-            return index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=", ">Save</button>\n        <button click=", ">Delete</button>\n      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=",
-                ">Save</button>\n        <button click=",
-                ">Delete</button>\n      "])), item.id, item.name, function (e, tpl) {
-                item.name = tpl.ids.name.value;
-                window.location.hash = "#itemlist";
-            }, function (_) {
-                delete_item(item);
-                window.location.hash = "#itemlist";
-            });
-        }
-    }));
-});
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_17, templateObject_16, templateObject_18, templateObject_11;
+Doremifa.mount(document.body,
+ (state) =>
+    html`Fooo...
+
+  <div>${state.time}</div>
+  <!-- navigation -->
+  <a href="#">Default</a>
+  <a href="#itemlist">Show List</a>
+  <a href="#page2">Show Page 2</a>
+  ${Doremifa.router({
+  
+    default : (state) => html`
+<div>
+  <hr><br><br>
+  This is the default route. Click show list to edit list of items.
+  Currently the list of items is ${state
+    .items.map( (item,i) =>
+               html`${i > 0 ? ', ' : ''} ${item.name}`)}
+  <div>
+    ${state.items.length === 4 ? 'Four' : html`<b>NOT FOUR!</b>`}
+  </div>
+</div>
+    `,
+
+    // route for #page2
+    page2 : () =>html`
+  <h2>Route for page 2</h2>
+  <hr>
+  <div>
+    The state is now
+    <pre>${JSON.stringify(state,null,2)}</pre>
+  </div>
+`,
+  
+    // route for #itemlist
+    itemlist : () =>
+      html`
+        <h2>Items</h2>
+        <button click=${add_item}>+ item</button>
+        <div>
+          ${state.items.map( item =>
+            html`<div>${item.name}<a href=${`#details/id/${item.id}`}>Edit</div>`)}
+        </div>
+      `,
+  
+    // route for #details/id/xxxx
+    details(state) {
+      const item = state
+        .items.filter( item => item.id == state.params.id).pop()
+      return html`<h2>Item ${item.id}</h2>
+        <input value=${item.name} id="name">
+        <button click=${(e,tpl)=>{
+          item.name = tpl.ids.name.value
+          window.location.hash = "#itemlist"
+        }}>Save</button>
+        <button click=${_ => {
+          delete_item(item)
+          window.location.hash = "#itemlist"
+        }}>Delete</button>
+      `
+     }
+    })}
+
+`
+ )
+*/
 // update the clock
 /*
 setInterval( _ => {

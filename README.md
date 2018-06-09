@@ -1,161 +1,123 @@
-# doremifa
+# Doremifa
 
 Reactive view library based on tagged template literals. It features:
 
 - no virtual DOM or JSX needed
-- reactive template literals to elements from HTML strings
-- state manager, which initiates rendering if state has changed
-- cached template literals to maintain UI state (with garbage collection)
-- `forElem` convenience method for quick and dirty DOM manipulation
+- reactive template literals 
+- fast updates, only changed parts updated
+- event handler support
+- SVG support
+- component and function state is optional
+- has built-in optional router and state implementation
 
-The rendering process re-uses the templates, so if you have TEXTAREA or INPUT elements they
-behave properly even if the data is inserted to the template.
+A simple example
 
-Simple example with simple state
 ```javascript
-
-import { start, router, getState, setState, element, forElem, html } from 'doremifa';
-
-start(document.body, async (state) => {
-  return forElem( 
-    element`
-    <div>
-        <button id="inc">+1</button>
-        <button id="dec">-1</button>
-        <div>${state.cnt}</div>   
-    </div>
-  `, o => {
-    o.inc.onclick = () => setState({cnt : state.cnt + 1 })
-    o.dec.onclick = () => setState({cnt : state.cnt - 1 })
-  })
-}, {
-  cnt : 0 
+import * as Doremifa from 'doremifa'
+Doremifa.setState({
+  time:(new Date).toTimeString(),
 })
-
+Doremifa.mount(document.body, state => html`<div>Hello World! ${state.time}</div>`)
+setInterval( _ => { setState({time:(new Date).toTimeString()})},1000)
 ```
 
-## start( root:Element, renderFn : (state:any) => Promise<Element>, state? :any, options?:DoremifaOptions) 
+## Install
 
-Starts the rendering of the application with 
-- `root` element to insert the renderers result
-- `renderFn` function returning the element to render
-- `state` initial state of the app
-- `options`
-
-Currently the only option is:
-- `updateInterval` render loop delay in milliseconds (default 100)
-
-```javascript
-start(document.body, async (state) => {
-  return element`<div>...</div>`
-}, {}, {})
+```
+npm i doremifa
 ```
 
-## getState
+Or with browser import `/static/Doremifa.js` or `static/Doremifa-min.js` and example:
 
-Returns the application state `{}`. 
+[Example in CodePen](https://codepen.io/tero_koodia/pen/RJKogo)
 
-State can have any keys except for the routing state that has three defined keys
+## html -literal
 
-- `state.page` which indicates the active page from `location.hash` like `#page`
-- `state.params` from the hash like `#page/id/1238`
-- `state.phase` the pages lifecycle, `init`, `refresh` or `close`
+To construct a Template you can write JavaScript template literal
 
-
-## setState
-
-Sets the application state for given keys, for example if the state is
 ```javascript
-{
-  name : "foobar",
-  cnt : 3
+  html`<div>${"Hello World"}</div>`
+```
+
+## Doremifa.mount
+
+Mount render function to some element
+
+```javascript
+Doremifa.mount(document.body, state => html`<div>Hello World!</div>`)
+```
+
+## Functions
+
+Any function which returns `drmfTemplate` can be used as a compomnent
+
+```javascript
+function message(txt) {
+  return html`<div>${txt}</div>`
 }
-```
-Calling `setState({cnt:4})` will set only the `cnt` part of the state to new value.
-
-## creating rendered elements
-
-- `element` for complex layouts
-- `html` for short HTML snippets
-
-For example
-```javascript
-element`<ul>${[1,2,3,4].map( item => html`<li>${item}</li>`)}</ul>`
+const example = html`<div>${message(txt)}</div>`
 ```
 
-## forEach(element, items:(o) => void) - binding and accessing DOM
+## Objects
 
-After an element is created there is a convenience method `forEach` for quickly accessing certain
-elements inside the rendered DOM
-
-- `list="items"` collects elements to Array `o.items`
-- `id="key"` collects elements to `o.key`
+Objects which implement `render()` -function and inherit from `drmfComponent` can be used as part of templates.
 
 ```javascript
-forElems(element`
-    <ul id="main">
-      ${[1,2,3,4].map( item => html`<li list="items">${item}</li>`)}
-    </ul>`,
-  o => {
-    o.main // do something with the <ul> element
-    o.items.forEach( el => {
-      el.onclick = () => {
-        // bind handler
-      }
-    })
-  })
+class Hello extends drmfComponent {
+  render() {
+    return html`<div>Hello World </div>`
+  }
+}
+const obj = new Hello(); // create and re-use if needed
+Doremifa.mount(document.body, state => html`<div>${obj}</div>`)
 ```
 
-## Routing
+## Custom Tags?
 
-Routing is derived from the `window.location.hash` and follow format `#list/len/4` where
+There are no custom tags, just functions or objects.
 
-- `list` results as `state.page == "list"` 
-- `len/4` results as `state.params.len == 4`
+## State and rendering
 
-Additionally the routing function is given `state.phase` which has values
+The application has a global state which is accessed using
 
-```javascript 
-  state.phase == "init"` // when the page is called the first time
-  state.phase == "refresh"` // during refresh calls
-  state.phase == "close"` // when the element is closed
+- `getState()`
+- `setState({...})`
+
+When state is updated, rendering is triggered and all parts of the application are processed. This should be extremely fast, since templates are cached and only changed parts are updated.
+
+## Promises inside View?
+
+No. Promises are not part of view tree. Just update state and view changes reactively.
+
+## Doremifa.router
+
+Build -in router router uses `window.location.hash` and acceptse links in format
+
+```html
+  <a href="#page1/param1/value1/param2/value2">Link to page 1</a>
+  <a href="#page2/param1/value1/param2/value2">Link to page 2</a>
 ```
 
-You can create your own router or use the default router like
+Then you can define router anywhere in templates like
 
 ```javascript
-${await router({
-  "page1" : (state) => element`<div>page1</div>`,
-  "page2" : (state) => element`<div>page2</div>`,
-})
+html`<div>  
+    ${Doremifa.router({
+        page1 : (state) => html`page1`,
+        page2 : (state) => html`page2`,
+      })
+    </div>`
 ```
 
-Example with router:
-
-```javascript
-  start(document.body, async (state) => {
-    return 
-      element`<div>
-      <div>
-        <a href="#hello">hello</a>
-        <a href="#list">list all</a>
-        <a href="#list/len/4">list, first 4</a>
-      </div>
-      ${await router({
-        "hello" : _ => element`<div>This is hello from hello route</div>`,
-        "list" : _ => {
-          const values = _.params.len ? _.list.slice(0, _.params.len | 0) : _.list
-          return element`<div>
-            <ul>${values.map( _ => html`<li><a href="#hello">${_}</a></li>`)}</ul>
-          </div>
-          `
-        }
-      })} 
-  </div>
-    `
-  }, {
-    list :[1,2,3,4,5,6,7,8,9,10] 
-  })
+The router component gets the `state` having following variables set
+```
+{
+  "page": "page2",
+  "params": {
+    param1 : value1,
+    param2 : value2
+  }
+}
 ```
 
 # License
