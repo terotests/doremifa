@@ -335,8 +335,8 @@ export class XMLParser  {
         }
         // if ">", check if self closing
         if(this.is_selfclosing) {
-          this.step(1)
-          this.in_tagdef = false
+          // this.step(1)
+          // this.in_tagdef = false
           callback.closeNode( this.last_tag_name, this.used_index )          
         }
         this.step(1)

@@ -182,7 +182,7 @@ var delete_item = function (item) {
 Doremifa.mount(document.body, function (state) {
     return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n\n"], ["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
         "\n\n"])), state.time, Doremifa.router({
-        default: function (state) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ", "\n  <div>\n    ", "\n  </div>\n</div>\n    "], ["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ",
+        default: function (state) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n<div>\n  <hr><br><br>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ", "\n  <div>\n    ", "\n  </div>\n</div>\n    "], ["\n<div>\n  <hr><br><br>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ",
             "\n  <div>\n    ", "\n  </div>\n</div>\n    "])), state
             .items.map(function (item, i) {
             return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["", " ", ""], ["", " ", ""])), i > 0 ? ', ' : '', item.name);

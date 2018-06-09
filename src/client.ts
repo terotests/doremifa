@@ -269,6 +269,7 @@ Doremifa.mount(document.body,
   
     default : (state) => html`
 <div>
+  <hr><br><br>
   This is the default route. Click show list to edit list of items.
   Currently the list of items is ${state
     .items.map( (item,i) => 
