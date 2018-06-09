@@ -92,7 +92,9 @@ html`<div style=${style}/>`
 
 ## Events
 
-Event handlers can be index to the 
+Event handlers get two params:
+- `e` the HTML event 
+- `tpl` the `drmfTemplate` -object which can old ID or list values
 
 ```javascript
 html`<button click=${(e, tpl) => {
@@ -103,8 +105,11 @@ html`<button click=${(e, tpl) => {
 ## References
 
 References are collected from templates to two colletions:
+
 - `ids` holds elements having "id" attribute set
 - `list` holds elements having `list="something"` set
+
+The are also available to event handlers.
 
 ```javascript
 html`<div>
@@ -128,7 +133,6 @@ html`<div></div>`.onReady( tpl => {
   // tpl.list
 })
 ```
-
 
 ## Custom Tags?
 
