@@ -160,19 +160,66 @@ index_1.setState({
 var ww = new WestWorld();
 var hello = new HelloWorld();
 var cnt = 0;
-index_1.mount(document.body, function (state) {
-    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["\n  <div>\n  <h1>State : ", "</h1>\n  <!-- navigation -->\n  <a href=\"#page1/id/1\">Page1</a><a href=\"#page2\">Page2</a>\n  <div>", "</div>\n  <input id=\"myInput\">\n  <button id=\"btn\" click=", " >Set state</button>\n  ", "\n  <div>\n  The state is actually now \n  <pre>", "</pre>\n  </div>\n  </div>\n"], ["\n  <div>\n  <h1>State : ", "</h1>\n  <!-- navigation -->\n  <a href=\"#page1/id/1\">Page1</a><a href=\"#page2\">Page2</a>\n  <div>", "</div>\n  <input id=\"myInput\">\n  <button id=\"btn\" click=",
-        " >Set state</button>\n  ",
-        "\n  <div>\n  The state is actually now \n  <pre>", "</pre>\n  </div>\n  </div>\n"])), state.msg, state.time, function (e, tpl) {
-        index_1.setState({ msg: tpl.ids.myInput.value });
-    }, Doremifa.router({
-        page1: function () { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<h2>Page1</h2>"], ["<h2>Page1</h2>"]))); },
-        page2: function () {
-            return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n      <h2>Page 2</h2>\n      <ul>", "</ul>"], ["\n      <h2>Page 2</h2>\n      <ul>", "</ul>"])), [1, 2, 3, 4].map(function (_) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<li>item", "</li>"], ["<li>item", "</li>"])), _); }));
-        }
-    }), JSON.stringify(state, null, 2));
+// initial state
+index_1.setState({
+    time: (new Date).toTimeString(),
+    items: [1, 2, 3, 4].map(function (id) { return ({ id: id, name: 'item ' + id }); })
 });
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_12, templateObject_14, templateObject_13, templateObject_11;
+var idcnt = 4;
+var add_item = function () {
+    var state = index_1.getState();
+    idcnt++;
+    index_1.setState({
+        items: state.items.concat([{ id: idcnt, name: 'item ' + idcnt }])
+    });
+};
+var delete_item = function (item) {
+    var state = index_1.getState();
+    index_1.setState({
+        items: state.items.filter(function (i) { return i.id != item.id; }).slice()
+    });
+};
+// mount application into some node
+Doremifa.mount(document.body, function (state) {
+    return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n\n"], ["Fooo...\n\n  <div>", "</div>\n  <!-- navigation -->\n  <a href=\"#\">Default</a> \n  <a href=\"#itemlist\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
+        "\n\n"])), state.time, Doremifa.router({
+        default: function (state) { return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ", "\n  <div>\n    ", "\n  </div>\n</div>\n    "], ["\n<div>\n  This is the default route. Click show list to edit list of items.\n  Currently the list of items is ",
+            "\n  <div>\n    ", "\n  </div>\n</div>\n    "])), state
+            .items.map(function (item, i) {
+            return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["", " ", ""], ["", " ", ""])), i > 0 ? ', ' : '', item.name);
+        }), state.items.length === 4 ? 'Four' : index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<b>NOT FOUR!</b>"], ["<b>NOT FOUR!</b>"])))); },
+        // route for #page2 
+        page2: function () { return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["\n  <h2>Route for page 2</h2>\n  <hr>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"])), JSON.stringify(state, null, 2)); },
+        // route for #itemlist
+        itemlist: function () {
+            return index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ", "\n        </div>\n      "], ["\n        <h2>Items</h2>\n        <button click=", ">+ item</button>\n        <div>\n          ",
+                "\n        </div>\n      "])), add_item, state.items.map(function (item) {
+                return index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject(["<div>", "<a href=", ">Edit</div>"], ["<div>", "<a href=", ">Edit</div>"])), item.name, "#details/id/" + item.id);
+            }));
+        },
+        // route for #details/id/xxxx  
+        details: function (state) {
+            var item = state
+                .items.filter(function (item) { return item.id == state.params.id; }).pop();
+            return index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=", ">Save</button>\n        <button click=", ">Delete</button>\n      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button click=",
+                ">Save</button>\n        <button click=",
+                ">Delete</button>\n      "])), item.id, item.name, function (e, tpl) {
+                item.name = tpl.ids.name.value;
+                window.location.hash = "#itemlist";
+            }, function (_) {
+                delete_item(item);
+                window.location.hash = "#itemlist";
+            });
+        }
+    }));
+});
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_17, templateObject_16, templateObject_18, templateObject_11;
+// update the clock
+/*
+setInterval( _ => {
+  setState({time:(new Date).toTimeString()})
+},1000)
+*/
 /*
 mount( document.body, (state) => {
   return html`
@@ -415,7 +462,6 @@ var drmfTemplate = /** @class */ (function () {
                     // transform into txt node
                     if (typeof (value) == 'string') {
                         var txt = document.createTextNode(value);
-                        this_1.slotTypes[i] = [3, last_root, txt];
                         var nodes_2 = currTpl.rootNodes;
                         var pNode = nodes_2[0].parentNode;
                         var first = nodes_2[0];
@@ -424,6 +470,7 @@ var drmfTemplate = /** @class */ (function () {
                             var n = nodes_3[_i];
                             pNode.removeChild(n);
                         }
+                        this_1.slotTypes[i] = [3, pNode, txt];
                     }
                     break;
                 case 3:
@@ -503,7 +550,6 @@ var drmfTemplate = /** @class */ (function () {
                     if (typeof (value) == 'string') {
                         var tplNow = last_slot[3];
                         var txt = document.createTextNode(value);
-                        this_1.slotTypes[i] = [3, last_root, txt];
                         var nodes_4 = tplNow.rootNodes;
                         var pNode = nodes_4[0].parentNode;
                         var first = nodes_4[0];
@@ -512,6 +558,7 @@ var drmfTemplate = /** @class */ (function () {
                             var n = nodes_5[_c];
                             pNode.removeChild(n);
                         }
+                        this_1.slotTypes[i] = [3, pNode, txt];
                     }
                     if (value instanceof drmfTemplate) {
                         var comp = last_slot[2];
@@ -653,6 +700,14 @@ var drmfTemplate = /** @class */ (function () {
                 if (value instanceof drfmKey) {
                     return;
                 }
+                var append = function (new_node) {
+                    if (activeNode) {
+                        activeNode.appendChild(new_node);
+                    }
+                    else {
+                        me.rootNodes.push(new_node);
+                    }
+                };
                 if (index & 1) {
                     if (value instanceof drmfTemplate) {
                         var tpl = value;
@@ -660,7 +715,7 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                             var it = items_1[_i];
-                            activeNode.appendChild(it);
+                            append(it);
                             snodes.push(it);
                         }
                         // render template
@@ -674,7 +729,7 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
                             var it = items_2[_a];
-                            activeNode.appendChild(it);
+                            append(it);
                             snodes.push(it);
                         }
                         // render template
@@ -685,7 +740,7 @@ var drmfTemplate = /** @class */ (function () {
                         var coll = new drmfTemplateCollection;
                         var txtV = document.createTextNode('');
                         coll.node = txtV;
-                        activeNode.appendChild(txtV); // placeholder in case empty list
+                        append(txtV); // placeholder in case empty list
                         var tpls = value;
                         coll.list = tpls;
                         var snodes = [];
@@ -694,10 +749,13 @@ var drmfTemplate = /** @class */ (function () {
                             if (!cont || !cont.createDOM) {
                                 throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
                             }
+                            if (!activeNode) {
+                                throw "Array can not be root node of html:\n " + value + " \n----------------------------\n " + me.valuestream;
+                            }
                             var items = cont.createDOM();
                             for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
                                 var it = items_3[_b];
-                                activeNode.appendChild(it);
+                                append(it);
                                 snodes.push(it);
                             }
                         }
@@ -758,7 +816,7 @@ function html(strings) {
         values[_i - 1] = arguments[_i];
     }
     var t = new drmfTemplate();
-    t.key = strings.join('<>');
+    t.key = strings.join('&');
     t.strings = strings;
     t.values = values.map(function (value) {
         if (typeof (value) === 'undefined')
@@ -857,7 +915,6 @@ function mount(root, comp,
 state, options) {
     var _this = this;
     if (!app.is_registered) {
-        console.log('registering app');
         app.is_registered = true;
         register_hash();
         window.addEventListener("hashchange", register_hash, false);
@@ -1009,7 +1066,7 @@ var XMLParser = /** @class */ (function () {
         this.buff_index = 0;
         this.used_index = 0;
         this.eof = false;
-        if (!this.buff)
+        if (typeof (this.buff) === 'undefined')
             this.eof = true;
     }
     XMLParser.prototype.code = function (index) {
@@ -1216,6 +1273,12 @@ var XMLParser = /** @class */ (function () {
         var cc1 = 0;
         var cc2 = 0;
         while (!this.eof) {
+            if (typeof (this.buff) === 'string' && this.buff.length === 0) {
+                var idx = this.buff_index;
+                callback.addTextNode('', idx);
+                this.stepBuffer();
+                continue;
+            }
             cc1 = this.here();
             if (this.in_tagdef) {
                 // <div  something = "..."

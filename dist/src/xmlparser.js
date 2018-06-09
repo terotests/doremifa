@@ -72,7 +72,7 @@ var XMLParser = /** @class */ (function () {
         this.buff_index = 0;
         this.used_index = 0;
         this.eof = false;
-        if (!this.buff)
+        if (typeof (this.buff) === 'undefined')
             this.eof = true;
     }
     XMLParser.prototype.code = function (index) {
@@ -279,6 +279,12 @@ var XMLParser = /** @class */ (function () {
         var cc1 = 0;
         var cc2 = 0;
         while (!this.eof) {
+            if (typeof (this.buff) === 'string' && this.buff.length === 0) {
+                var idx = this.buff_index;
+                callback.addTextNode('', idx);
+                this.stepBuffer();
+                continue;
+            }
             cc1 = this.here();
             if (this.in_tagdef) {
                 // <div  something = "..."

@@ -98,7 +98,7 @@ export class drmfTemplate {
 
     for( let i=0; i<values.length ; i++) {
       const value = values[i]
-      if(!value) continue
+      if(typeof(value) === 'undefined') continue
       const last_slot = this.slotTypes[i]
       if(!last_slot) continue
       const last_type = last_slot[0]
@@ -147,15 +147,15 @@ export class drmfTemplate {
 
           // transform into txt node
           if( typeof(value) == 'string' ) {
-            const txt = document.createTextNode(value)
-            this.slotTypes[i] = [3, last_root, txt]            
+            const txt = document.createTextNode(value)                        
             const nodes = currTpl.rootNodes
             const pNode = nodes[0].parentNode
             const first = nodes[0]
             pNode.insertBefore( txt, first )
             for( let n of nodes ) {
               pNode.removeChild( n )
-            }             
+            } 
+            this.slotTypes[i] = [3, pNode, txt]            
           }
           
         break;
@@ -236,8 +236,6 @@ export class drmfTemplate {
           if(typeof(value) == 'string') {
             const tplNow = last_slot[3] as drmfTemplate
             const txt = document.createTextNode(value)
-            this.slotTypes[i] = [3, last_root, txt]     
-
             const nodes = tplNow.rootNodes
             const pNode = nodes[0].parentNode
             const first = nodes[0]
@@ -245,6 +243,7 @@ export class drmfTemplate {
             for( let n of nodes ) {
               pNode.removeChild( n )
             }  
+            this.slotTypes[i] = [3, pNode, txt] 
           }
 
           if(value instanceof drmfTemplate) {
@@ -280,7 +279,6 @@ export class drmfTemplate {
   }
 
   createDOM() : Node[] {
-
     const parser = new XMLParser(this.valuestream)
     let eof = false
     const nodetree:Node[] = []
@@ -378,17 +376,23 @@ export class drmfTemplate {
         }
       },
       addTextNode(value, index) {
-
         if(value instanceof drfmKey) {
           return
         }
+        const append = (new_node:Node) => {
+          if(activeNode) {
+            activeNode.appendChild( new_node )
+          } else {
+            me.rootNodes.push(new_node)        
+          }         
+        }        
         if( index & 1 ) {
           if(value instanceof drmfTemplate) {
             const tpl = value as drmfTemplate
             const items = tpl.createDOM()
             const snodes = []
             for( let it of items ) {
-              activeNode.appendChild( it )
+              append( it )
               snodes.push( it )
             }
             // render template
@@ -401,7 +405,7 @@ export class drmfTemplate {
             const items = tpl.createDOM()
             const snodes = []
             for( let it of items ) {
-              activeNode.appendChild( it )
+              append( it )
               snodes.push( it )
             }
             // render template
@@ -412,7 +416,7 @@ export class drmfTemplate {
             const coll = new drmfTemplateCollection
             const txtV = document.createTextNode('')
             coll.node = txtV
-            activeNode.appendChild(txtV) // placeholder in case empty list
+            append(txtV) // placeholder in case empty list
 
             const tpls = value as drmfTemplate[]
             coll.list = tpls
@@ -422,9 +426,12 @@ export class drmfTemplate {
               if(!cont || !cont.createDOM) {
                 throw `Array or result of map must contain valid template elements:\n ${value} \n----------------------------\n ${me.valuestream}`
               }
+              if(!activeNode) {
+                throw `Array can not be root node of html:\n ${value} \n----------------------------\n ${me.valuestream}`
+              }
               const items = cont.createDOM()
               for( let it of items ) {
-                activeNode.appendChild( it )
+                append( it )
                 snodes.push( it )
               }  
             }
@@ -480,9 +487,10 @@ export class drmfTemplate {
 
 export function html(strings, ...values) : drmfTemplate {
   const t = new drmfTemplate()   
-  t.key = strings.join('<>')
+  t.key = strings.join('&')
   t.strings = strings
   t.values = values.map( value => {
+    if(typeof(value) === 'undefined') return ''
     if(!isNaN(value) && (!Array.isArray(value))) return value.toString()
     return value
   }) 
@@ -589,7 +597,6 @@ export function mount ( root:Element,
   state? :any, 
   options?:DoremifaOptions ) {
   if(!app.is_registered) {
-    console.log('registering app')
     app.is_registered = true
     register_hash()
     window.addEventListener("hashchange", register_hash, false);

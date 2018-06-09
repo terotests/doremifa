@@ -141,7 +141,7 @@ var drmfTemplate = /** @class */ (function () {
     drmfTemplate.prototype.updateValues = function (values) {
         var _loop_1 = function (i) {
             var value = values[i];
-            if (!value)
+            if (typeof (value) === 'undefined')
                 return "continue";
             var last_slot = this_1.slotTypes[i];
             if (!last_slot)
@@ -194,7 +194,6 @@ var drmfTemplate = /** @class */ (function () {
                     // transform into txt node
                     if (typeof (value) == 'string') {
                         var txt = document.createTextNode(value);
-                        this_1.slotTypes[i] = [3, last_root, txt];
                         var nodes_2 = currTpl.rootNodes;
                         var pNode = nodes_2[0].parentNode;
                         var first = nodes_2[0];
@@ -203,6 +202,7 @@ var drmfTemplate = /** @class */ (function () {
                             var n = nodes_3[_i];
                             pNode.removeChild(n);
                         }
+                        this_1.slotTypes[i] = [3, pNode, txt];
                     }
                     break;
                 case 3:
@@ -282,7 +282,6 @@ var drmfTemplate = /** @class */ (function () {
                     if (typeof (value) == 'string') {
                         var tplNow = last_slot[3];
                         var txt = document.createTextNode(value);
-                        this_1.slotTypes[i] = [3, last_root, txt];
                         var nodes_4 = tplNow.rootNodes;
                         var pNode = nodes_4[0].parentNode;
                         var first = nodes_4[0];
@@ -291,6 +290,7 @@ var drmfTemplate = /** @class */ (function () {
                             var n = nodes_5[_c];
                             pNode.removeChild(n);
                         }
+                        this_1.slotTypes[i] = [3, pNode, txt];
                     }
                     if (value instanceof drmfTemplate) {
                         var comp = last_slot[2];
@@ -432,6 +432,14 @@ var drmfTemplate = /** @class */ (function () {
                 if (value instanceof drfmKey) {
                     return;
                 }
+                var append = function (new_node) {
+                    if (activeNode) {
+                        activeNode.appendChild(new_node);
+                    }
+                    else {
+                        me.rootNodes.push(new_node);
+                    }
+                };
                 if (index & 1) {
                     if (value instanceof drmfTemplate) {
                         var tpl = value;
@@ -439,7 +447,7 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
                             var it = items_1[_i];
-                            activeNode.appendChild(it);
+                            append(it);
                             snodes.push(it);
                         }
                         // render template
@@ -453,7 +461,7 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var _a = 0, items_2 = items; _a < items_2.length; _a++) {
                             var it = items_2[_a];
-                            activeNode.appendChild(it);
+                            append(it);
                             snodes.push(it);
                         }
                         // render template
@@ -464,7 +472,7 @@ var drmfTemplate = /** @class */ (function () {
                         var coll = new drmfTemplateCollection;
                         var txtV = document.createTextNode('');
                         coll.node = txtV;
-                        activeNode.appendChild(txtV); // placeholder in case empty list
+                        append(txtV); // placeholder in case empty list
                         var tpls = value;
                         coll.list = tpls;
                         var snodes = [];
@@ -473,10 +481,13 @@ var drmfTemplate = /** @class */ (function () {
                             if (!cont || !cont.createDOM) {
                                 throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
                             }
+                            if (!activeNode) {
+                                throw "Array can not be root node of html:\n " + value + " \n----------------------------\n " + me.valuestream;
+                            }
                             var items = cont.createDOM();
                             for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
                                 var it = items_3[_b];
-                                activeNode.appendChild(it);
+                                append(it);
                                 snodes.push(it);
                             }
                         }
@@ -537,9 +548,11 @@ function html(strings) {
         values[_i - 1] = arguments[_i];
     }
     var t = new drmfTemplate();
-    t.key = strings.join('<>');
+    t.key = strings.join('&');
     t.strings = strings;
     t.values = values.map(function (value) {
+        if (typeof (value) === 'undefined')
+            return '';
         if (!isNaN(value) && (!Array.isArray(value)))
             return value.toString();
         return value;
@@ -634,7 +647,6 @@ function mount(root, comp,
 state, options) {
     var _this = this;
     if (!app.is_registered) {
-        console.log('registering app');
         app.is_registered = true;
         register_hash();
         window.addEventListener("hashchange", register_hash, false);
