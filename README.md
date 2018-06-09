@@ -1,19 +1,23 @@
 # Doremifa
 
-Reactive view library based on tagged template literals. It features:
+Reactive view library based on tagged template literals. It is special compared to other similar libraries in that it implements it's own XHTML/HTML parser.
 
-- no virtual DOM or JSX needed
-- reactive template literals 
-- fast updates, only changed parts updated
-- event handler support
+The main features are
+
+- Reactive template literals where only changed parts are re-rendered
+- Event handler support
 - SVG support
-- component and function state is optional
-- has built-in optional router and state implementation
+- Has reactive global state, which can be used (not mandatory)
+- Router baked in (or you can use your own)
 
-A simple example
+A simple TypeScript example
 
 ```javascript
 import * as Doremifa from 'doremifa'
+
+const html = Doremifa.html;
+const setState = Doremifa.setState
+
 Doremifa.setState({
   time:(new Date).toTimeString(),
 })
@@ -21,15 +25,22 @@ Doremifa.mount(document.body, state => html`<div>Hello World! ${state.time}</div
 setInterval( _ => { setState({time:(new Date).toTimeString()})},1000)
 ```
 
-## Install
+[Hello World in CodePen](https://codepen.io/tero_koodia/pen/mKRrXd)
+[Router Example in CodePen](https://codepen.io/tero_koodia/pen/mKRrXd)
+
+## Usage and Install
 
 ```
 npm i doremifa
 ```
 
-Or with browser import `/static/Doremifa.js` or `static/Doremifa-min.js` and example:
+And then 
 
-[Example in CodePen](https://codepen.io/tero_koodia/pen/RJKogo)
+```typescript
+import { mount, router, getState, setState, html, drmfComponent, drmfTemplate } from 'doremifa';
+// or
+import * as Doremifa from './index';
+```
 
 ## html -literal
 
@@ -71,6 +82,53 @@ class Hello extends drmfComponent {
 const obj = new Hello(); // create and re-use if needed
 Doremifa.mount(document.body, state => html`<div>${obj}</div>`)
 ```
+
+## Attributes can be set by value without quotes
+
+```javascript
+const style='color:blue;'
+html`<div style=${style}/>`
+```
+
+## Events
+
+Event handlers can be index to the 
+
+```javascript
+html`<button click=${(e, tpl) => {
+  // tpl holds the template object
+}}>Click me!</button>`
+```
+
+## References
+
+References are collected from templates to two colletions:
+- `ids` holds elements having "id" attribute set
+- `list` holds elements having `list="something"` set
+
+```javascript
+html`<div>
+  <input id="name" />
+  <div list="divs" />
+  <div list="divs" />
+  <button click=${(e, tpl) => {
+    alert(tpl.ids.name)           // value of input 
+    alert(tpl.list.divs.length)   // 2
+}}>Click me!</button>
+</div>`
+```
+
+## Event after template is assigned
+
+Sometimes you want to manipulate DOM after the template has been rendered
+
+```javascript
+html`<div></div>`.onReady( tpl => {
+  // tpl.ids
+  // tpl.list
+})
+```
+
 
 ## Custom Tags?
 
@@ -119,6 +177,12 @@ The router component gets the `state` having following variables set
   }
 }
 ```
+
+# Other Similar libraries
+
+- hyperHTML
+- lit-html
+- YallaJS
 
 # License
 
