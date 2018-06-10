@@ -25,7 +25,7 @@ Doremifa.mount(document.body, state => html`<div>Hello World! ${state.time}</div
 setInterval( _ => { setState({time:(new Date).toTimeString()})},1000)
 ```
 
-[Hello World in CodePen](https://codepen.io/tero_koodia/pen/mKRrXd)
+[Hello World in CodePen](https://codepen.io/tero_koodia/pen/RJKogo)
 [Router Example in CodePen](https://codepen.io/tero_koodia/pen/mKRrXd)
 
 ## Usage and Install
