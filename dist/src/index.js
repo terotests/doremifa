@@ -108,6 +108,8 @@ var drmfTemplate = /** @class */ (function () {
         this.children = {};
         this.doms = {};
         this.rootNodes = [];
+        // to get all the root nodes
+        this.baseNodes = [];
         this.slotTypes = [];
         this.ids = {};
         this.list = {};
@@ -116,26 +118,72 @@ var drmfTemplate = /** @class */ (function () {
         this._ready = fn;
         return this;
     };
+    drmfTemplate.prototype.getFirstNode = function () {
+        var n = this.baseNodes[0];
+        if (Array.isArray(n)) {
+            return n[0];
+        }
+        if (n instanceof drmfTemplate) {
+            return n.getFirstNode();
+        }
+        if (n instanceof drmfTemplateCollection) {
+            return n.node;
+        }
+    };
+    drmfTemplate.prototype.addAt = function (parentNode, before) {
+        for (var _i = 0, _a = this.baseNodes; _i < _a.length; _i++) {
+            var n = _a[_i];
+            if (Array.isArray(n)) {
+                for (var _b = 0, n_1 = n; _b < n_1.length; _b++) {
+                    var node = n_1[_b];
+                    parentNode.insertBefore(node, before);
+                }
+                continue;
+            }
+            if (n instanceof drmfTemplate) {
+                n.addAt(parentNode, before);
+            }
+            if (n instanceof drmfTemplateCollection) {
+                for (var _c = 0, _d = n.list; _c < _d.length; _c++) {
+                    var el = _d[_c];
+                    el.addAt(parentNode, before);
+                }
+            }
+        }
+    };
+    drmfTemplate.prototype.removeBaseNodes = function () {
+        for (var _i = 0, _a = this.baseNodes; _i < _a.length; _i++) {
+            var n = _a[_i];
+            if (Array.isArray(n)) {
+                for (var _b = 0, n_2 = n; _b < n_2.length; _b++) {
+                    var node = n_2[_b];
+                    node.parentNode.removeChild(node);
+                }
+                continue;
+            }
+            if (n instanceof drmfTemplate) {
+                n.removeBaseNodes();
+            }
+            if (n instanceof drmfTemplateCollection) {
+                for (var _c = 0, _d = n.list; _c < _d.length; _c++) {
+                    var el = _d[_c];
+                    el.removeBaseNodes();
+                }
+            }
+        }
+    };
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
+            // The problem is here, the update values will update root elements...
             this.updateValues(renderedTpl.values);
             return this;
         }
-        var currTpl = this;
-        var nodes = currTpl.rootNodes;
-        var renderNodes;
-        var new_nodes = renderedTpl.createDOM();
-        // replace current with new
-        var pNode = nodes[0].parentNode;
-        var first = nodes[0];
-        for (var _i = 0, new_nodes_1 = new_nodes; _i < new_nodes_1.length; _i++) {
-            var n = new_nodes_1[_i];
-            pNode.insertBefore(n, first);
-        }
-        for (var _a = 0, nodes_1 = nodes; _a < nodes_1.length; _a++) {
-            var n = nodes_1[_a];
-            pNode.removeChild(n);
-        }
+        // creates the nodes...
+        renderedTpl.createDOM();
+        var fNode = this.getFirstNode();
+        // get the first render template node...
+        renderedTpl.addAt(fNode.parentNode, fNode);
+        this.removeBaseNodes();
         return renderedTpl;
     };
     drmfTemplate.prototype.updateValues = function (values) {
@@ -176,6 +224,7 @@ var drmfTemplate = /** @class */ (function () {
                         }
                     }
                     break;
+                // last node was drmfTemplate
                 case 2:
                     // simple content template was the last type...
                     var currTpl = last_slot[2];
@@ -183,6 +232,8 @@ var drmfTemplate = /** @class */ (function () {
                     if (value instanceof drmfTemplate) {
                         var renderedTpl = value;
                         this_1.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = this_1.slotTypes[i][2];
                     }
                     if (value instanceof drmfComponent) {
                         // render the situation now...
@@ -190,51 +241,67 @@ var drmfTemplate = /** @class */ (function () {
                         var rTpl = renderedComp.render();
                         var newTpl = currTpl.replaceWith(rTpl);
                         this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     // transform into txt node
                     if (typeof (value) == 'string') {
+                        console.log('drfmTemplate -> string');
                         var txt = document.createTextNode(value);
-                        var nodes_2 = currTpl.rootNodes;
-                        var pNode = nodes_2[0].parentNode;
-                        var first = nodes_2[0];
+                        var nodes_1 = currTpl.rootNodes;
+                        var pNode = nodes_1[0].parentNode;
+                        var first = nodes_1[0];
                         pNode.insertBefore(txt, first);
-                        for (var _i = 0, nodes_3 = nodes_2; _i < nodes_3.length; _i++) {
-                            var n = nodes_3[_i];
+                        for (var _i = 0, nodes_2 = nodes_1; _i < nodes_2.length; _i++) {
+                            var n = nodes_2[_i];
                             pNode.removeChild(n);
                         }
                         this_1.slotTypes[i] = [3, pNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
+                        console.log(this_1.baseNodes);
                     }
                     break;
+                // last node was text node
                 case 3:
                     var text_node = last_slot[2];
                     if (typeof (value) == 'string') {
                         text_node.textContent = value;
                     }
                     if (value instanceof drmfTemplate) {
+                        console.log('Text ==> drfmTemplate');
                         var new_nodes = value.createDOM();
                         // replace current with new
                         var pNode = text_node.parentNode;
-                        for (var _a = 0, new_nodes_2 = new_nodes; _a < new_nodes_2.length; _a++) {
-                            var n = new_nodes_2[_a];
+                        for (var _a = 0, new_nodes_1 = new_nodes; _a < new_nodes_1.length; _a++) {
+                            var n = new_nodes_1[_a];
                             pNode.insertBefore(n, text_node);
                         }
                         pNode.removeChild(text_node);
+                        console.log(value);
                         this_1.slotTypes[i] = [2, last_root, value, new_nodes];
+                        // if the slot is base slot...
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = value;
+                        console.log(this_1.baseNodes);
                     }
                     if (value instanceof drmfComponent) {
                         var comp = value;
                         var tpl = comp.render();
                         var new_nodes = tpl.createDOM();
                         var pNode = text_node.parentNode;
-                        for (var _b = 0, new_nodes_3 = new_nodes; _b < new_nodes_3.length; _b++) {
-                            var n = new_nodes_3[_b];
+                        for (var _b = 0, new_nodes_2 = new_nodes; _b < new_nodes_2.length; _b++) {
+                            var n = new_nodes_2[_b];
                             pNode.insertBefore(n, text_node);
                         }
                         pNode.removeChild(text_node);
                         this_1.slotTypes[i] = [5, last_root, comp, tpl, new_nodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = value;
                         return { value: void 0 };
                     }
                     break;
+                // last node was drmfTemplateCollection
                 case 4:
                     var tpls = value;
                     var curr_collection = last_slot[2];
@@ -278,19 +345,22 @@ var drmfTemplate = /** @class */ (function () {
                     }
                     curr_collection.list = list;
                     break;
+                // last node was drmfComponent        
                 case 5:
                     if (typeof (value) == 'string') {
                         var tplNow = last_slot[3];
                         var txt = document.createTextNode(value);
-                        var nodes_4 = tplNow.rootNodes;
-                        var pNode = nodes_4[0].parentNode;
-                        var first = nodes_4[0];
+                        var nodes_3 = tplNow.rootNodes;
+                        var pNode = nodes_3[0].parentNode;
+                        var first = nodes_3[0];
                         pNode.insertBefore(txt, first);
-                        for (var _c = 0, nodes_5 = nodes_4; _c < nodes_5.length; _c++) {
-                            var n = nodes_5[_c];
+                        for (var _c = 0, nodes_4 = nodes_3; _c < nodes_4.length; _c++) {
+                            var n = nodes_4[_c];
                             pNode.removeChild(n);
                         }
                         this_1.slotTypes[i] = [3, pNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
                     }
                     if (value instanceof drmfTemplate) {
                         var comp = last_slot[2];
@@ -299,6 +369,8 @@ var drmfTemplate = /** @class */ (function () {
                         var rTpl = value;
                         var newTpl = tplNow.replaceWith(rTpl);
                         this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = value;
                     }
                     if (value instanceof drmfComponent) {
                         var comp = last_slot[2];
@@ -312,6 +384,8 @@ var drmfTemplate = /** @class */ (function () {
                             this_1.slotTypes[i][2] = renderedComp;
                             this_1.slotTypes[i][3] = newTpl;
                         }
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     break;
             }
@@ -361,6 +435,9 @@ var drmfTemplate = /** @class */ (function () {
                 }
                 else {
                     me.rootNodes.push(new_node);
+                    if (!me.baseNodes[index])
+                        me.baseNodes[index] = [];
+                    me.baseNodes[index].push(new_node);
                 }
                 activeNode = new_node;
                 nodetree.push(new_node);
@@ -452,6 +529,7 @@ var drmfTemplate = /** @class */ (function () {
                         }
                         // render template
                         me.slotTypes[(index - 1) >> 1] = [2, activeNode, tpl, snodes];
+                        me.baseNodes[index] = tpl;
                         return;
                     }
                     if (value instanceof drmfComponent) {
@@ -466,6 +544,7 @@ var drmfTemplate = /** @class */ (function () {
                         }
                         // render template
                         me.slotTypes[(index - 1) >> 1] = [5, activeNode, comp, tpl, snodes];
+                        me.baseNodes[index] = tpl;
                         return;
                     }
                     if (Array.isArray(value)) {
@@ -478,12 +557,14 @@ var drmfTemplate = /** @class */ (function () {
                         var snodes = [];
                         for (var idx = 0; idx < tpls.length; idx++) {
                             var cont = tpls[idx];
-                            if (!cont || !cont.createDOM) {
-                                throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
+                            /*
+                            if(!cont || !cont.createDOM) {
+                              throw `Array or result of map must contain valid template elements:\n ${value} \n----------------------------\n ${me.valuestream}`
                             }
-                            if (!activeNode) {
-                                throw "Array can not be root node of html:\n " + value + " \n----------------------------\n " + me.valuestream;
+                            if(!activeNode) {
+                              throw `Array can not be root node of html:\n ${value} \n----------------------------\n ${me.valuestream}`
                             }
+                            */
                             var items = cont.createDOM();
                             for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
                                 var it = items_3[_b];
@@ -493,6 +574,8 @@ var drmfTemplate = /** @class */ (function () {
                         }
                         // render templates
                         me.slotTypes[(index - 1) >> 1] = [4, activeNode, coll, snodes];
+                        if (!activeNode)
+                            me.baseNodes[index] = coll;
                         return;
                     }
                 }
@@ -506,6 +589,9 @@ var drmfTemplate = /** @class */ (function () {
                     me.slotTypes[(index - 1) >> 1] = [3, activeNode, txt];
                 }
                 if (!activeNode) {
+                    if (!me.baseNodes[index])
+                        me.baseNodes[index] = [];
+                    me.baseNodes[index].push(txt);
                     me.rootNodes.push(txt);
                     return;
                 }

@@ -57,6 +57,10 @@ export class drmfTemplate {
   templateDom:Node[]
 
   rootNodes:Node[] = []
+
+  // to get all the root nodes
+  baseNodes:any[] = []
+  
   slotTypes:any[][] = []
   
   prevNode:Node
@@ -71,26 +75,72 @@ export class drmfTemplate {
     return this
   }
 
+  getFirstNode() : Node {
+    const n = this.baseNodes[0]
+    if(Array.isArray(n)) {
+      return n[0]
+    }
+    if(n instanceof drmfTemplate) {
+      return n.getFirstNode()
+    }
+    if(n instanceof drmfTemplateCollection) {
+      return n.node
+    }    
+  }
+
+  addAt( parentNode:Node, before?:Node ) {
+    for(let n of this.baseNodes) {
+      if(Array.isArray(n)) {
+        for( let node of n) {
+          parentNode.insertBefore( node, before )
+        }
+        continue
+      }
+      if(n instanceof drmfTemplate) {
+        n.addAt( parentNode, before)
+      }
+      if(n instanceof drmfTemplateCollection) {
+        for( let el of n.list ) {
+          el.addAt( parentNode, before)
+        }
+      }
+    }
+  }
+  
+  removeBaseNodes() {
+    for(let n of this.baseNodes) {
+      if(Array.isArray(n)) {
+        for( let node of n) {
+          node.parentNode.removeChild( node )
+        }
+        continue
+      }
+      if(n instanceof drmfTemplate) {
+        n.removeBaseNodes()
+      }
+      if(n instanceof drmfTemplateCollection) {
+        for( let el of n.list ) {
+          el.removeBaseNodes()
+        }
+      }
+    }
+  }
+
   replaceWith(renderedTpl:drmfTemplate) : drmfTemplate {
 
     if(this.key == renderedTpl.key) {
+      // The problem is here, the update values will update root elements...
       this.updateValues( renderedTpl.values )
       return this
     } 
 
-    const currTpl = this
-    const nodes = currTpl.rootNodes
-    let renderNodes
-    const new_nodes = renderedTpl.createDOM()
-    // replace current with new
-    const pNode = nodes[0].parentNode
-    const first = nodes[0]
-    for( let n of new_nodes ) {
-      pNode.insertBefore( n, first )
-    }
-    for( let n of nodes ) {
-      pNode.removeChild( n )
-    }
+    // creates the nodes...
+    renderedTpl.createDOM()
+
+    const fNode = this.getFirstNode()    
+    // get the first render template node...
+    renderedTpl.addAt( fNode.parentNode, fNode )
+    this.removeBaseNodes()
     return renderedTpl
   }
 
@@ -127,6 +177,8 @@ export class drmfTemplate {
             }
           }          
         break;
+
+        // last node was drmfTemplate
         case 2:
           // simple content template was the last type...
           const currTpl = last_slot[2] as drmfTemplate
@@ -134,7 +186,8 @@ export class drmfTemplate {
 
           if( value instanceof drmfTemplate) {
             const renderedTpl = value as drmfTemplate
-            this.slotTypes[i][2] = currTpl.replaceWith( renderedTpl )            
+            this.slotTypes[i][2] = currTpl.replaceWith( renderedTpl )   
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = this.slotTypes[i][2]         
           }
 
           if(value instanceof drmfComponent) {
@@ -143,10 +196,12 @@ export class drmfTemplate {
             const rTpl = renderedComp.render()  
             const newTpl = currTpl.replaceWith( rTpl )   
             this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]   
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = newTpl
           }          
 
           // transform into txt node
           if( typeof(value) == 'string' ) {
+            console.log('drfmTemplate -> string')
             const txt = document.createTextNode(value)                        
             const nodes = currTpl.rootNodes
             const pNode = nodes[0].parentNode
@@ -155,16 +210,21 @@ export class drmfTemplate {
             for( let n of nodes ) {
               pNode.removeChild( n )
             } 
-            this.slotTypes[i] = [3, pNode, txt]            
+            this.slotTypes[i] = [3, pNode, txt]   
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] =[txt]  
+            console.log(this.baseNodes)       
           }
           
         break;
+
+        // last node was text node
         case 3:
           const text_node = last_slot[2]
           if(typeof(value) == 'string') {
             text_node.textContent = value
           }
           if( value instanceof drmfTemplate) {
+            console.log('Text ==> drfmTemplate')
             const new_nodes = value.createDOM()
             // replace current with new
             const pNode = text_node.parentNode
@@ -172,7 +232,11 @@ export class drmfTemplate {
               pNode.insertBefore( n, text_node )
             }            
             pNode.removeChild(text_node)
+            console.log(value)
             this.slotTypes[i] = [2, last_root, value, new_nodes] 
+            // if the slot is base slot...
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
+            console.log(this.baseNodes)
           }
           if(value instanceof drmfComponent) {
             const comp = value as drmfComponent
@@ -183,11 +247,15 @@ export class drmfTemplate {
               pNode.insertBefore( n, text_node )
             }  
             pNode.removeChild(text_node)
-            this.slotTypes[i] = [5, last_root, comp, tpl, new_nodes]             
+            this.slotTypes[i] = [5, last_root, comp, tpl, new_nodes]     
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
+       
             return
           } 
 
         break;
+
+         // last node was drmfTemplateCollection
         case 4:
           const tpls = value as drmfTemplate[]
           const curr_collection = last_slot[2] as drmfTemplateCollection
@@ -228,9 +296,9 @@ export class drmfTemplate {
             }            
           }
           curr_collection.list = list
-
         break;
 
+        // last node was drmfComponent        
         case 5:
 
           if(typeof(value) == 'string') {
@@ -244,6 +312,8 @@ export class drmfTemplate {
               pNode.removeChild( n )
             }  
             this.slotTypes[i] = [3, pNode, txt] 
+
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = [txt]            
           }
 
           if(value instanceof drmfTemplate) {
@@ -253,6 +323,7 @@ export class drmfTemplate {
             const rTpl = value as drmfTemplate
             const newTpl = tplNow.replaceWith( rTpl ) 
             this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]  
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
           }          
 
           if(value instanceof drmfComponent) {
@@ -270,6 +341,7 @@ export class drmfTemplate {
               this.slotTypes[i][2] = renderedComp 
               this.slotTypes[i][3] = newTpl 
             }   
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = newTpl
           }
           
         break;
@@ -314,7 +386,9 @@ export class drmfTemplate {
         if( activeNode instanceof Node && activeNode) {
           activeNode.appendChild( new_node )
         } else {
-          me.rootNodes.push(new_node)        
+          me.rootNodes.push(new_node)  
+          if(!me.baseNodes[index]) me.baseNodes[index] = []   
+          me.baseNodes[index].push( new_node )  
         }
         activeNode = new_node
         nodetree.push(new_node)
@@ -396,7 +470,8 @@ export class drmfTemplate {
               snodes.push( it )
             }
             // render template
-            me.slotTypes[( index - 1 ) >> 1] = [2, activeNode, tpl, snodes]           
+            me.slotTypes[( index - 1 ) >> 1] = [2, activeNode, tpl, snodes]
+            me.baseNodes[index] = tpl           
             return
           }            
           if(value instanceof drmfComponent) {
@@ -409,7 +484,8 @@ export class drmfTemplate {
               snodes.push( it )
             }
             // render template
-            me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]               
+            me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]  
+            me.baseNodes[index] = tpl             
             return
           }            
           if(Array.isArray( value )) {
@@ -423,12 +499,14 @@ export class drmfTemplate {
             const snodes = []
             for(let idx=0; idx < tpls.length; idx++) {
               let cont = tpls[idx]
+              /*
               if(!cont || !cont.createDOM) {
                 throw `Array or result of map must contain valid template elements:\n ${value} \n----------------------------\n ${me.valuestream}`
               }
               if(!activeNode) {
                 throw `Array can not be root node of html:\n ${value} \n----------------------------\n ${me.valuestream}`
               }
+              */
               const items = cont.createDOM()
               for( let it of items ) {
                 append( it )
@@ -437,6 +515,7 @@ export class drmfTemplate {
             }
             // render templates
             me.slotTypes[( index - 1 ) >> 1] = [4, activeNode, coll, snodes]  
+            if(!activeNode) me.baseNodes[index] = coll
             return
           }            
         }
@@ -449,6 +528,8 @@ export class drmfTemplate {
           me.slotTypes[( index - 1 ) >> 1] = [3, activeNode, txt]           
         }
         if(!activeNode) {
+          if(!me.baseNodes[index]) me.baseNodes[index] = []
+          me.baseNodes[index].push( txt )
           me.rootNodes.push(txt)
           return 
         }  
