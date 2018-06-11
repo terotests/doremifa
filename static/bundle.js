@@ -191,8 +191,31 @@ var Hello = /** @class */ (function (_super) {
     };
     return Hello;
 }(index_1.drmfComponent));
-Doremifa.mount(document.body, new Hello());
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+// The Materialize demo...
+// Doremifa.mount(document.body, new WestWorld() )
+function frontpage(state) {
+    return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"], ["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"])));
+}
+function jumbo(state) {
+    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\">Learn more</a>\n    </p>\n  </div>  \n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\">Learn more</a>\n    </p>\n  </div>  \n  "])));
+}
+function buttons(state) {
+    return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["\n  <div>\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\">Dark</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n  </div>\n  "], ["\n  <div>\n    ",
+        "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=",
+        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=",
+        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\">Dark</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n  </div>\n  "])), state.warning ? index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject([""], [""]))), function (_) {
+        index_1.setState({ warning: '' });
+    }, function (_) {
+        index_1.setState({ warning: 'I Give you a warning here!!!' });
+    });
+}
+Doremifa.mount(document.body, function (_) { return index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject(["\n\n<div class=\"container\">\n  <!-- Content here -->\n\n  ", "\n\n</div>\n\n"], ["\n\n<div class=\"container\">\n  <!-- Content here -->\n\n  ",
+    "\n\n</div>\n\n"])), index_1.router({
+    default: frontpage,
+    buttons: buttons,
+    jumbo: jumbo,
+})); });
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_15, templateObject_16, templateObject_14, templateObject_17;
 /*
 // mount application into some node
 Doremifa.mount(document.body,
