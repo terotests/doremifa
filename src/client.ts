@@ -261,7 +261,85 @@ class Hello extends drmfComponent {
     return html`<div>Hello ${this.msg}</div>`
   }
 }
-Doremifa.mount(document.body, new Hello() )
+
+// The Materialize demo...
+// Doremifa.mount(document.body, new WestWorld() )
+
+function frontpage(state) {
+  return html`
+  <h2>Hello World</h2>
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <a href="#buttons" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+
+  <div class="alert alert-primary" role="alert">
+    This is a primary alert—check it out!
+  </div>`
+}
+
+function jumbo(state) {
+  return html`
+  <div class="jumbotron">
+    <h1 class="display-4">Hello, world!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </p>
+  </div>  
+  `
+}
+
+function buttons(state) {
+  return html`
+  <div>
+    ${state.warning ? html`
+    <div class="alert alert-warning" role="alert">
+      ${state.warning}
+    </div>
+    ` : html``}
+    <div>  
+      <a role="button" class="btn btn-primary" href="#jumbo">Primary</a>
+      <button type="button" class="btn btn-secondary" click=${_ => {
+        setState({warning: ''})
+      }}>Secondary</button>
+      <button type="button" class="btn btn-success">Success</button>
+      <button type="button" class="btn btn-danger">Danger</button>
+      <button type="button" class="btn btn-warning" click=${_ => {
+        setState({warning: 'I Give you a warning here!!!'})
+      }}>Warning</button>
+      <button type="button" class="btn btn-info">Info</button>
+      <button type="button" class="btn btn-light">Light</button>
+      <button type="button" class="btn btn-dark">Dark</button>  
+      <button type="button" class="btn btn-link">Link</button>  
+    </div>
+  </div>
+  `
+}
+
+Doremifa.mount(document.body, _ => html`
+
+<div class="container">
+  <!-- Content here -->
+
+  ${router({
+    default : frontpage,
+    buttons,
+    jumbo,
+  })}
+
+</div>
+
+`)
+
+
+
+
 
 /*
 // mount application into some node
