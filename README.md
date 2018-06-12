@@ -26,7 +26,7 @@ setInterval( _ => { setState({time:(new Date).toTimeString()})},1000)
 ```
 
 [Hello World in CodePen](https://codepen.io/tero_koodia/pen/RJKogo)
-[Router Example in CodePen](https://codepen.io/tero_koodia/pen/mKRrXd)
+[Router Example in CodePen](https://codepen.io/tero_koodia/full/eKWvYJ/)
 
 ## Usage and Install
 
