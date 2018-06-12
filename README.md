@@ -97,7 +97,7 @@ Event handlers get two params:
 - `tpl` the `drmfTemplate` -object which can old ID or list values
 
 ```javascript
-html`<button click=${(e, tpl) => {
+html`<button onclick=${(e, tpl) => {
   // tpl holds the template object
 }}>Click me!</button>`
 ```
@@ -116,7 +116,7 @@ html`<div>
   <input id="name" />
   <div list="divs" />
   <div list="divs" />
-  <button click=${(e, tpl) => {
+  <button onclick=${(e, tpl) => {
     alert(tpl.ids.name)           // value of input 
     alert(tpl.list.divs.length)   // 2
 }}>Click me!</button>

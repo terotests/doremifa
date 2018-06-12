@@ -1,9 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14,354 +10,113 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+    return cooked;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = require("./index");
-var Doremifa = require("./index");
-var timers_1 = require("timers");
-function intropage(state) {
-    var colorList = ['red', 'yellow', 'green', 'brown'];
-    return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
-        "\n</form>\n<ul>\n  ", "\n</ul>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        onclick=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        onclick=",
-        " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "])), state.color === color, function (e, tpl) {
-        index_1.setState({ color: color });
-    }, color); }), [1, 2, 3, 4, 5, 6].map(function (item) { return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<li>", "</li>"], ["<li>", "</li>"])), item); }));
-}
-function details(state) {
-    var item = state.list.filter(function (item) { return item.id == state.params.id; }).pop();
-    // could you just bind to the ID values directly...
-    return index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" onclick=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" onclick=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" onclick=",
-        ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" onclick=",
-        ">Poista</a>      \n    </div>    \n    </form>\n  </div>"])), state.params.id, item.name, item.duration, function (e, tpl) {
-        item.duration = tpl.ids.duration.value;
-        item.name = tpl.ids.name.value;
-        window.location.hash = 'lista';
-    }, function (e, tpl) {
-        removeTask(item);
-        window.location.hash = 'lista';
-    });
-}
-function removeTask(task) {
-    var list = index_1.getState().list;
-    var index = list.indexOf(task);
-    list.splice(index, 1);
-    index_1.setState({ list: list });
-}
-var id_list = 10;
-function generateID() {
-    return id_list++;
-}
-function addTask() {
-    var list = index_1.getState().list;
-    var id = generateID();
-    var task = {
-        id: id,
-        name: 'Task ' + id,
-        duration: Math.floor(2 + Math.random() * 8)
-    };
-    list.push(task);
-    index_1.setState({ list: list });
-    return task;
-}
-function add100Tasks() {
-    var cnt = 100;
-    while (cnt--)
-        addTask();
-}
-function listademo(state) {
-    var item_list;
-    var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
-        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        onclick=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          onclick=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"], ["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        onclick=",
-        ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          onclick=",
-        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"])), item.id, function (e) {
-        e.preventDefault();
-        item.duration--;
-        index_1.setState({});
-    }, function (e) {
-        e.preventDefault();
-        item.duration++;
-        index_1.setState({});
-    }, item.duration > 3 ? 'new badge red' : 'new badge blue', item.duration, item.name); }));
-    return res;
-}
-function createPoint(item) {
-    var time = (new Date).getTime() / 1000;
-    var value = item.id;
-    var r = 10 + Math.sin(value / 10) * 5;
-    var op = Math.abs(Math.cos(time));
-    var x = Math.floor(200 + Math.cos(time + value / 10) * (20 + value / 2) * Math.cos(time));
-    var y = Math.floor(200 + Math.sin(time + value / 10) * (20 + value / 2) * Math.cos(time));
-    return index_1.html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<circle fill=\"red\" opacity=", " r=", " cx=", " cy=", "/>"], ["<circle fill=\"red\" opacity=", " r=", " cx=", " cy=", "/>"])), op, r, x, y);
-}
-function svgPart(state) {
-    return index_1.html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<svg height=\"600\" width=\"600\" viewBox=\"0 0 400 400\">\n                  ", "\n                </svg>"], ["<svg height=\"600\" width=\"600\" viewBox=\"0 0 400 400\">\n                  ", "\n                </svg>"])), state.list.map(createPoint));
-}
-var WestWorld = /** @class */ (function (_super) {
-    __extends(WestWorld, _super);
-    function WestWorld() {
-        var _this = _super.call(this) || this;
-        console.log('West World was created!!!');
-        return _this;
+var Doremifa = require("../src/");
+var html = Doremifa.html;
+var setState = Doremifa.setState;
+var getState = Doremifa.getState;
+var someClass = /** @class */ (function (_super) {
+    __extends(someClass, _super);
+    function someClass() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    WestWorld.prototype.removeItem = function () {
-        var list = index_1.getState().list;
-        list.push(Math.floor(Math.random() * 100));
-        index_1.setState({ list: list });
+    someClass.prototype.render = function () {
+        return html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>Object test with render()</div>"], ["<div>Object test with render()</div>"])));
     };
-    WestWorld.prototype.render = function () {
-        var state = index_1.getState();
-        return index_1.html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" onclick=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" onclick=",
-            ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ",
-            "\n      </div>        \n    </div>   \n    "])), index_1.getState().list.length, function (e) {
-            e.preventDefault();
-            addTask();
-        }, index_1.router({
-            intro: intropage,
-            lista: listademo,
-            details: details,
-            default: listademo,
-            svg: svgPart,
-        }));
-    };
-    return WestWorld;
-}(index_1.drmfComponent));
-exports.WestWorld = WestWorld;
-var had_it = false;
-var HelloWorld = /** @class */ (function (_super) {
-    __extends(HelloWorld, _super);
-    function HelloWorld() {
-        var _this = _super.call(this) || this;
-        var c = _this.myCanvas = document.createElement("canvas");
-        c.setAttribute('width', '200px');
-        c.setAttribute('height', '200px');
-        var ctx = c.getContext("2d");
-        ctx.moveTo(0, 0);
-        ctx.lineTo(200, 100);
-        ctx.stroke();
-        return _this;
+    return someClass;
+}(Doremifa.drmfComponent));
+var obj = new someClass();
+function renderType(state) {
+    switch (state.type) {
+        case 0:
+            return 'Just a Text <b>HTML not rendered</b>';
+        case 1:
+            return ['Array ', html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<b>Of</b> "], ["<b>Of</b> "]))), [3, ' Different elems']];
+        case 2:
+            return obj;
+        case 3:
+            return html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<div>HTML <u>template</u> built with literal</div>"], ["<div>HTML <u>template</u> built with literal</div>"])));
     }
-    HelloWorld.prototype.render = function () {
-        var _this = this;
-        return index_1.html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["\n      <h4 id='head'>Hello World, it is ", "</h4>\n      <div id='canvasContainer'/>\n      Very nice...\n      "], ["\n      <h4 id='head'>Hello World, it is ", "</h4>\n      <div id='canvasContainer'/>\n      Very nice...\n      "])), (new Date).toString()).onReady(function (tpl) {
-            console.log('Binded ');
-            tpl.ids.head.setAttribute('style', 'color:green;');
-            tpl.ids.canvasContainer.appendChild(_this.myCanvas);
-        });
-    };
-    return HelloWorld;
-}(index_1.drmfComponent));
-exports.HelloWorld = HelloWorld;
-index_1.setState({
-    color: 'red',
-    list: [1, 2, 3, 4].map(function (item) { return ({
-        id: item,
-        name: 'Task ' + item,
-        duration: Math.floor(1 + Math.random() * 8)
-    }); })
-});
-var ww = new WestWorld();
-var hello = new HelloWorld();
-var cnt = 0;
+}
 // initial state
-index_1.setState({
+setState({
+    editable: false,
+    type: 0,
     time: (new Date).toTimeString(),
     items: [1, 2, 3, 4].map(function (id) { return ({ id: id, name: 'item ' + id }); })
 });
 var idcnt = 4;
 var add_item = function () {
-    var state = index_1.getState();
+    var state = getState();
     idcnt++;
-    index_1.setState({
+    setState({
         items: state.items.concat([{ id: idcnt, name: 'item ' + idcnt }])
     });
 };
 var delete_item = function (item) {
-    var state = index_1.getState();
-    index_1.setState({
+    var state = getState();
+    setState({
         items: state.items.filter(function (i) { return i.id != item.id; }).slice()
     });
 };
-var Hello = /** @class */ (function (_super) {
-    __extends(Hello, _super);
-    function Hello() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.msg = 'World';
-        return _this;
-    }
-    Hello.prototype.render = function () {
-        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", " Component</div>"], ["<div>Hello ", " Component</div>"])), this.msg);
-    };
-    return Hello;
-}(index_1.drmfComponent));
-// The Materialize demo...
-// Doremifa.mount(document.body, new WestWorld() )
-function frontpage(state) {
-    return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"], ["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"])));
+function editable_row(item) {
+    return html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<li ", " class=\"list-group-item\"><input value=", " oninput=", "/><a \nclass=\"btn btn-light float-right\" role=\"button\" href=", ">Edit</a>\n<button type=\"button\" class=\"btn btn-light float-right\" \n  onclick=", "\n>Remove</button>   \n</li>"], ["<li ", " class=\"list-group-item\"><input value=", " oninput=",
+        "/><a \nclass=\"btn btn-light float-right\" role=\"button\" href=", ">Edit</a>\n<button type=\"button\" class=\"btn btn-light float-right\" \n  onclick=", "\n>Remove</button>   \n</li>"])), Doremifa.key(item.id), item.name, function (e) {
+        item.name = e.target.value;
+    }, "#details/id/" + item.id, function (_) { return delete_item(item); });
 }
-function jumbo(state) {
-    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" onclick=", ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" onclick=",
-        ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "])), function (e) {
-        e.preventDefault();
-        index_1.getState().items.push({ name: 'foobar ' + Math.floor(Math.random() * 100) });
-        index_1.setState({});
-    }, index_1.getState().items.map(function (item) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<div>", "</div>"], ["<div>", "</div>"])), item.name); }));
+function std_row(item) {
+    return html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<li class=\"list-group-item\">", "</li>"], ["<li class=\"list-group-item\">", "</li>"])), item.name);
 }
-var helloComp = new Hello();
-function buttons(state) {
-    return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" onclick=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" onclick=", ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" onclick=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" onclick=", ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "], ["\n\n    ",
-        "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" onclick=",
-        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" onclick=",
-        ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" onclick=",
-        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" onclick=",
-        ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "])), state.warning ? index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject([""], [""]))), function (_) {
-        index_1.setState({ warning: '' });
-    }, function (_) {
-        var s = index_1.getState();
-        s.items.splice(0, 1);
-        index_1.setState({});
-    }, function (_) {
-        index_1.setState({ warning: 'I Give you a warning here!!!' });
-    }, function (_) {
-        index_1.setState({ items: index_1.getState().items.reverse() });
-    }, index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["abc", "efg"], ["abc", "efg"])), index_1.html(templateObject_19 || (templateObject_19 = __makeTemplateObject(["<div>Deep Div</div>"], ["<div>Deep Div</div>"])))), counter & 1 ? (new Date()).toString() : index_1.html(templateObject_20 || (templateObject_20 = __makeTemplateObject([" <div>OK1?</div> <div>OK2?</div> "], [" <div>OK1?</div> <div>OK2?</div> "]))), counter & 1 ? 'Alternative text...' : helloComp, index_1.getState().items.map(function (item) { return index_1.html(templateObject_21 || (templateObject_21 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }));
-}
-function testBox(txt, value) {
-    return index_1.html(templateObject_22 || (templateObject_22 = __makeTemplateObject(["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "], ["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "])), txt, value);
-}
-// ${ counter & 1 ? 'Alternative text...' : helloComp}
-//  ${ counter & 1 ? 'Array OR' : getState().items.map( item => html`<div>ARRAY ${item.name}</div>`)}
-var counter = 0;
-var helloComp2 = new Hello();
-Doremifa.mount(document.body, function (state) { return index_1.html(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ", "\n</div>\n", "\n", "\n", "\n", "\n\n"], ["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ",
-    "\n</div>\n", "\n", "\n", "\n", "\n\n"])), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_24 || (templateObject_24 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_25 || (templateObject_25 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), index_1.router({
-    default: frontpage,
-    buttons: buttons,
-    jumbo: jumbo,
-}), testBox('Test from TXT -> array', Math.floor(counter) & 1 ? 'TXT' : index_1.getState().items.map(function (item) { return index_1.html(templateObject_26 || (templateObject_26 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from html -> array', Math.floor(counter) & 1 ? index_1.html(templateObject_27 || (templateObject_27 = __makeTemplateObject(["<div><b>DIV</b></div>"], ["<div><b>DIV</b></div>"]))) : index_1.getState().items.map(function (item) { return index_1.html(templateObject_28 || (templateObject_28 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from static array -> array', Math.floor(counter) & 1 ? [1, '+', 2, index_1.html(templateObject_29 || (templateObject_29 = __makeTemplateObject(["<b>== 10</b>"], ["<b>== 10</b>"])))] : index_1.getState().items.map(function (item) { return index_1.html(templateObject_30 || (templateObject_30 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from Object -> array', Math.floor(counter) & 1 ? helloComp2 : index_1.getState().items.map(function (item) { return index_1.html(templateObject_31 || (templateObject_31 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }))); });
-timers_1.setInterval(function (_) {
-    counter++;
-    index_1.setState({});
-}, 5000);
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_14, templateObject_13, templateObject_16, templateObject_17, templateObject_19, templateObject_18, templateObject_20, templateObject_21, templateObject_15, templateObject_22, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_23;
-/*
 // mount application into some node
-Doremifa.mount(document.body,
- (state) =>
-    html`Fooo...
-
-  <div>${state.time}</div>
-  <!-- navigation -->
-  <a href="#">Default</a>
-  <a href="#itemlist">Show List</a>
-  <a href="#page2">Show Page 2</a>
-  ${Doremifa.router({
-  
-    default : (state) => html`
-<div>
-  <hr><br><br>
-  This is the default route. onclick show list to edit list of items.
-  Currently the list of items is ${state
-    .items.map( (item,i) =>
-               html`${i > 0 ? ', ' : ''} ${item.name}`)}
-  <div>
-    ${state.items.length === 4 ? 'Four' : html`<b>NOT FOUR!</b>`}
-  </div>
-</div>
-    `,
-
-    // route for #page2
-    page2 : () =>html`
-  <h2>Route for page 2</h2>
-  <hr>
-  <div>
-    The state is now
-    <pre>${JSON.stringify(state,null,2)}</pre>
-  </div>
-`,
-  
-    // route for #itemlist
-    itemlist : () =>
-      html`
-        <h2>Items</h2>
-        <button onclick=${add_item}>+ item</button>
-        <div>
-          ${state.items.map( item =>
-            html`<div>${item.name}<a href=${`#details/id/${item.id}`}>Edit</div>`)}
-        </div>
-      `,
-  
-    // route for #details/id/xxxx
-    details(state) {
-      const item = state
-        .items.filter( item => item.id == state.params.id).pop()
-      return html`<h2>Item ${item.id}</h2>
-        <input value=${item.name} id="name">
-        <button onclick=${(e,tpl)=>{
-          item.name = tpl.ids.name.value
-          window.location.hash = "#itemlist"
-        }}>Save</button>
-        <button onclick=${_ => {
-          delete_item(item)
-          window.location.hash = "#itemlist"
-        }}>Delete</button>
-      `
-     }
-    })}
-
-`
- )
-*/
+Doremifa.mount(document.body, function (state) {
+    return html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n</div>\n"], ["\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
+        "\n</div>\n"])), state.time, Doremifa.router({
+        // route for #page2 
+        page2: function (state) { return html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ", "\n  </table>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ",
+            "\n  </table>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"])), [[1, 2], [3, 4]].map(function (tr) {
+            return html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<tr>\n      ", "\n    </tr>"], ["<tr>\n      ", "\n    </tr>"])), tr.map(function (text) { return html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<td>Cell ", "</td>"], ["<td>Cell ", "</td>"])), text); }));
+        }), JSON.stringify(state, null, 2)); },
+        // route for #itemlist
+        default: function (state) {
+            return html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", "</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">Reverse</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">", "</button>\n<ul class=\"list-group\">\n        ", "\n</ul>\n"], ["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", "</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=",
+                ">Reverse</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=",
+                ">", "</button>\n<ul class=\"list-group\">\n        ",
+                "\n</ul>\n"])), [0, 1, 2, 3].map(function (ti) { return html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<button onclick=", ">type ", "</button>"], ["<button onclick=", ">type ", "</button>"])), function (_) { return setState({ type: ti }); }, ti); }), renderType(state), state.items.length, add_item, function (_) {
+                setState({ items: state.items.reverse() });
+            }, function (_) {
+                setState({ editable: !state.editable });
+            }, state.editable ? 'Hide Edits' : 'Toggle Editable', state.items.length ? state.items.map(function (item) {
+                return state.editable ? editable_row(item) : std_row(item);
+            }) : html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<li class=\"list-group-item\">List is empty</li>"], ["<li class=\"list-group-item\">List is empty</li>"]))));
+        },
+        // route for #details/id/xxxx  
+        details: function (state) {
+            var item = state
+                .items.filter(function (item) { return item.id == state.params.id; }).pop();
+            return html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=", ">Save</button>\n        <button onclick=", ">Delete</button>      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=",
+                ">Save</button>\n        <button onclick=",
+                ">Delete</button>      "])), item.id, item.name, function (e, tpl) {
+                item.name = tpl.ids.name.value;
+                window.location.hash = "#";
+            }, function (_) {
+                delete_item(item);
+                window.location.hash = "#";
+            });
+        }
+    }));
+});
 // update the clock
-/*
-setInterval( _ => {
-  setState({time:(new Date).toTimeString()})
-},1000)
-*/
-/*
-mount( document.body, (state) => {
-  return html`
+setInterval(function (_) {
+    setState({ time: (new Date).toTimeString() });
+}, 1000);
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_9, templateObject_8, templateObject_7, templateObject_11, templateObject_12, templateObject_10, templateObject_13, templateObject_6;
 
-  <header class="mui-appbar mui--z1">
-  <div class="mui-container">
-    <table>
-      <tr class="mui--appbar-height">
-        <td class="mui--text-title">Brand.io</td>
-        <td class="mui--text-right">
-          <ul class="mui-list--inline mui--text-body2">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">Login</a></li>
-          </ul>
-        </td>
-      </tr>
-    </table>
-  </div>
-  </header>
-  <!-- the actual page content comes in here -->
-  <div id="content-wrapper" class="mui--text-center">
-    <div class="mui--appbar-height"></div>
-    <br>
-    <br>
-    <div class="mui--text-display3">Brand.io ... comment ?? </div>
-    <br>
-    <br>
-    <button class="mui-btn mui-btn--raised">Get started</button>
-    <!--
-    <img width="200" height="200" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png">
-    -->
-  </div>
-  <footer>
-    <div class="mui-container mui--text-center mui--text-bottom">
-      Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
-    </div>
-  </footer>
-  
-  `
-})
-*/
-// setTimeout(add100Tasks,100)
-// setInterval( _ => setState({}), 20)
-
-},{"./index":2,"timers":5}],2:[function(require,module,exports){
+},{"../src/":2}],2:[function(require,module,exports){
 "use strict";
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
@@ -1520,267 +1275,4 @@ var XMLParser = /** @class */ (function () {
 }());
 exports.XMLParser = XMLParser;
 
-},{"./index":2}],4:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],5:[function(require,module,exports){
-var nextTick = require('process/browser.js').nextTick;
-var apply = Function.prototype.apply;
-var slice = Array.prototype.slice;
-var immediateIds = {};
-var nextImmediateId = 0;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) { timeout.close(); };
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// That's not how node.js implements it but the exposed api is the same.
-exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-  var id = nextImmediateId++;
-  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-  immediateIds[id] = true;
-
-  nextTick(function onNextTick() {
-    if (immediateIds[id]) {
-      // fn.call() is faster so we optimize for the common use-case
-      // @see http://jsperf.com/call-apply-segu
-      if (args) {
-        fn.apply(null, args);
-      } else {
-        fn.call(null);
-      }
-      // Prevent ids from leaking
-      exports.clearImmediate(id);
-    }
-  });
-
-  return id;
-};
-
-exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-  delete immediateIds[id];
-};
-},{"process/browser.js":4}]},{},[1]);
+},{"./index":2}]},{},[1]);

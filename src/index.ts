@@ -223,7 +223,7 @@ export class drmfTemplate {
             if(is_svg) {
               last_root.setAttributeNS( null, name, value )
             } else {
-              last_root.setAttribute( name, value )
+              last_root.setAttribute( name, value )                         
             }
           }          
         break;

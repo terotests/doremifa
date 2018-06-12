@@ -1,8 +1,8 @@
 import { drfmKey } from "./index";
 
 // TODO:
-// - support self closing tags
-// http://xahlee.info/js/html5_non-closing_tag.html
+// - support char escape
+//   https://www.w3.org/International/questions/qa-escapes
 
 export type bufferType = string | any
 
