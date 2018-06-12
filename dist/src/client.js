@@ -16,6 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
 var Doremifa = require("./index");
+var timers_1 = require("timers");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
     return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
@@ -68,9 +69,9 @@ function add100Tasks() {
 function listademo(state) {
     var item_list;
     var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
-        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"], ["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
+        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"], ["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
         ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=",
-        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"])), item.id, function (e) {
+        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"])), item.id, function (e) {
         e.preventDefault();
         item.duration--;
         index_1.setState({});
@@ -186,7 +187,7 @@ var Hello = /** @class */ (function (_super) {
         return _this;
     }
     Hello.prototype.render = function () {
-        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", "</div>"], ["<div>Hello ", "</div>"])), this.msg);
+        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", " Component</div>"], ["<div>Hello ", " Component</div>"])), this.msg);
     };
     return Hello;
 }(index_1.drmfComponent));
@@ -196,25 +197,50 @@ function frontpage(state) {
     return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"], ["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"])));
 }
 function jumbo(state) {
-    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\">Learn more</a>\n    </p>\n  </div>  \n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\">Learn more</a>\n    </p>\n  </div>  \n  "])));
+    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=", ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=",
+        ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "])), function (e) {
+        e.preventDefault();
+        index_1.getState().items.push({ name: 'foobar ' + Math.floor(Math.random() * 100) });
+        index_1.setState({});
+    }, index_1.getState().items.map(function (item) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<div>", "</div>"], ["<div>", "</div>"])), item.name); }));
 }
+var helloComp = new Hello();
 function buttons(state) {
-    return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\">Dark</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n  "], ["\n\n    ",
+    return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=", ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=", ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "], ["\n\n    ",
         "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=",
-        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=",
-        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\">Dark</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n  "])), state.warning ? index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject([""], [""]))), function (_) {
+        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=",
+        ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=",
+        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=",
+        ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "])), state.warning ? index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject([""], [""]))), function (_) {
         index_1.setState({ warning: '' });
     }, function (_) {
+        var s = index_1.getState();
+        s.items.splice(0, 1);
+        index_1.setState({});
+    }, function (_) {
         index_1.setState({ warning: 'I Give you a warning here!!!' });
-    });
+    }, function (_) {
+        index_1.setState({ items: index_1.getState().items.reverse() });
+    }, index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["abc", "efg"], ["abc", "efg"])), index_1.html(templateObject_19 || (templateObject_19 = __makeTemplateObject(["<div>Deep Div</div>"], ["<div>Deep Div</div>"])))), counter & 1 ? (new Date()).toString() : index_1.html(templateObject_20 || (templateObject_20 = __makeTemplateObject([" <div>OK1?</div> <div>OK2?</div> "], [" <div>OK1?</div> <div>OK2?</div> "]))), counter & 1 ? 'Alternative text...' : helloComp, index_1.getState().items.map(function (item) { return index_1.html(templateObject_21 || (templateObject_21 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }));
 }
-Doremifa.mount(document.body, function (_) { return index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject(["\n\n<div class=\"container\">\n  <!-- Content here -->\n\n  ", "\n\n</div>\n\n"], ["\n\n<div class=\"container\">\n  <!-- Content here -->\n\n  ",
-    "\n\n</div>\n\n"])), index_1.router({
+function testBox(txt, value) {
+    return index_1.html(templateObject_22 || (templateObject_22 = __makeTemplateObject(["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "], ["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "])), txt, value);
+}
+// ${ counter & 1 ? 'Alternative text...' : helloComp}
+//  ${ counter & 1 ? 'Array OR' : getState().items.map( item => html`<div>ARRAY ${item.name}</div>`)}
+var counter = 0;
+var helloComp2 = new Hello();
+Doremifa.mount(document.body, function (state) { return index_1.html(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ", "\n</div>\n", "\n", "\n", "\n", "\n\n"], ["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ",
+    "\n</div>\n", "\n", "\n", "\n", "\n\n"])), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_24 || (templateObject_24 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_25 || (templateObject_25 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), index_1.router({
     default: frontpage,
     buttons: buttons,
     jumbo: jumbo,
-})); });
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_13, templateObject_15, templateObject_16, templateObject_14, templateObject_17;
+}), testBox('Test from TXT -> array', Math.floor(counter) & 1 ? 'TXT' : index_1.getState().items.map(function (item) { return index_1.html(templateObject_26 || (templateObject_26 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from html -> array', Math.floor(counter) & 1 ? index_1.html(templateObject_27 || (templateObject_27 = __makeTemplateObject(["<div><b>DIV</b></div>"], ["<div><b>DIV</b></div>"]))) : index_1.getState().items.map(function (item) { return index_1.html(templateObject_28 || (templateObject_28 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from static array -> array', Math.floor(counter) & 1 ? [1, '+', 2, index_1.html(templateObject_29 || (templateObject_29 = __makeTemplateObject(["<b>== 10</b>"], ["<b>== 10</b>"])))] : index_1.getState().items.map(function (item) { return index_1.html(templateObject_30 || (templateObject_30 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from Object -> array', Math.floor(counter) & 1 ? helloComp2 : index_1.getState().items.map(function (item) { return index_1.html(templateObject_31 || (templateObject_31 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }))); });
+timers_1.setInterval(function (_) {
+    counter++;
+    index_1.setState({});
+}, 5000);
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_14, templateObject_13, templateObject_16, templateObject_17, templateObject_19, templateObject_18, templateObject_20, templateObject_21, templateObject_15, templateObject_22, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_23;
 /*
 // mount application into some node
 Doremifa.mount(document.body,

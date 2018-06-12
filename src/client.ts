@@ -109,7 +109,7 @@ function listademo(state) {
     <a class="waves-effect waves-light btn" click=${add100Tasks}>+ 100 Tasks</a>
     <div class="collection">
       ${item_list = state.list.sort( (a,b) => a.id - b.id
-      ).map( item => html`<a href="#details/id/${item.id}" class="collection-item" id="link">
+      ).map( item => html`<li><a href="#details/id/${item.id}" class="collection-item" id="link">
 
         <span class="new badge blue"
         data-badge-caption="" 
@@ -127,7 +127,7 @@ function listademo(state) {
           }}>+</span>      
         <span class=${item.duration > 3 ? 'new badge red' : 'new badge blue'} 
           data-badge-caption="h" >${item.duration}</span>
-        ${item.name}</a>` ) }
+        ${item.name}</a></li>` ) }
     </div>    
   </div>
   `
@@ -258,7 +258,7 @@ const delete_item = (item) =>{
 class Hello extends drmfComponent {
   msg = 'World'
   render() {
-    return html`<div>Hello ${this.msg}</div>`
+    return html`<div>Hello ${this.msg} Component</div>`
   }
 }
 
@@ -289,16 +289,24 @@ function jumbo(state) {
     <hr class="my-4">
     <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
     <p class="lead">
-      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+      <a class="btn btn-primary btn-lg" href="#" role="button" click=${e => {
+        e.preventDefault()
+        getState().items.push({name:'foobar ' + Math.floor(Math.random()*100)})
+        setState({})
+      }}>+ Item</a>
+      <a class="btn btn-primary btn-lg" href="#" role="button" >See more</a>
     </p>
   </div>  
+  ${getState().items.map( item => html`<div>${item.name}</div>`)}
   `
 }
 
+const helloComp = new Hello()
 function buttons(state) {
   return html`
 
     ${state.warning ? html`
+    Example warning:
     <div class="alert alert-warning" role="alert">
       ${state.warning}
     </div>
@@ -309,32 +317,67 @@ function buttons(state) {
         setState({warning: ''})
       }}>Secondary</button>
       <button type="button" class="btn btn-success">Success</button>
-      <button type="button" class="btn btn-danger">Danger</button>
+      <button type="button" class="btn btn-danger" click=${_ => {
+        const s = getState()
+        s.items.splice(0,1);
+        setState({})
+      }}>Danger</button>
       <button type="button" class="btn btn-warning" click=${_ => {
         setState({warning: 'I Give you a warning here!!!'})
       }}>Warning</button>
       <button type="button" class="btn btn-info">Info</button>
       <button type="button" class="btn btn-light">Light</button>
-      <button type="button" class="btn btn-dark">Dark</button>  
+      <button type="button" class="btn btn-dark" click=${ _ =>{
+        setState({items:getState().items.reverse()})
+      }}>Reverse</button>  
       <button type="button" class="btn btn-link">Link</button>  
     </div>
-  `
+    ${html`abc${html`<div>Deep Div</div>`}efg`}
+    ${ counter & 1 ? (new Date()).toString() : html` <div>OK1?</div> <div>OK2?</div> `}
+    ${ counter & 1 ? 'Alternative text...' : helloComp}
+    ${getState().items.map( item => html`<div>...${item.name}</div>`)}
+ `
 }
 
-Doremifa.mount(document.body, _ => html`
+function testBox(txt, value) {
+  return html`
+  <div style="width:200px;float:left">
+    <div>${txt}</div>
+    ${value}
+  </div>  
+  `
+}
+// ${ counter & 1 ? 'Alternative text...' : helloComp}
 
+//  ${ counter & 1 ? 'Array OR' : getState().items.map( item => html`<div>ARRAY ${item.name}</div>`)}
+
+let counter = 0
+const helloComp2 = new Hello()
+Doremifa.mount(document.body, state => html`
+${state.items.map( (item, idx) => idx & 1 ? html`<b>${item.name}</b>` : 'Hello ' + item.name)}
 <div class="container">
   <!-- Content here -->
-
+  <div>
+    <input/>
+    ${state.items.map( (item, idx) => idx & 1 ? html`<b>${item.name}</b>` : 'Hello ' + item.name)}
+  </div>
   ${router({
     default : frontpage,
     buttons,
     jumbo,
   })}
-
 </div>
+${ testBox( 'Test from TXT -> array', Math.floor( counter ) & 1 ? 'TXT' :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from html -> array', Math.floor( counter ) & 1 ? html`<div><b>DIV</b></div>` :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from static array -> array',  Math.floor( counter ) & 1 ? [1, '+', 2, html`<b>== 10</b>`] :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from Object -> array', Math.floor( counter ) & 1 ? helloComp2 :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
 
 `)
+
+setInterval( _=> {
+  counter++
+  setState({})
+}, 5000)
 
 
 

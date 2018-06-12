@@ -20,21 +20,6 @@ export class drmfComponent {
   tpl() : drmfTemplate {
     return this.lastRender
   }
-
-  toDom() : Node[] {
-    const tpl = this.render()    
-    // if not rendered at all or different template
-    if(!this.lastRender || (this.lastRender.key != tpl.key)) {
-      const elems = tpl.createDOM()
-      this.lastRender = tpl
-      return elems
-    }
-    const last = this.lastRender 
-    last.updateValues( tpl.values )
-    // TODO: does not work always, root nodes can change
-    return last.rootNodes
-  }
-
   render() : drmfTemplate {
     return drmf`<div>Hello World</div>`
   }
@@ -43,6 +28,47 @@ export class drmfComponent {
 export class drmfTemplateCollection {
   node:Node
   list:drmfTemplate[]
+
+  refreshFrom(tpls:drmfTemplate[]) {
+    
+    const curr_collection = this
+    const curr_tpls = curr_collection.list
+    let prevNode = curr_collection.node
+    const len = Math.max( tpls.length, curr_tpls.length )
+    if(len === 0) return
+    if(tpls.length === 0) {
+      for( let t of curr_tpls) {
+        t.removeBaseNodes()
+      }
+      curr_collection.list = []
+      return
+    }
+    let ii = 0
+    let list = []
+    for(let ii = 0 ; ii <len ; ii++) {
+      const ct = curr_tpls[ii]
+      let rt = tpls[ii]
+      if(ct && rt) {
+        const p = ct.replaceWith( rt )
+        list[ii] = p
+        prevNode = p.getLastNode() // p.rootNodes[p.rootNodes.length - 1]
+        continue
+      } 
+      if(ct && !rt) {
+        ct.removeBaseNodes()
+        // ct.rootNodes.forEach( n => n.parentNode.removeChild(n))                              
+        continue
+      }
+      if(!ct && rt) { 
+        if(rt.rootNodes.length === 0) rt.createDOM()
+        rt.addAt( prevNode.parentNode, prevNode.nextSibling )
+        list[ii] = rt
+        prevNode = rt.getLastNode()
+        continue
+      }            
+    }
+    curr_collection.list = list    
+  }
 }
 
 export class drmfTemplate {
@@ -59,10 +85,8 @@ export class drmfTemplate {
   rootNodes:Node[] = []
 
   // to get all the root nodes
-  baseNodes:any[] = []
-  
+  baseNodes:any[] = []  
   slotTypes:any[][] = []
-  
   prevNode:Node
 
   ids : { [key: string]: Element } = {}
@@ -88,6 +112,21 @@ export class drmfTemplate {
     }    
   }
 
+  getLastNode() : Node {
+    if(this.baseNodes.length == 0) return null
+    const n = this.baseNodes[this.baseNodes.length-1]
+    if(Array.isArray(n)) {
+      return n[n.length-1]
+    }
+    if(n instanceof drmfTemplate) {
+      return n.getLastNode()
+    }
+    if(n instanceof drmfTemplateCollection) {
+      if(n.list.length == 0) return n.node
+      return n.list[ n.list.length - 1 ].getLastNode()
+    }    
+  }  
+
   addAt( parentNode:Node, before?:Node ) {
     for(let n of this.baseNodes) {
       if(Array.isArray(n)) {
@@ -100,6 +139,7 @@ export class drmfTemplate {
         n.addAt( parentNode, before)
       }
       if(n instanceof drmfTemplateCollection) {
+        if(n.node) parentNode.insertBefore( n.node, before )
         for( let el of n.list ) {
           el.addAt( parentNode, before)
         }
@@ -119,6 +159,8 @@ export class drmfTemplate {
         n.removeBaseNodes()
       }
       if(n instanceof drmfTemplateCollection) {
+        // remove the placeholder node...
+        if(n.node && n.node.parentNode) n.node.parentNode.removeChild( n.node )
         for( let el of n.list ) {
           el.removeBaseNodes()
         }
@@ -184,8 +226,12 @@ export class drmfTemplate {
           const currTpl = last_slot[2] as drmfTemplate
           const nodes = currTpl.rootNodes
 
-          if( value instanceof drmfTemplate) {
-            const renderedTpl = value as drmfTemplate
+          let local_value = value
+          if(Array.isArray(value)) {
+            local_value = html`${value}`
+          }
+          if( local_value instanceof drmfTemplate) {
+            const renderedTpl = local_value as drmfTemplate
             this.slotTypes[i][2] = currTpl.replaceWith( renderedTpl )   
             if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = this.slotTypes[i][2]         
           }
@@ -201,18 +247,12 @@ export class drmfTemplate {
 
           // transform into txt node
           if( typeof(value) == 'string' ) {
-            console.log('drfmTemplate -> string')
             const txt = document.createTextNode(value)                        
-            const nodes = currTpl.rootNodes
-            const pNode = nodes[0].parentNode
-            const first = nodes[0]
-            pNode.insertBefore( txt, first )
-            for( let n of nodes ) {
-              pNode.removeChild( n )
-            } 
-            this.slotTypes[i] = [3, pNode, txt]   
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] =[txt]  
-            console.log(this.baseNodes)       
+            const first = currTpl.getFirstNode()
+            first.parentNode.insertBefore( txt, first )
+            currTpl.removeBaseNodes()
+            this.slotTypes[i] = [3, first.parentNode, txt]   
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] =[txt]       
           }
           
         break;
@@ -222,108 +262,66 @@ export class drmfTemplate {
           const text_node = last_slot[2]
           if(typeof(value) == 'string') {
             text_node.textContent = value
+          }          
+          let v = value
+          if(Array.isArray(value)) {
+            v = html`${value}`
           }
-          if( value instanceof drmfTemplate) {
-            console.log('Text ==> drfmTemplate')
-            const new_nodes = value.createDOM()
-            // replace current with new
-            const pNode = text_node.parentNode
-            for( let n of new_nodes ) {
-              pNode.insertBefore( n, text_node )
-            }            
-            pNode.removeChild(text_node)
-            console.log(value)
-            this.slotTypes[i] = [2, last_root, value, new_nodes] 
+          if( v instanceof drmfTemplate) {
+            v.createDOM()
+            v.addAt(text_node.parentNode, text_node)
+            text_node.parentNode.removeChild(text_node)
+            this.slotTypes[i] = [2, last_root, v] 
             // if the slot is base slot...
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
-            console.log(this.baseNodes)
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = v
           }
-          if(value instanceof drmfComponent) {
-            const comp = value as drmfComponent
+          if(v instanceof drmfComponent) {
+            const comp = v as drmfComponent
             const tpl = comp.render()
-            const new_nodes = tpl.createDOM()
-            const pNode = text_node.parentNode
-            for( let n of new_nodes ) {
-              pNode.insertBefore( n, text_node )
-            }  
-            pNode.removeChild(text_node)
-            this.slotTypes[i] = [5, last_root, comp, tpl, new_nodes]     
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
-       
-            return
+            tpl.createDOM()
+            tpl.addAt(text_node.parentNode, text_node)
+            text_node.parentNode.removeChild(text_node)
+            this.slotTypes[i] = [5, last_root, comp, tpl]     
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = tpl
           } 
-
         break;
 
          // last node was drmfTemplateCollection
         case 4:
-          const tpls = value as drmfTemplate[]
+          const items = Array.isArray( value ) ? value : [html`${value}`]
+          const tpls = items.map( item => {
+            if(item instanceof drmfTemplate) return item
+            return html`${item}`
+          })
           const curr_collection = last_slot[2] as drmfTemplateCollection
-          const curr_tpls = curr_collection.list
-          let prevNode = curr_collection.node
-          const len = Math.max( tpls.length, curr_tpls.length )
-          if(len === 0) return
-          if(tpls.length === 0) {
-            curr_tpls.forEach( d => {
-              d.rootNodes.forEach( n => n.parentNode.removeChild(n))
-            })
-            curr_collection.list = []
-            return
-          }
-          let ii = 0
-          let list = []
-          for(let ii = 0 ; ii <len ; ii++) {
-            const ct = curr_tpls[ii]
-            let rt = tpls[ii]
-            if(ct && rt) {
-              const p = ct.replaceWith( rt )
-              list[ii] = p
-              prevNode = p.rootNodes[p.rootNodes.length - 1]
-              continue
-            } 
-            if(ct && !rt) {
-              ct.rootNodes.forEach( n => n.parentNode.removeChild(n))                              
-              continue
-            }
-            if(!ct && rt) { 
-              if(rt.rootNodes.length === 0) rt.createDOM()
-              rt.rootNodes.forEach( n => {
-                prevNode.parentNode.insertBefore( n, prevNode.nextSibling )
-                prevNode = n
-              })
-              list[ii] = rt
-              continue
-            }            
-          }
-          curr_collection.list = list
+          curr_collection.refreshFrom( tpls )
         break;
 
         // last node was drmfComponent        
         case 5:
 
+          let local_tpl = value
+          if(Array.isArray(value)) {
+            local_tpl = html`${value}`
+          }        
           if(typeof(value) == 'string') {
             const tplNow = last_slot[3] as drmfTemplate
             const txt = document.createTextNode(value)
-            const nodes = tplNow.rootNodes
-            const pNode = nodes[0].parentNode
-            const first = nodes[0]
-            pNode.insertBefore( txt, first )
-            for( let n of nodes ) {
-              pNode.removeChild( n )
-            }  
-            this.slotTypes[i] = [3, pNode, txt] 
-
+            const first = tplNow.getFirstNode()
+            first.parentNode.insertBefore( txt, first )
+            tplNow.removeBaseNodes()
+            this.slotTypes[i] = [3, first.parentNode, txt] 
             if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = [txt]            
           }
 
-          if(value instanceof drmfTemplate) {
+          if(local_tpl instanceof drmfTemplate) {
             const comp = last_slot[2] as drmfComponent
             const tplNow = last_slot[3] as drmfTemplate
             const tpl_nodes = tplNow.rootNodes
-            const rTpl = value as drmfTemplate
+            const rTpl = local_tpl as drmfTemplate
             const newTpl = tplNow.replaceWith( rTpl ) 
             this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]  
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = value
+            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = local_tpl
           }          
 
           if(value instanceof drmfComponent) {
@@ -471,7 +469,7 @@ export class drmfTemplate {
             }
             // render template
             me.slotTypes[( index - 1 ) >> 1] = [2, activeNode, tpl, snodes]
-            me.baseNodes[index] = tpl           
+            if(!activeNode) me.baseNodes[index] = tpl           
             return
           }            
           if(value instanceof drmfComponent) {
@@ -485,36 +483,30 @@ export class drmfTemplate {
             }
             // render template
             me.slotTypes[( index - 1 ) >> 1] = [5, activeNode, comp, tpl, snodes]  
-            me.baseNodes[index] = tpl             
+            if(!activeNode) me.baseNodes[index] = tpl             
             return
           }            
           if(Array.isArray( value )) {
+
             const coll = new drmfTemplateCollection
             const txtV = document.createTextNode('')
             coll.node = txtV
-            append(txtV) // placeholder in case empty list
-
-            const tpls = value as drmfTemplate[]
+            append(txtV)             
+            const tpls = value.map( item => {
+              if(item instanceof drmfTemplate) return item
+              return html`${item}`
+            })
             coll.list = tpls
             const snodes = []
             for(let idx=0; idx < tpls.length; idx++) {
               let cont = tpls[idx]
-              /*
-              if(!cont || !cont.createDOM) {
-                throw `Array or result of map must contain valid template elements:\n ${value} \n----------------------------\n ${me.valuestream}`
-              }
-              if(!activeNode) {
-                throw `Array can not be root node of html:\n ${value} \n----------------------------\n ${me.valuestream}`
-              }
-              */
               const items = cont.createDOM()
               for( let it of items ) {
                 append( it )
                 snodes.push( it )
               }  
             }
-            // render templates
-            me.slotTypes[( index - 1 ) >> 1] = [4, activeNode, coll, snodes]  
+            me.slotTypes[( index - 1 ) >> 1] = [4, activeNode, coll, null]  
             if(!activeNode) me.baseNodes[index] = coll
             return
           }            
@@ -696,31 +688,21 @@ export function mount ( root:Element,
       if(last_state != app.state) {
         last_state = app.state
         b_render_on = true
+        let tpl
         if( typeof(comp) == 'function') {
-          const tpl = comp(app.state)
+          tpl = comp(app.state)
+        }
+        if( comp instanceof drmfComponent) {
+          tpl = comp.render()
+        }
+        if(tpl) {
           if(lastTpl) {
             lastTpl = lastTpl.replaceWith( tpl )
           } else {
-            const items = tpl.createDOM()
-            for( let item of items ) {
-              if(!item.parentNode) document.body.appendChild( item )
-            } 
+            tpl.createDOM()
+            tpl.addAt( root, root.lastChild )
             lastTpl = tpl
           }
-        }
-        if( comp instanceof drmfComponent) {
-          const items = comp.toDom()
-          for( let item of items ) {
-            if(!item.parentNode) document.body.appendChild( item )
-          } 
-          if(last_items) {
-            for( let last of last_items ) {
-              if( last.parentNode && items.indexOf(last) < 0 ) {
-                last.parentNode.removeChild( last )
-              }
-            }  
-          }
-          last_items = items  
         }
         b_render_on = false
       }
