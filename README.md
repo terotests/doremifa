@@ -60,7 +60,7 @@ Doremifa.mount(document.body, state => html`<div>Hello World!</div>`)
 
 ## Functions
 
-Any function which returns `drmfTemplate` can be used as a compomnent
+Any function which returns `drmfTemplate` can be used as a component
 
 ```javascript
 function message(txt) {
