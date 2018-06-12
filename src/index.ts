@@ -200,6 +200,14 @@ export class drmfTemplate {
         case 1:
           const name = last_slot[2]
           const is_svg = last_slot[4]
+
+          if(typeof(value) === 'function') {
+            last_root[name] = (e)=>{
+              value(e,this)
+            }
+            continue
+          }
+
           if(value==='false' || value==='true') {
             const t = value==='true'
             if(t) {
@@ -401,12 +409,9 @@ export class drmfTemplate {
         }              
         if(typeof(value) == 'function') {
           if(activeNode instanceof Node) {
-            activeNode.addEventListener(name, (e)=>{
+            activeNode[name] = (e)=>{
               value(e,me)
-            })
-          }
-          if(activeNode instanceof drmfComponent) {
-            activeNode.addEventListener(name, value)
+            }
           }
           return;
         }

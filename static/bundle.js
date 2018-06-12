@@ -21,7 +21,7 @@ var timers_1 = require("timers");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
     return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
-        "\n</form>\n<ul>\n  ", "\n</ul>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        click=",
+        "\n</form>\n<ul>\n  ", "\n</ul>\n  "])), (new Date).toString(), state.color, colorList.map(function (color) { return index_1.html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        onclick=", " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "], ["\n  <p>\n    <label>\n      <input name=\"group1\" type=\"radio\" checked=", " list=\"colors\" \n        onclick=",
         " />\n      <span>", "</span>\n    </label>\n  </p>  \n  "])), state.color === color, function (e, tpl) {
         index_1.setState({ color: color });
     }, color); }), [1, 2, 3, 4, 5, 6].map(function (item) { return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<li>", "</li>"], ["<li>", "</li>"])), item); }));
@@ -29,8 +29,8 @@ function intropage(state) {
 function details(state) {
     var item = state.list.filter(function (item) { return item.id == state.params.id; }).pop();
     // could you just bind to the ID values directly...
-    return index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" click=",
-        ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" click=",
+    return index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" onclick=", ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" onclick=", ">Poista</a>      \n    </div>    \n    </form>\n  </div>"], ["<div>\n    <h4>Details for item ", "</h4>\n\n    <form class=\"col s12\">    \n    <div class=\"row\">\n      <div class=\"input-field col s12\">\n        <input placeholder=\"Placeholder\" value=", " id=\"name\" type=\"text\" list=\"input\" class=\"validate\">\n        <label for=\"name\">Name</label>\n      </div>\n      <div class=\"row\">\n        <div class=\"input-field col s12\">\n          <input id=\"duration\" type=\"text\" value=", " class=\"validate\">\n          <label for=\"duration\">Duration</label>\n        </div>\n      </div>\n      <a class=\"waves-effect waves-light btn\" onclick=",
+        ">Tallenna tiedot</a>\n      <a class=\"waves-effect waves-light btn\" onclick=",
         ">Poista</a>      \n    </div>    \n    </form>\n  </div>"])), state.params.id, item.name, item.duration, function (e, tpl) {
         item.duration = tpl.ids.duration.value;
         item.name = tpl.ids.name.value;
@@ -69,9 +69,9 @@ function add100Tasks() {
 }
 function listademo(state) {
     var item_list;
-    var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
-        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"], ["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
-        ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=",
+    var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" onclick=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
+        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        onclick=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          onclick=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"], ["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        onclick=",
+        ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          onclick=",
         ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"])), item.id, function (e) {
         e.preventDefault();
         item.duration--;
@@ -109,7 +109,7 @@ var WestWorld = /** @class */ (function (_super) {
     };
     WestWorld.prototype.render = function () {
         var state = index_1.getState();
-        return index_1.html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" click=",
+        return index_1.html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" onclick=", ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ", "\n      </div>        \n    </div>   \n    "], ["\n    <div>\n      <nav>\n        <div class=\"nav-wrapper\">\n          <a href=\"#lista\" class=\"brand-logo\">Tasks: ", "</a>\n          <ul id=\"nav-mobile\" class=\"right hide-on-med-and-down\">\n            <li><a href=\"#intro\">Intro</a></li>\n            <li><a href=\"#lista\">Listademo</a></li>\n            <li><a href=\"#svg\">SVG</a></li>\n            <li><a class=\"waves-effect waves-light btn\" onclick=",
             ">+ Item to list</a></li>\n          </ul>\n        </div>\n      </nav>    \n      <div>     \n      </div>\n      <div class=\"container\">\n        ",
             "\n      </div>        \n    </div>   \n    "])), index_1.getState().list.length, function (e) {
             e.preventDefault();
@@ -198,7 +198,7 @@ function frontpage(state) {
     return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"], ["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"])));
 }
 function jumbo(state) {
-    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=", ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=",
+    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" onclick=", ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" onclick=",
         ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "])), function (e) {
         e.preventDefault();
         index_1.getState().items.push({ name: 'foobar ' + Math.floor(Math.random() * 100) });
@@ -207,11 +207,11 @@ function jumbo(state) {
 }
 var helloComp = new Hello();
 function buttons(state) {
-    return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=", ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=", ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "], ["\n\n    ",
-        "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=",
-        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=",
-        ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=",
-        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=",
+    return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" onclick=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" onclick=", ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" onclick=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" onclick=", ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "], ["\n\n    ",
+        "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" onclick=",
+        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" onclick=",
+        ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" onclick=",
+        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" onclick=",
         ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "])), state.warning ? index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject([""], [""]))), function (_) {
         index_1.setState({ warning: '' });
     }, function (_) {
@@ -258,7 +258,7 @@ Doremifa.mount(document.body,
     default : (state) => html`
 <div>
   <hr><br><br>
-  This is the default route. Click show list to edit list of items.
+  This is the default route. onclick show list to edit list of items.
   Currently the list of items is ${state
     .items.map( (item,i) =>
                html`${i > 0 ? ', ' : ''} ${item.name}`)}
@@ -282,7 +282,7 @@ Doremifa.mount(document.body,
     itemlist : () =>
       html`
         <h2>Items</h2>
-        <button click=${add_item}>+ item</button>
+        <button onclick=${add_item}>+ item</button>
         <div>
           ${state.items.map( item =>
             html`<div>${item.name}<a href=${`#details/id/${item.id}`}>Edit</div>`)}
@@ -295,11 +295,11 @@ Doremifa.mount(document.body,
         .items.filter( item => item.id == state.params.id).pop()
       return html`<h2>Item ${item.id}</h2>
         <input value=${item.name} id="name">
-        <button click=${(e,tpl)=>{
+        <button onclick=${(e,tpl)=>{
           item.name = tpl.ids.name.value
           window.location.hash = "#itemlist"
         }}>Save</button>
-        <button click=${_ => {
+        <button onclick=${_ => {
           delete_item(item)
           window.location.hash = "#itemlist"
         }}>Delete</button>
@@ -601,13 +601,14 @@ var drmfTemplate = /** @class */ (function () {
         return renderedTpl;
     };
     drmfTemplate.prototype.updateValues = function (values) {
-        for (var i = 0; i < values.length; i++) {
+        var _this = this;
+        var _loop_1 = function (i) {
             var value = values[i];
             if (typeof (value) === 'undefined')
-                continue;
-            var last_slot = this.slotTypes[i];
+                return "continue";
+            var last_slot = this_1.slotTypes[i];
             if (!last_slot)
-                continue;
+                return "continue";
             var last_type = last_slot[0];
             var last_root = last_slot[1];
             // assuming now that the type stays the same...
@@ -615,6 +616,12 @@ var drmfTemplate = /** @class */ (function () {
                 case 1:
                     var name_1 = last_slot[2];
                     var is_svg = last_slot[4];
+                    if (typeof (value) === 'function') {
+                        last_root[name_1] = function (e) {
+                            value(e, _this);
+                        };
+                        return "continue";
+                    }
                     if (value === 'false' || value === 'true') {
                         var t = value === 'true';
                         if (t) {
@@ -649,18 +656,18 @@ var drmfTemplate = /** @class */ (function () {
                     }
                     if (local_value instanceof drmfTemplate) {
                         var renderedTpl = local_value;
-                        this.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = this.slotTypes[i][2];
+                        this_1.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = this_1.slotTypes[i][2];
                     }
                     if (value instanceof drmfComponent) {
                         // render the situation now...
                         var renderedComp = value;
                         var rTpl = renderedComp.render();
                         var newTpl = currTpl.replaceWith(rTpl);
-                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = newTpl;
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     // transform into txt node
                     if (typeof (value) == 'string') {
@@ -668,9 +675,9 @@ var drmfTemplate = /** @class */ (function () {
                         var first = currTpl.getFirstNode();
                         first.parentNode.insertBefore(txt, first);
                         currTpl.removeBaseNodes();
-                        this.slotTypes[i] = [3, first.parentNode, txt];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = [txt];
+                        this_1.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
                     }
                     break;
                 // last node was text node
@@ -687,10 +694,10 @@ var drmfTemplate = /** @class */ (function () {
                         v.createDOM();
                         v.addAt(text_node.parentNode, text_node);
                         text_node.parentNode.removeChild(text_node);
-                        this.slotTypes[i] = [2, last_root, v];
+                        this_1.slotTypes[i] = [2, last_root, v];
                         // if the slot is base slot...
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = v;
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = v;
                     }
                     if (v instanceof drmfComponent) {
                         var comp = v;
@@ -698,9 +705,9 @@ var drmfTemplate = /** @class */ (function () {
                         tpl.createDOM();
                         tpl.addAt(text_node.parentNode, text_node);
                         text_node.parentNode.removeChild(text_node);
-                        this.slotTypes[i] = [5, last_root, comp, tpl];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = tpl;
+                        this_1.slotTypes[i] = [5, last_root, comp, tpl];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = tpl;
                     }
                     break;
                 // last node was drmfTemplateCollection
@@ -726,9 +733,9 @@ var drmfTemplate = /** @class */ (function () {
                         var first = tplNow.getFirstNode();
                         first.parentNode.insertBefore(txt, first);
                         tplNow.removeBaseNodes();
-                        this.slotTypes[i] = [3, first.parentNode, txt];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = [txt];
+                        this_1.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
                     }
                     if (local_tpl instanceof drmfTemplate) {
                         var comp = last_slot[2];
@@ -736,9 +743,9 @@ var drmfTemplate = /** @class */ (function () {
                         var tpl_nodes = tplNow.rootNodes;
                         var rTpl = local_tpl;
                         var newTpl = tplNow.replaceWith(rTpl);
-                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = local_tpl;
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = local_tpl;
                     }
                     if (value instanceof drmfComponent) {
                         var comp = last_slot[2];
@@ -749,14 +756,18 @@ var drmfTemplate = /** @class */ (function () {
                         var rTpl = renderedComp.render();
                         var newTpl = tplNow.replaceWith(rTpl);
                         if (newTpl === rTpl) {
-                            this.slotTypes[i][2] = renderedComp;
-                            this.slotTypes[i][3] = newTpl;
+                            this_1.slotTypes[i][2] = renderedComp;
+                            this_1.slotTypes[i][3] = newTpl;
                         }
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = newTpl;
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     break;
             }
+        };
+        var this_1 = this;
+        for (var i = 0; i < values.length; i++) {
+            _loop_1(i);
         }
     };
     drmfTemplate.prototype.createDOM = function () {
@@ -815,12 +826,9 @@ var drmfTemplate = /** @class */ (function () {
                 }
                 if (typeof (value) == 'function') {
                     if (activeNode instanceof Node) {
-                        activeNode.addEventListener(name, function (e) {
+                        activeNode[name] = function (e) {
                             value(e, me);
-                        });
-                    }
-                    if (activeNode instanceof drmfComponent) {
-                        activeNode.addEventListener(name, value);
+                        };
                     }
                     return;
                 }

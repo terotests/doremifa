@@ -237,13 +237,14 @@ var drmfTemplate = /** @class */ (function () {
         return renderedTpl;
     };
     drmfTemplate.prototype.updateValues = function (values) {
-        for (var i = 0; i < values.length; i++) {
+        var _this = this;
+        var _loop_1 = function (i) {
             var value = values[i];
             if (typeof (value) === 'undefined')
-                continue;
-            var last_slot = this.slotTypes[i];
+                return "continue";
+            var last_slot = this_1.slotTypes[i];
             if (!last_slot)
-                continue;
+                return "continue";
             var last_type = last_slot[0];
             var last_root = last_slot[1];
             // assuming now that the type stays the same...
@@ -251,6 +252,12 @@ var drmfTemplate = /** @class */ (function () {
                 case 1:
                     var name_1 = last_slot[2];
                     var is_svg = last_slot[4];
+                    if (typeof (value) === 'function') {
+                        last_root[name_1] = function (e) {
+                            value(e, _this);
+                        };
+                        return "continue";
+                    }
                     if (value === 'false' || value === 'true') {
                         var t = value === 'true';
                         if (t) {
@@ -285,18 +292,18 @@ var drmfTemplate = /** @class */ (function () {
                     }
                     if (local_value instanceof drmfTemplate) {
                         var renderedTpl = local_value;
-                        this.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = this.slotTypes[i][2];
+                        this_1.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = this_1.slotTypes[i][2];
                     }
                     if (value instanceof drmfComponent) {
                         // render the situation now...
                         var renderedComp = value;
                         var rTpl = renderedComp.render();
                         var newTpl = currTpl.replaceWith(rTpl);
-                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = newTpl;
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     // transform into txt node
                     if (typeof (value) == 'string') {
@@ -304,9 +311,9 @@ var drmfTemplate = /** @class */ (function () {
                         var first = currTpl.getFirstNode();
                         first.parentNode.insertBefore(txt, first);
                         currTpl.removeBaseNodes();
-                        this.slotTypes[i] = [3, first.parentNode, txt];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = [txt];
+                        this_1.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
                     }
                     break;
                 // last node was text node
@@ -323,10 +330,10 @@ var drmfTemplate = /** @class */ (function () {
                         v.createDOM();
                         v.addAt(text_node.parentNode, text_node);
                         text_node.parentNode.removeChild(text_node);
-                        this.slotTypes[i] = [2, last_root, v];
+                        this_1.slotTypes[i] = [2, last_root, v];
                         // if the slot is base slot...
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = v;
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = v;
                     }
                     if (v instanceof drmfComponent) {
                         var comp = v;
@@ -334,9 +341,9 @@ var drmfTemplate = /** @class */ (function () {
                         tpl.createDOM();
                         tpl.addAt(text_node.parentNode, text_node);
                         text_node.parentNode.removeChild(text_node);
-                        this.slotTypes[i] = [5, last_root, comp, tpl];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = tpl;
+                        this_1.slotTypes[i] = [5, last_root, comp, tpl];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = tpl;
                     }
                     break;
                 // last node was drmfTemplateCollection
@@ -362,9 +369,9 @@ var drmfTemplate = /** @class */ (function () {
                         var first = tplNow.getFirstNode();
                         first.parentNode.insertBefore(txt, first);
                         tplNow.removeBaseNodes();
-                        this.slotTypes[i] = [3, first.parentNode, txt];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = [txt];
+                        this_1.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = [txt];
                     }
                     if (local_tpl instanceof drmfTemplate) {
                         var comp = last_slot[2];
@@ -372,9 +379,9 @@ var drmfTemplate = /** @class */ (function () {
                         var tpl_nodes = tplNow.rootNodes;
                         var rTpl = local_tpl;
                         var newTpl = tplNow.replaceWith(rTpl);
-                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = local_tpl;
+                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = local_tpl;
                     }
                     if (value instanceof drmfComponent) {
                         var comp = last_slot[2];
@@ -385,14 +392,18 @@ var drmfTemplate = /** @class */ (function () {
                         var rTpl = renderedComp.render();
                         var newTpl = tplNow.replaceWith(rTpl);
                         if (newTpl === rTpl) {
-                            this.slotTypes[i][2] = renderedComp;
-                            this.slotTypes[i][3] = newTpl;
+                            this_1.slotTypes[i][2] = renderedComp;
+                            this_1.slotTypes[i][3] = newTpl;
                         }
-                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this.baseNodes[i * 2 + 1] = newTpl;
+                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this_1.baseNodes[i * 2 + 1] = newTpl;
                     }
                     break;
             }
+        };
+        var this_1 = this;
+        for (var i = 0; i < values.length; i++) {
+            _loop_1(i);
         }
     };
     drmfTemplate.prototype.createDOM = function () {
@@ -451,12 +462,9 @@ var drmfTemplate = /** @class */ (function () {
                 }
                 if (typeof (value) == 'function') {
                     if (activeNode instanceof Node) {
-                        activeNode.addEventListener(name, function (e) {
+                        activeNode[name] = function (e) {
                             value(e, me);
-                        });
-                    }
-                    if (activeNode instanceof drmfComponent) {
-                        activeNode.addEventListener(name, value);
+                        };
                     }
                     return;
                 }
