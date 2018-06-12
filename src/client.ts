@@ -21,7 +21,7 @@ ${
   <p>
     <label>
       <input name="group1" type="radio" checked=${state.color===color} list="colors" 
-        click=${(e,tpl)=>{
+        onclick=${(e,tpl)=>{
           setState({color})
         }} />
       <span>${color}</span>
@@ -55,12 +55,12 @@ function details(state) {
           <label for="duration">Duration</label>
         </div>
       </div>
-      <a class="waves-effect waves-light btn" click=${(e,tpl) => {
+      <a class="waves-effect waves-light btn" onclick=${(e,tpl) => {
         item.duration = tpl.ids.duration.value
         item.name = tpl.ids.name.value
         window.location.hash = 'lista'
       }}>Tallenna tiedot</a>
-      <a class="waves-effect waves-light btn" click=${(e,tpl) => {
+      <a class="waves-effect waves-light btn" onclick=${(e,tpl) => {
         removeTask(item)
         window.location.hash = 'lista'
       }}>Poista</a>      
@@ -105,22 +105,22 @@ function listademo(state) {
   let item_list
   const res = html`
   <div>
-    <a class="waves-effect waves-light btn" click=${addTask}>+ Task</a>
-    <a class="waves-effect waves-light btn" click=${add100Tasks}>+ 100 Tasks</a>
+    <a class="waves-effect waves-light btn" onclick=${addTask}>+ Task</a>
+    <a class="waves-effect waves-light btn" onclick=${add100Tasks}>+ 100 Tasks</a>
     <div class="collection">
       ${item_list = state.list.sort( (a,b) => a.id - b.id
       ).map( item => html`<li><a href="#details/id/${item.id}" class="collection-item" id="link">
 
         <span class="new badge blue"
         data-badge-caption="" 
-        click=${ e => {
+        onclick=${ e => {
           e.preventDefault()
           item.duration--;
           setState({})
         }}>-</span>         
         <span class="new badge blue"
           data-badge-caption="" 
-          click=${ e => {
+          onclick=${ e => {
             e.preventDefault()
             item.duration++;
             setState({})
@@ -171,7 +171,7 @@ export class WestWorld extends drmfComponent {
             <li><a href="#intro">Intro</a></li>
             <li><a href="#lista">Listademo</a></li>
             <li><a href="#svg">SVG</a></li>
-            <li><a class="waves-effect waves-light btn" click=${e=> {
+            <li><a class="waves-effect waves-light btn" onclick=${e=> {
               e.preventDefault()
               addTask()
             }}>+ Item to list</a></li>
@@ -289,7 +289,7 @@ function jumbo(state) {
     <hr class="my-4">
     <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
     <p class="lead">
-      <a class="btn btn-primary btn-lg" href="#" role="button" click=${e => {
+      <a class="btn btn-primary btn-lg" href="#" role="button" onclick=${e => {
         e.preventDefault()
         getState().items.push({name:'foobar ' + Math.floor(Math.random()*100)})
         setState({})
@@ -313,21 +313,21 @@ function buttons(state) {
     ` : html``}
     <div>  
       <a role="button" class="btn btn-primary" href="#jumbo">Primary</a>
-      <button type="button" class="btn btn-secondary" click=${_ => {
+      <button type="button" class="btn btn-secondary" onclick=${_ => {
         setState({warning: ''})
       }}>Secondary</button>
       <button type="button" class="btn btn-success">Success</button>
-      <button type="button" class="btn btn-danger" click=${_ => {
+      <button type="button" class="btn btn-danger" onclick=${_ => {
         const s = getState()
         s.items.splice(0,1);
         setState({})
       }}>Danger</button>
-      <button type="button" class="btn btn-warning" click=${_ => {
+      <button type="button" class="btn btn-warning" onclick=${_ => {
         setState({warning: 'I Give you a warning here!!!'})
       }}>Warning</button>
       <button type="button" class="btn btn-info">Info</button>
       <button type="button" class="btn btn-light">Light</button>
-      <button type="button" class="btn btn-dark" click=${ _ =>{
+      <button type="button" class="btn btn-dark" onclick=${ _ =>{
         setState({items:getState().items.reverse()})
       }}>Reverse</button>  
       <button type="button" class="btn btn-link">Link</button>  
@@ -399,7 +399,7 @@ Doremifa.mount(document.body,
     default : (state) => html`
 <div>
   <hr><br><br>
-  This is the default route. Click show list to edit list of items.
+  This is the default route. onclick show list to edit list of items.
   Currently the list of items is ${state
     .items.map( (item,i) => 
                html`${i > 0 ? ', ' : ''} ${item.name}`)}
@@ -423,7 +423,7 @@ Doremifa.mount(document.body,
     itemlist : () => 
       html`
         <h2>Items</h2>
-        <button click=${add_item}>+ item</button>
+        <button onclick=${add_item}>+ item</button>
         <div>
           ${state.items.map( item => 
             html`<div>${item.name}<a href=${`#details/id/${item.id}`}>Edit</div>`)}
@@ -436,11 +436,11 @@ Doremifa.mount(document.body,
         .items.filter( item => item.id == state.params.id).pop()
       return html`<h2>Item ${item.id}</h2>
         <input value=${item.name} id="name">
-        <button click=${(e,tpl)=>{
+        <button onclick=${(e,tpl)=>{
           item.name = tpl.ids.name.value
           window.location.hash = "#itemlist"
         }}>Save</button>
-        <button click=${_ => {
+        <button onclick=${_ => {
           delete_item(item)
           window.location.hash = "#itemlist"
         }}>Delete</button>
