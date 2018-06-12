@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
 var Doremifa = require("./index");
+var timers_1 = require("timers");
 function intropage(state) {
     var colorList = ['red', 'yellow', 'green', 'brown'];
     return index_1.html(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n", "\n</form>\n<ul>\n  ", "\n</ul>\n  "], ["\n\n<h1>Hello! This is the introduction page</h1>\n<p>Hello World, it is ", "</p>\n<div>Color is now ", "</div>\n<form action=\"#\">\n",
@@ -69,9 +70,9 @@ function add100Tasks() {
 function listademo(state) {
     var item_list;
     var res = index_1.html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ", "\n    </div>    \n  </div>\n  "], ["\n  <div>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ Task</a>\n    <a class=\"waves-effect waves-light btn\" click=", ">+ 100 Tasks</a>\n    <div class=\"collection\">\n      ",
-        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"], ["<a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
+        "\n    </div>    \n  </div>\n  "])), addTask, add100Tasks, item_list = state.list.sort(function (a, b) { return a.id - b.id; }).map(function (item) { return index_1.html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=", ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=", ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"], ["<li><a href=\"#details/id/", "\" class=\"collection-item\" id=\"link\">\n\n        <span class=\"new badge blue\"\n        data-badge-caption=\"\" \n        click=",
         ">-</span>         \n        <span class=\"new badge blue\"\n          data-badge-caption=\"\" \n          click=",
-        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a>"])), item.id, function (e) {
+        ">+</span>      \n        <span class=", " \n          data-badge-caption=\"h\" >", "</span>\n        ", "</a></li>"])), item.id, function (e) {
         e.preventDefault();
         item.duration--;
         index_1.setState({});
@@ -187,12 +188,60 @@ var Hello = /** @class */ (function (_super) {
         return _this;
     }
     Hello.prototype.render = function () {
-        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", "</div>"], ["<div>Hello ", "</div>"])), this.msg);
+        return index_1.html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<div>Hello ", " Component</div>"], ["<div>Hello ", " Component</div>"])), this.msg);
     };
     return Hello;
 }(index_1.drmfComponent));
-Doremifa.mount(document.body, new Hello());
-var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11;
+// The Materialize demo...
+// Doremifa.mount(document.body, new WestWorld() )
+function frontpage(state) {
+    return index_1.html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"], ["\n  <h2>Hello World</h2>\n  <div class=\"card\" style=\"width: 18rem;\">\n    <div class=\"card-body\">\n      <h5 class=\"card-title\">Card title</h5>\n      <p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>\n      <a href=\"#buttons\" class=\"btn btn-primary\">Go somewhere</a>\n    </div>\n  </div>\n\n  <div class=\"alert alert-primary\" role=\"alert\">\n    This is a primary alert\u2014check it out!\n  </div>"])));
+}
+function jumbo(state) {
+    return index_1.html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=", ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "], ["\n  <div class=\"jumbotron\">\n    <h1 class=\"display-4\">Hello, world!</h1>\n    <p class=\"lead\">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>\n    <hr class=\"my-4\">\n    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>\n    <p class=\"lead\">\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" click=",
+        ">+ Item</a>\n      <a class=\"btn btn-primary btn-lg\" href=\"#\" role=\"button\" >See more</a>\n    </p>\n  </div>  \n  ", "\n  "])), function (e) {
+        e.preventDefault();
+        index_1.getState().items.push({ name: 'foobar ' + Math.floor(Math.random() * 100) });
+        index_1.setState({});
+    }, index_1.getState().items.map(function (item) { return index_1.html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<div>", "</div>"], ["<div>", "</div>"])), item.name); }));
+}
+var helloComp = new Hello();
+function buttons(state) {
+    return index_1.html(templateObject_15 || (templateObject_15 = __makeTemplateObject(["\n\n    ", "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=", ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=", ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=", ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=", ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "], ["\n\n    ",
+        "\n    <div>  \n      <a role=\"button\" class=\"btn btn-primary\" href=\"#jumbo\">Primary</a>\n      <button type=\"button\" class=\"btn btn-secondary\" click=",
+        ">Secondary</button>\n      <button type=\"button\" class=\"btn btn-success\">Success</button>\n      <button type=\"button\" class=\"btn btn-danger\" click=",
+        ">Danger</button>\n      <button type=\"button\" class=\"btn btn-warning\" click=",
+        ">Warning</button>\n      <button type=\"button\" class=\"btn btn-info\">Info</button>\n      <button type=\"button\" class=\"btn btn-light\">Light</button>\n      <button type=\"button\" class=\"btn btn-dark\" click=",
+        ">Reverse</button>  \n      <button type=\"button\" class=\"btn btn-link\">Link</button>  \n    </div>\n    ", "\n    ", "\n    ", "\n    ", "\n "])), state.warning ? index_1.html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "], ["\n    Example warning:\n    <div class=\"alert alert-warning\" role=\"alert\">\n      ", "\n    </div>\n    "])), state.warning) : index_1.html(templateObject_17 || (templateObject_17 = __makeTemplateObject([""], [""]))), function (_) {
+        index_1.setState({ warning: '' });
+    }, function (_) {
+        var s = index_1.getState();
+        s.items.splice(0, 1);
+        index_1.setState({});
+    }, function (_) {
+        index_1.setState({ warning: 'I Give you a warning here!!!' });
+    }, function (_) {
+        index_1.setState({ items: index_1.getState().items.reverse() });
+    }, index_1.html(templateObject_18 || (templateObject_18 = __makeTemplateObject(["abc", "efg"], ["abc", "efg"])), index_1.html(templateObject_19 || (templateObject_19 = __makeTemplateObject(["<div>Deep Div</div>"], ["<div>Deep Div</div>"])))), counter & 1 ? (new Date()).toString() : index_1.html(templateObject_20 || (templateObject_20 = __makeTemplateObject([" <div>OK1?</div> <div>OK2?</div> "], [" <div>OK1?</div> <div>OK2?</div> "]))), counter & 1 ? 'Alternative text...' : helloComp, index_1.getState().items.map(function (item) { return index_1.html(templateObject_21 || (templateObject_21 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }));
+}
+function testBox(txt, value) {
+    return index_1.html(templateObject_22 || (templateObject_22 = __makeTemplateObject(["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "], ["\n  <div style=\"width:200px;float:left\">\n    <div>", "</div>\n    ", "\n  </div>  \n  "])), txt, value);
+}
+// ${ counter & 1 ? 'Alternative text...' : helloComp}
+//  ${ counter & 1 ? 'Array OR' : getState().items.map( item => html`<div>ARRAY ${item.name}</div>`)}
+var counter = 0;
+var helloComp2 = new Hello();
+Doremifa.mount(document.body, function (state) { return index_1.html(templateObject_23 || (templateObject_23 = __makeTemplateObject(["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ", "\n</div>\n", "\n", "\n", "\n", "\n\n"], ["\n", "\n<div class=\"container\">\n  <!-- Content here -->\n  <div>\n    <input/>\n    ", "\n  </div>\n  ",
+    "\n</div>\n", "\n", "\n", "\n", "\n\n"])), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_24 || (templateObject_24 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), state.items.map(function (item, idx) { return idx & 1 ? index_1.html(templateObject_25 || (templateObject_25 = __makeTemplateObject(["<b>", "</b>"], ["<b>", "</b>"])), item.name) : 'Hello ' + item.name; }), index_1.router({
+    default: frontpage,
+    buttons: buttons,
+    jumbo: jumbo,
+}), testBox('Test from TXT -> array', Math.floor(counter) & 1 ? 'TXT' : index_1.getState().items.map(function (item) { return index_1.html(templateObject_26 || (templateObject_26 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from html -> array', Math.floor(counter) & 1 ? index_1.html(templateObject_27 || (templateObject_27 = __makeTemplateObject(["<div><b>DIV</b></div>"], ["<div><b>DIV</b></div>"]))) : index_1.getState().items.map(function (item) { return index_1.html(templateObject_28 || (templateObject_28 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from static array -> array', Math.floor(counter) & 1 ? [1, '+', 2, index_1.html(templateObject_29 || (templateObject_29 = __makeTemplateObject(["<b>== 10</b>"], ["<b>== 10</b>"])))] : index_1.getState().items.map(function (item) { return index_1.html(templateObject_30 || (templateObject_30 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); })), testBox('Test from Object -> array', Math.floor(counter) & 1 ? helloComp2 : index_1.getState().items.map(function (item) { return index_1.html(templateObject_31 || (templateObject_31 = __makeTemplateObject(["<div>...", "</div>"], ["<div>...", "</div>"])), item.name); }))); });
+timers_1.setInterval(function (_) {
+    counter++;
+    index_1.setState({});
+}, 5000);
+var templateObject_2, templateObject_3, templateObject_1, templateObject_4, templateObject_6, templateObject_5, templateObject_7, templateObject_8, templateObject_9, templateObject_10, templateObject_11, templateObject_12, templateObject_14, templateObject_13, templateObject_16, templateObject_17, templateObject_19, templateObject_18, templateObject_20, templateObject_21, templateObject_15, templateObject_22, templateObject_24, templateObject_25, templateObject_26, templateObject_27, templateObject_28, templateObject_29, templateObject_30, templateObject_31, templateObject_23;
 /*
 // mount application into some node
 Doremifa.mount(document.body,
@@ -312,7 +361,7 @@ mount( document.body, (state) => {
 // setTimeout(add100Tasks,100)
 // setInterval( _ => setState({}), 20)
 
-},{"./index":2}],2:[function(require,module,exports){
+},{"./index":2,"timers":5}],2:[function(require,module,exports){
 "use strict";
 var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
     if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
@@ -393,19 +442,6 @@ var drmfComponent = /** @class */ (function () {
     drmfComponent.prototype.tpl = function () {
         return this.lastRender;
     };
-    drmfComponent.prototype.toDom = function () {
-        var tpl = this.render();
-        // if not rendered at all or different template
-        if (!this.lastRender || (this.lastRender.key != tpl.key)) {
-            var elems = tpl.createDOM();
-            this.lastRender = tpl;
-            return elems;
-        }
-        var last = this.lastRender;
-        last.updateValues(tpl.values);
-        // TODO: does not work always, root nodes can change
-        return last.rootNodes;
-    };
     drmfComponent.prototype.render = function () {
         return exports.drmf(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>Hello World</div>"], ["<div>Hello World</div>"])));
     };
@@ -415,6 +451,48 @@ exports.drmfComponent = drmfComponent;
 var drmfTemplateCollection = /** @class */ (function () {
     function drmfTemplateCollection() {
     }
+    drmfTemplateCollection.prototype.refreshFrom = function (tpls) {
+        var curr_collection = this;
+        var curr_tpls = curr_collection.list;
+        var prevNode = curr_collection.node;
+        var len = Math.max(tpls.length, curr_tpls.length);
+        if (len === 0)
+            return;
+        if (tpls.length === 0) {
+            for (var _i = 0, curr_tpls_1 = curr_tpls; _i < curr_tpls_1.length; _i++) {
+                var t = curr_tpls_1[_i];
+                t.removeBaseNodes();
+            }
+            curr_collection.list = [];
+            return;
+        }
+        var ii = 0;
+        var list = [];
+        for (var ii_1 = 0; ii_1 < len; ii_1++) {
+            var ct = curr_tpls[ii_1];
+            var rt = tpls[ii_1];
+            if (ct && rt) {
+                var p = ct.replaceWith(rt);
+                list[ii_1] = p;
+                prevNode = p.getLastNode(); // p.rootNodes[p.rootNodes.length - 1]
+                continue;
+            }
+            if (ct && !rt) {
+                ct.removeBaseNodes();
+                // ct.rootNodes.forEach( n => n.parentNode.removeChild(n))                              
+                continue;
+            }
+            if (!ct && rt) {
+                if (rt.rootNodes.length === 0)
+                    rt.createDOM();
+                rt.addAt(prevNode.parentNode, prevNode.nextSibling);
+                list[ii_1] = rt;
+                prevNode = rt.getLastNode();
+                continue;
+            }
+        }
+        curr_collection.list = list;
+    };
     return drmfTemplateCollection;
 }());
 exports.drmfTemplateCollection = drmfTemplateCollection;
@@ -423,6 +501,8 @@ var drmfTemplate = /** @class */ (function () {
         this.children = {};
         this.doms = {};
         this.rootNodes = [];
+        // to get all the root nodes
+        this.baseNodes = [];
         this.slotTypes = [];
         this.ids = {};
         this.list = {};
@@ -431,36 +511,103 @@ var drmfTemplate = /** @class */ (function () {
         this._ready = fn;
         return this;
     };
+    drmfTemplate.prototype.getFirstNode = function () {
+        var n = this.baseNodes[0];
+        if (Array.isArray(n)) {
+            return n[0];
+        }
+        if (n instanceof drmfTemplate) {
+            return n.getFirstNode();
+        }
+        if (n instanceof drmfTemplateCollection) {
+            return n.node;
+        }
+    };
+    drmfTemplate.prototype.getLastNode = function () {
+        if (this.baseNodes.length == 0)
+            return null;
+        var n = this.baseNodes[this.baseNodes.length - 1];
+        if (Array.isArray(n)) {
+            return n[n.length - 1];
+        }
+        if (n instanceof drmfTemplate) {
+            return n.getLastNode();
+        }
+        if (n instanceof drmfTemplateCollection) {
+            if (n.list.length == 0)
+                return n.node;
+            return n.list[n.list.length - 1].getLastNode();
+        }
+    };
+    drmfTemplate.prototype.addAt = function (parentNode, before) {
+        for (var _i = 0, _a = this.baseNodes; _i < _a.length; _i++) {
+            var n = _a[_i];
+            if (Array.isArray(n)) {
+                for (var _b = 0, n_1 = n; _b < n_1.length; _b++) {
+                    var node = n_1[_b];
+                    parentNode.insertBefore(node, before);
+                }
+                continue;
+            }
+            if (n instanceof drmfTemplate) {
+                n.addAt(parentNode, before);
+            }
+            if (n instanceof drmfTemplateCollection) {
+                if (n.node)
+                    parentNode.insertBefore(n.node, before);
+                for (var _c = 0, _d = n.list; _c < _d.length; _c++) {
+                    var el = _d[_c];
+                    el.addAt(parentNode, before);
+                }
+            }
+        }
+    };
+    drmfTemplate.prototype.removeBaseNodes = function () {
+        for (var _i = 0, _a = this.baseNodes; _i < _a.length; _i++) {
+            var n = _a[_i];
+            if (Array.isArray(n)) {
+                for (var _b = 0, n_2 = n; _b < n_2.length; _b++) {
+                    var node = n_2[_b];
+                    node.parentNode.removeChild(node);
+                }
+                continue;
+            }
+            if (n instanceof drmfTemplate) {
+                n.removeBaseNodes();
+            }
+            if (n instanceof drmfTemplateCollection) {
+                // remove the placeholder node...
+                if (n.node && n.node.parentNode)
+                    n.node.parentNode.removeChild(n.node);
+                for (var _c = 0, _d = n.list; _c < _d.length; _c++) {
+                    var el = _d[_c];
+                    el.removeBaseNodes();
+                }
+            }
+        }
+    };
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
         if (this.key == renderedTpl.key) {
+            // The problem is here, the update values will update root elements...
             this.updateValues(renderedTpl.values);
             return this;
         }
-        var currTpl = this;
-        var nodes = currTpl.rootNodes;
-        var renderNodes;
-        var new_nodes = renderedTpl.createDOM();
-        // replace current with new
-        var pNode = nodes[0].parentNode;
-        var first = nodes[0];
-        for (var _i = 0, new_nodes_1 = new_nodes; _i < new_nodes_1.length; _i++) {
-            var n = new_nodes_1[_i];
-            pNode.insertBefore(n, first);
-        }
-        for (var _a = 0, nodes_1 = nodes; _a < nodes_1.length; _a++) {
-            var n = nodes_1[_a];
-            pNode.removeChild(n);
-        }
+        // creates the nodes...
+        renderedTpl.createDOM();
+        var fNode = this.getFirstNode();
+        // get the first render template node...
+        renderedTpl.addAt(fNode.parentNode, fNode);
+        this.removeBaseNodes();
         return renderedTpl;
     };
     drmfTemplate.prototype.updateValues = function (values) {
-        var _loop_1 = function (i) {
+        for (var i = 0; i < values.length; i++) {
             var value = values[i];
             if (typeof (value) === 'undefined')
-                return "continue";
-            var last_slot = this_1.slotTypes[i];
+                continue;
+            var last_slot = this.slotTypes[i];
             if (!last_slot)
-                return "continue";
+                continue;
             var last_type = last_slot[0];
             var last_root = last_slot[1];
             // assuming now that the type stays the same...
@@ -491,129 +638,107 @@ var drmfTemplate = /** @class */ (function () {
                         }
                     }
                     break;
+                // last node was drmfTemplate
                 case 2:
                     // simple content template was the last type...
                     var currTpl = last_slot[2];
                     var nodes = currTpl.rootNodes;
-                    if (value instanceof drmfTemplate) {
-                        var renderedTpl = value;
-                        this_1.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                    var local_value = value;
+                    if (Array.isArray(value)) {
+                        local_value = html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["", ""], ["", ""])), value);
+                    }
+                    if (local_value instanceof drmfTemplate) {
+                        var renderedTpl = local_value;
+                        this.slotTypes[i][2] = currTpl.replaceWith(renderedTpl);
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = this.slotTypes[i][2];
                     }
                     if (value instanceof drmfComponent) {
                         // render the situation now...
                         var renderedComp = value;
                         var rTpl = renderedComp.render();
                         var newTpl = currTpl.replaceWith(rTpl);
-                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = newTpl;
                     }
                     // transform into txt node
                     if (typeof (value) == 'string') {
                         var txt = document.createTextNode(value);
-                        var nodes_2 = currTpl.rootNodes;
-                        var pNode = nodes_2[0].parentNode;
-                        var first = nodes_2[0];
-                        pNode.insertBefore(txt, first);
-                        for (var _i = 0, nodes_3 = nodes_2; _i < nodes_3.length; _i++) {
-                            var n = nodes_3[_i];
-                            pNode.removeChild(n);
-                        }
-                        this_1.slotTypes[i] = [3, pNode, txt];
+                        var first = currTpl.getFirstNode();
+                        first.parentNode.insertBefore(txt, first);
+                        currTpl.removeBaseNodes();
+                        this.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = [txt];
                     }
                     break;
+                // last node was text node
                 case 3:
                     var text_node = last_slot[2];
                     if (typeof (value) == 'string') {
                         text_node.textContent = value;
                     }
-                    if (value instanceof drmfTemplate) {
-                        var new_nodes = value.createDOM();
-                        // replace current with new
-                        var pNode = text_node.parentNode;
-                        for (var _a = 0, new_nodes_2 = new_nodes; _a < new_nodes_2.length; _a++) {
-                            var n = new_nodes_2[_a];
-                            pNode.insertBefore(n, text_node);
-                        }
-                        pNode.removeChild(text_node);
-                        this_1.slotTypes[i] = [2, last_root, value, new_nodes];
+                    var v = value;
+                    if (Array.isArray(value)) {
+                        v = html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["", ""], ["", ""])), value);
                     }
-                    if (value instanceof drmfComponent) {
-                        var comp = value;
+                    if (v instanceof drmfTemplate) {
+                        v.createDOM();
+                        v.addAt(text_node.parentNode, text_node);
+                        text_node.parentNode.removeChild(text_node);
+                        this.slotTypes[i] = [2, last_root, v];
+                        // if the slot is base slot...
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = v;
+                    }
+                    if (v instanceof drmfComponent) {
+                        var comp = v;
                         var tpl = comp.render();
-                        var new_nodes = tpl.createDOM();
-                        var pNode = text_node.parentNode;
-                        for (var _b = 0, new_nodes_3 = new_nodes; _b < new_nodes_3.length; _b++) {
-                            var n = new_nodes_3[_b];
-                            pNode.insertBefore(n, text_node);
-                        }
-                        pNode.removeChild(text_node);
-                        this_1.slotTypes[i] = [5, last_root, comp, tpl, new_nodes];
-                        return { value: void 0 };
+                        tpl.createDOM();
+                        tpl.addAt(text_node.parentNode, text_node);
+                        text_node.parentNode.removeChild(text_node);
+                        this.slotTypes[i] = [5, last_root, comp, tpl];
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = tpl;
                     }
                     break;
+                // last node was drmfTemplateCollection
                 case 4:
-                    var tpls = value;
+                    var items = Array.isArray(value) ? value : [html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["", ""], ["", ""])), value)];
+                    var tpls = items.map(function (item) {
+                        if (item instanceof drmfTemplate)
+                            return item;
+                        return html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["", ""], ["", ""])), item);
+                    });
                     var curr_collection = last_slot[2];
-                    var curr_tpls = curr_collection.list;
-                    var prevNode_1 = curr_collection.node;
-                    var len = Math.max(tpls.length, curr_tpls.length);
-                    if (len === 0)
-                        return { value: void 0 };
-                    if (tpls.length === 0) {
-                        curr_tpls.forEach(function (d) {
-                            d.rootNodes.forEach(function (n) { return n.parentNode.removeChild(n); });
-                        });
-                        curr_collection.list = [];
-                        return { value: void 0 };
-                    }
-                    var ii = 0;
-                    var list = [];
-                    for (var ii_1 = 0; ii_1 < len; ii_1++) {
-                        var ct = curr_tpls[ii_1];
-                        var rt = tpls[ii_1];
-                        if (ct && rt) {
-                            var p = ct.replaceWith(rt);
-                            list[ii_1] = p;
-                            prevNode_1 = p.rootNodes[p.rootNodes.length - 1];
-                            continue;
-                        }
-                        if (ct && !rt) {
-                            ct.rootNodes.forEach(function (n) { return n.parentNode.removeChild(n); });
-                            continue;
-                        }
-                        if (!ct && rt) {
-                            if (rt.rootNodes.length === 0)
-                                rt.createDOM();
-                            rt.rootNodes.forEach(function (n) {
-                                prevNode_1.parentNode.insertBefore(n, prevNode_1.nextSibling);
-                                prevNode_1 = n;
-                            });
-                            list[ii_1] = rt;
-                            continue;
-                        }
-                    }
-                    curr_collection.list = list;
+                    curr_collection.refreshFrom(tpls);
                     break;
+                // last node was drmfComponent        
                 case 5:
+                    var local_tpl = value;
+                    if (Array.isArray(value)) {
+                        local_tpl = html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["", ""], ["", ""])), value);
+                    }
                     if (typeof (value) == 'string') {
                         var tplNow = last_slot[3];
                         var txt = document.createTextNode(value);
-                        var nodes_4 = tplNow.rootNodes;
-                        var pNode = nodes_4[0].parentNode;
-                        var first = nodes_4[0];
-                        pNode.insertBefore(txt, first);
-                        for (var _c = 0, nodes_5 = nodes_4; _c < nodes_5.length; _c++) {
-                            var n = nodes_5[_c];
-                            pNode.removeChild(n);
-                        }
-                        this_1.slotTypes[i] = [3, pNode, txt];
+                        var first = tplNow.getFirstNode();
+                        first.parentNode.insertBefore(txt, first);
+                        tplNow.removeBaseNodes();
+                        this.slotTypes[i] = [3, first.parentNode, txt];
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = [txt];
                     }
-                    if (value instanceof drmfTemplate) {
+                    if (local_tpl instanceof drmfTemplate) {
                         var comp = last_slot[2];
                         var tplNow = last_slot[3];
                         var tpl_nodes = tplNow.rootNodes;
-                        var rTpl = value;
+                        var rTpl = local_tpl;
                         var newTpl = tplNow.replaceWith(rTpl);
-                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = local_tpl;
                     }
                     if (value instanceof drmfComponent) {
                         var comp = last_slot[2];
@@ -624,18 +749,14 @@ var drmfTemplate = /** @class */ (function () {
                         var rTpl = renderedComp.render();
                         var newTpl = tplNow.replaceWith(rTpl);
                         if (newTpl === rTpl) {
-                            this_1.slotTypes[i][2] = renderedComp;
-                            this_1.slotTypes[i][3] = newTpl;
+                            this.slotTypes[i][2] = renderedComp;
+                            this.slotTypes[i][3] = newTpl;
                         }
+                        if (typeof (this.baseNodes[i * 2 + 1]) !== 'undefined')
+                            this.baseNodes[i * 2 + 1] = newTpl;
                     }
                     break;
             }
-        };
-        var this_1 = this;
-        for (var i = 0; i < values.length; i++) {
-            var state_1 = _loop_1(i);
-            if (typeof state_1 === "object")
-                return state_1.value;
         }
     };
     drmfTemplate.prototype.createDOM = function () {
@@ -676,6 +797,9 @@ var drmfTemplate = /** @class */ (function () {
                 }
                 else {
                     me.rootNodes.push(new_node);
+                    if (!me.baseNodes[index])
+                        me.baseNodes[index] = [];
+                    me.baseNodes[index].push(new_node);
                 }
                 activeNode = new_node;
                 nodetree.push(new_node);
@@ -767,6 +891,8 @@ var drmfTemplate = /** @class */ (function () {
                         }
                         // render template
                         me.slotTypes[(index - 1) >> 1] = [2, activeNode, tpl, snodes];
+                        if (!activeNode)
+                            me.baseNodes[index] = tpl;
                         return;
                     }
                     if (value instanceof drmfComponent) {
@@ -781,24 +907,24 @@ var drmfTemplate = /** @class */ (function () {
                         }
                         // render template
                         me.slotTypes[(index - 1) >> 1] = [5, activeNode, comp, tpl, snodes];
+                        if (!activeNode)
+                            me.baseNodes[index] = tpl;
                         return;
                     }
                     if (Array.isArray(value)) {
                         var coll = new drmfTemplateCollection;
                         var txtV = document.createTextNode('');
                         coll.node = txtV;
-                        append(txtV); // placeholder in case empty list
-                        var tpls = value;
+                        append(txtV);
+                        var tpls = value.map(function (item) {
+                            if (item instanceof drmfTemplate)
+                                return item;
+                            return html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["", ""], ["", ""])), item);
+                        });
                         coll.list = tpls;
                         var snodes = [];
                         for (var idx = 0; idx < tpls.length; idx++) {
                             var cont = tpls[idx];
-                            if (!cont || !cont.createDOM) {
-                                throw "Array or result of map must contain valid template elements:\n " + value + " \n----------------------------\n " + me.valuestream;
-                            }
-                            if (!activeNode) {
-                                throw "Array can not be root node of html:\n " + value + " \n----------------------------\n " + me.valuestream;
-                            }
                             var items = cont.createDOM();
                             for (var _b = 0, items_3 = items; _b < items_3.length; _b++) {
                                 var it = items_3[_b];
@@ -806,8 +932,9 @@ var drmfTemplate = /** @class */ (function () {
                                 snodes.push(it);
                             }
                         }
-                        // render templates
-                        me.slotTypes[(index - 1) >> 1] = [4, activeNode, coll, snodes];
+                        me.slotTypes[(index - 1) >> 1] = [4, activeNode, coll, null];
+                        if (!activeNode)
+                            me.baseNodes[index] = coll;
                         return;
                     }
                 }
@@ -821,6 +948,9 @@ var drmfTemplate = /** @class */ (function () {
                     me.slotTypes[(index - 1) >> 1] = [3, activeNode, txt];
                 }
                 if (!activeNode) {
+                    if (!me.baseNodes[index])
+                        me.baseNodes[index] = [];
+                    me.baseNodes[index].push(txt);
                     me.rootNodes.push(txt);
                     return;
                 }
@@ -932,7 +1062,7 @@ var drmfRouter = /** @class */ (function (_super) {
             app.last_page_name = page_name;
             return page(__assign({}, app.state, { phase: phase }));
         }
-        return exports.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
+        return exports.drmf(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
     };
     return drmfRouter;
 }(drmfComponent));
@@ -973,8 +1103,8 @@ state, options) {
     if (state)
         app.state = __assign({}, app.state, state);
     var update_application = function () { return __awaiter(_this, void 0, void 0, function () {
-        var tpl, items, _i, items_4, item, items, _a, items_5, item, _b, last_items_1, last, _c, tickFunctions_1, f;
-        return __generator(this, function (_d) {
+        var tpl, _i, tickFunctions_1, f;
+        return __generator(this, function (_a) {
             if (b_render_on && (retry_cnt < 5)) {
                 retry_cnt++;
                 return [2 /*return*/];
@@ -984,37 +1114,22 @@ state, options) {
                 if (last_state != app.state) {
                     last_state = app.state;
                     b_render_on = true;
+                    tpl = void 0;
                     if (typeof (comp) == 'function') {
                         tpl = comp(app.state);
+                    }
+                    if (comp instanceof drmfComponent) {
+                        tpl = comp.render();
+                    }
+                    if (tpl) {
                         if (lastTpl) {
                             lastTpl = lastTpl.replaceWith(tpl);
                         }
                         else {
-                            items = tpl.createDOM();
-                            for (_i = 0, items_4 = items; _i < items_4.length; _i++) {
-                                item = items_4[_i];
-                                if (!item.parentNode)
-                                    document.body.appendChild(item);
-                            }
+                            tpl.createDOM();
+                            tpl.addAt(root, root.lastChild);
                             lastTpl = tpl;
                         }
-                    }
-                    if (comp instanceof drmfComponent) {
-                        items = comp.toDom();
-                        for (_a = 0, items_5 = items; _a < items_5.length; _a++) {
-                            item = items_5[_a];
-                            if (!item.parentNode)
-                                document.body.appendChild(item);
-                        }
-                        if (last_items) {
-                            for (_b = 0, last_items_1 = last_items; _b < last_items_1.length; _b++) {
-                                last = last_items_1[_b];
-                                if (last.parentNode && items.indexOf(last) < 0) {
-                                    last.parentNode.removeChild(last);
-                                }
-                            }
-                        }
-                        last_items = items;
                     }
                     b_render_on = false;
                 }
@@ -1023,8 +1138,8 @@ state, options) {
                 console.error(e);
             }
             window.requestAnimationFrame(update_application);
-            for (_c = 0, tickFunctions_1 = tickFunctions; _c < tickFunctions_1.length; _c++) {
-                f = tickFunctions_1[_c];
+            for (_i = 0, tickFunctions_1 = tickFunctions; _i < tickFunctions_1.length; _i++) {
+                f = tickFunctions_1[_i];
                 if (f)
                     f();
             }
@@ -1036,7 +1151,7 @@ state, options) {
     // interval = setInterval( update_application, update_delay);
 }
 exports.mount = mount;
-var templateObject_1, templateObject_2;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;
 
 },{"./xmlparser":3}],3:[function(require,module,exports){
 "use strict";
@@ -1397,4 +1512,267 @@ var XMLParser = /** @class */ (function () {
 }());
 exports.XMLParser = XMLParser;
 
-},{"./index":2}]},{},[1]);
+},{"./index":2}],4:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],5:[function(require,module,exports){
+var nextTick = require('process/browser.js').nextTick;
+var apply = Function.prototype.apply;
+var slice = Array.prototype.slice;
+var immediateIds = {};
+var nextImmediateId = 0;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) { timeout.close(); };
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// That's not how node.js implements it but the exposed api is the same.
+exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+  var id = nextImmediateId++;
+  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+  immediateIds[id] = true;
+
+  nextTick(function onNextTick() {
+    if (immediateIds[id]) {
+      // fn.call() is faster so we optimize for the common use-case
+      // @see http://jsperf.com/call-apply-segu
+      if (args) {
+        fn.apply(null, args);
+      } else {
+        fn.call(null);
+      }
+      // Prevent ids from leaking
+      exports.clearImmediate(id);
+    }
+  });
+
+  return id;
+};
+
+exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+  delete immediateIds[id];
+};
+},{"process/browser.js":4}]},{},[1]);

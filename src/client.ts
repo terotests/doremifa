@@ -109,7 +109,7 @@ function listademo(state) {
     <a class="waves-effect waves-light btn" click=${add100Tasks}>+ 100 Tasks</a>
     <div class="collection">
       ${item_list = state.list.sort( (a,b) => a.id - b.id
-      ).map( item => html`<a href="#details/id/${item.id}" class="collection-item" id="link">
+      ).map( item => html`<li><a href="#details/id/${item.id}" class="collection-item" id="link">
 
         <span class="new badge blue"
         data-badge-caption="" 
@@ -127,7 +127,7 @@ function listademo(state) {
           }}>+</span>      
         <span class=${item.duration > 3 ? 'new badge red' : 'new badge blue'} 
           data-badge-caption="h" >${item.duration}</span>
-        ${item.name}</a>` ) }
+        ${item.name}</a></li>` ) }
     </div>    
   </div>
   `
@@ -258,10 +258,130 @@ const delete_item = (item) =>{
 class Hello extends drmfComponent {
   msg = 'World'
   render() {
-    return html`<div>Hello ${this.msg}</div>`
+    return html`<div>Hello ${this.msg} Component</div>`
   }
 }
-Doremifa.mount(document.body, new Hello() )
+
+// The Materialize demo...
+// Doremifa.mount(document.body, new WestWorld() )
+
+function frontpage(state) {
+  return html`
+  <h2>Hello World</h2>
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <a href="#buttons" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+
+  <div class="alert alert-primary" role="alert">
+    This is a primary alert—check it out!
+  </div>`
+}
+
+function jumbo(state) {
+  return html`
+  <div class="jumbotron">
+    <h1 class="display-4">Hello, world!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="#" role="button" click=${e => {
+        e.preventDefault()
+        getState().items.push({name:'foobar ' + Math.floor(Math.random()*100)})
+        setState({})
+      }}>+ Item</a>
+      <a class="btn btn-primary btn-lg" href="#" role="button" >See more</a>
+    </p>
+  </div>  
+  ${getState().items.map( item => html`<div>${item.name}</div>`)}
+  `
+}
+
+const helloComp = new Hello()
+function buttons(state) {
+  return html`
+
+    ${state.warning ? html`
+    Example warning:
+    <div class="alert alert-warning" role="alert">
+      ${state.warning}
+    </div>
+    ` : html``}
+    <div>  
+      <a role="button" class="btn btn-primary" href="#jumbo">Primary</a>
+      <button type="button" class="btn btn-secondary" click=${_ => {
+        setState({warning: ''})
+      }}>Secondary</button>
+      <button type="button" class="btn btn-success">Success</button>
+      <button type="button" class="btn btn-danger" click=${_ => {
+        const s = getState()
+        s.items.splice(0,1);
+        setState({})
+      }}>Danger</button>
+      <button type="button" class="btn btn-warning" click=${_ => {
+        setState({warning: 'I Give you a warning here!!!'})
+      }}>Warning</button>
+      <button type="button" class="btn btn-info">Info</button>
+      <button type="button" class="btn btn-light">Light</button>
+      <button type="button" class="btn btn-dark" click=${ _ =>{
+        setState({items:getState().items.reverse()})
+      }}>Reverse</button>  
+      <button type="button" class="btn btn-link">Link</button>  
+    </div>
+    ${html`abc${html`<div>Deep Div</div>`}efg`}
+    ${ counter & 1 ? (new Date()).toString() : html` <div>OK1?</div> <div>OK2?</div> `}
+    ${ counter & 1 ? 'Alternative text...' : helloComp}
+    ${getState().items.map( item => html`<div>...${item.name}</div>`)}
+ `
+}
+
+function testBox(txt, value) {
+  return html`
+  <div style="width:200px;float:left">
+    <div>${txt}</div>
+    ${value}
+  </div>  
+  `
+}
+// ${ counter & 1 ? 'Alternative text...' : helloComp}
+
+//  ${ counter & 1 ? 'Array OR' : getState().items.map( item => html`<div>ARRAY ${item.name}</div>`)}
+
+let counter = 0
+const helloComp2 = new Hello()
+Doremifa.mount(document.body, state => html`
+${state.items.map( (item, idx) => idx & 1 ? html`<b>${item.name}</b>` : 'Hello ' + item.name)}
+<div class="container">
+  <!-- Content here -->
+  <div>
+    <input/>
+    ${state.items.map( (item, idx) => idx & 1 ? html`<b>${item.name}</b>` : 'Hello ' + item.name)}
+  </div>
+  ${router({
+    default : frontpage,
+    buttons,
+    jumbo,
+  })}
+</div>
+${ testBox( 'Test from TXT -> array', Math.floor( counter ) & 1 ? 'TXT' :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from html -> array', Math.floor( counter ) & 1 ? html`<div><b>DIV</b></div>` :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from static array -> array',  Math.floor( counter ) & 1 ? [1, '+', 2, html`<b>== 10</b>`] :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+${ testBox( 'Test from Object -> array', Math.floor( counter ) & 1 ? helloComp2 :  getState().items.map( item => html`<div>...${item.name}</div>`) ) }
+
+`)
+
+setInterval( _=> {
+  counter++
+  setState({})
+}, 5000)
+
+
+
+
 
 /*
 // mount application into some node
@@ -381,7 +501,6 @@ mount( document.body, (state) => {
 */
 // setTimeout(add100Tasks,100)
 // setInterval( _ => setState({}), 20)
-
 
 
 
