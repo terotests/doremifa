@@ -221,7 +221,11 @@ export class drmfTemplate {
             }
           } else {
             if(is_svg) {
-              last_root.setAttributeNS( null, name, value )
+              if( name !== 'xmlns' && name !=='xmlns:xlink' ) {
+                last_root.setAttributeNS( null, name, value )
+              } else {
+                last_root.setAttribute( name, value ) 
+              }
             } else {
               last_root.setAttribute( name, value )                         
             }
@@ -424,8 +428,13 @@ export class drmfTemplate {
               node.setAttributeNS(null,name, '')
             }
           } else {
-            node.setAttributeNS(null,name, value)
-          }        } else {
+            if( name !== 'xmlns' && name !=='xmlns:xlink') {
+              node.setAttributeNS( null, name, value )
+            } else {
+              node.setAttribute( name, value ) 
+            }            
+          }        
+        } else {
           if(value==='false' || value==='true') {
             const t = value==='true'
             if(t) {

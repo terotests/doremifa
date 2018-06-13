@@ -274,7 +274,12 @@ var drmfTemplate = /** @class */ (function () {
                     }
                     else {
                         if (is_svg) {
-                            last_root.setAttributeNS(null, name_1, value);
+                            if (name_1 !== 'xmlns' && name_1 !== 'xmlns:xlink') {
+                                last_root.setAttributeNS(null, name_1, value);
+                            }
+                            else {
+                                last_root.setAttribute(name_1, value);
+                            }
                         }
                         else {
                             last_root.setAttribute(name_1, value);
@@ -477,7 +482,12 @@ var drmfTemplate = /** @class */ (function () {
                         }
                     }
                     else {
-                        node.setAttributeNS(null, name, value);
+                        if (name !== 'xmlns' && name !== 'xmlns:xlink') {
+                            node.setAttributeNS(null, name, value);
+                        }
+                        else {
+                            node.setAttribute(name, value);
+                        }
                     }
                 }
                 else {

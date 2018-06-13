@@ -59,15 +59,28 @@ class="btn btn-light float-right" role="button" href=${`#details/id/${item.id}`}
 function std_row(item) {
   return html`<li class="list-group-item">${item.name}</li>`
 }
-
+// &#x20AC;&heartsuit;&#8364;
 // mount application into some node
 Doremifa.mount(document.body,
  (state) => 
-    html`
+    html` 
+
   <div>Time now is: ${state.time}</div>
   <a href="#">Show List</a> 
   <a href="#page2">Show Page 2</a>
+  <a href="#page3">Chartest</a>
   ${Doremifa.router({   
+    page3 : () => html`
+
+    <div>&#x20AC;&heartsuit;&#8364;&time;&times;&auml;&Auml;</div>
+    <h2>&#x20AC;&heartsuit;&#8364;</h2>
+    &#x20AC;&heartsuit;&#8364;&#x20AC;&heartsuit;&#8364;  
+    <svg xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect x="10" y="20" width="30" height="20"/>
+      <text x="40" y="20">&auml;</text>
+    </svg>     
+    `,
     // route for #page2 
     page2 : (state) =>html`<h2>Route for page 2</h2>
   <!-- table render example -->
@@ -88,7 +101,7 @@ Doremifa.mount(document.body,
    <div>${[0,1,2,3].map(ti => html`<button onclick=${_ => setState({type:ti})}>type ${ti}</button>`)}</div>
    ${renderType(state)}
 
-<h2>Items ${state.items.length}</h2>
+<h2>Items ${state.items.length} &#x20AC;</h2>
 
 <button type="button" 
  class="btn btn-primary" onclick=${add_item}>+ item</button>
