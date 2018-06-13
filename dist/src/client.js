@@ -71,33 +71,35 @@ function editable_row(item) {
 function std_row(item) {
     return html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["<li class=\"list-group-item\">", "</li>"], ["<li class=\"list-group-item\">", "</li>"])), item.name);
 }
+// &#x20AC;&heartsuit;&#8364;
 // mount application into some node
 Doremifa.mount(document.body, function (state) {
-    return html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ", "\n</div>\n"], ["\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  ",
+    return html(templateObject_6 || (templateObject_6 = __makeTemplateObject([" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ", "\n</div>\n"], [" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ",
         "\n</div>\n"])), state.time, Doremifa.router({
+        page3: function () { return html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n\n    <div>&#x20AC;&heartsuit;&#8364;&time;&times;&auml;&Auml;</div>\n    <h2>&#x20AC;&heartsuit;&#8364;</h2>\n    &#x20AC;&heartsuit;&#8364;&#x20AC;&heartsuit;&#8364;  \n  \n    <svg xmlns=\"http://www.w3.org/2000/svg\"\n      xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n      <rect x=\"10\" y=\"20\" width=\"30\" height=\"20\"/>\n      <text x=\"40\" y=\"20\">&auml;</text>\n    </svg>     \n    "], ["\n\n    <div>&#x20AC;&heartsuit;&#8364;&time;&times;&auml;&Auml;</div>\n    <h2>&#x20AC;&heartsuit;&#8364;</h2>\n    &#x20AC;&heartsuit;&#8364;&#x20AC;&heartsuit;&#8364;  \n  \n    <svg xmlns=\"http://www.w3.org/2000/svg\"\n      xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n      <rect x=\"10\" y=\"20\" width=\"30\" height=\"20\"/>\n      <text x=\"40\" y=\"20\">&auml;</text>\n    </svg>     \n    "]))); },
         // route for #page2 
-        page2: function (state) { return html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ", "\n  </table>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ",
+        page2: function (state) { return html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ", "\n  </table>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"], ["<h2>Route for page 2</h2>\n  <!-- table render example -->\n  <table class=\"table\">\n    ",
             "\n  </table>\n  <div>\n    The state is now \n    <pre>", "</pre>\n  </div>\n"])), [[1, 2], [3, 4]].map(function (tr) {
-            return html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<tr>\n      ", "\n    </tr>"], ["<tr>\n      ", "\n    </tr>"])), tr.map(function (text) { return html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<td>Cell ", "</td>"], ["<td>Cell ", "</td>"])), text); }));
+            return html(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<tr>\n      ", "\n    </tr>"], ["<tr>\n      ", "\n    </tr>"])), tr.map(function (text) { return html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["<td>Cell ", "</td>"], ["<td>Cell ", "</td>"])), text); }));
         }), JSON.stringify(state, null, 2)); },
         // route for #itemlist
         default: function (state) {
-            return html(templateObject_10 || (templateObject_10 = __makeTemplateObject(["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", "</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">Reverse</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">", "</button>\n<ul class=\"list-group\">\n        ", "\n</ul>\n"], ["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", "</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=",
+            return html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", " &#x20AC;</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">Reverse</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=", ">", "</button>\n<ul class=\"list-group\">\n        ", "\n</ul>\n"], ["\n   <div>", "</div>\n   ", "\n\n<h2>Items ", " &#x20AC;</h2>\n\n<button type=\"button\" \n class=\"btn btn-primary\" onclick=", ">+ item</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=",
                 ">Reverse</button>\n<button type=\"button\" \n class=\"btn btn-warning\" onclick=",
                 ">", "</button>\n<ul class=\"list-group\">\n        ",
-                "\n</ul>\n"])), [0, 1, 2, 3].map(function (ti) { return html(templateObject_11 || (templateObject_11 = __makeTemplateObject(["<button onclick=", ">type ", "</button>"], ["<button onclick=", ">type ", "</button>"])), function (_) { return setState({ type: ti }); }, ti); }), renderType(state), state.items.length, add_item, function (_) {
+                "\n</ul>\n"])), [0, 1, 2, 3].map(function (ti) { return html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<button onclick=", ">type ", "</button>"], ["<button onclick=", ">type ", "</button>"])), function (_) { return setState({ type: ti }); }, ti); }), renderType(state), state.items.length, add_item, function (_) {
                 setState({ items: state.items.reverse() });
             }, function (_) {
                 setState({ editable: !state.editable });
             }, state.editable ? 'Hide Edits' : 'Toggle Editable', state.items.length ? state.items.map(function (item) {
                 return state.editable ? editable_row(item) : std_row(item);
-            }) : html(templateObject_12 || (templateObject_12 = __makeTemplateObject(["<li class=\"list-group-item\">List is empty</li>"], ["<li class=\"list-group-item\">List is empty</li>"]))));
+            }) : html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["<li class=\"list-group-item\">List is empty</li>"], ["<li class=\"list-group-item\">List is empty</li>"]))));
         },
         // route for #details/id/xxxx  
         details: function (state) {
             var item = state
                 .items.filter(function (item) { return item.id == state.params.id; }).pop();
-            return html(templateObject_13 || (templateObject_13 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=", ">Save</button>\n        <button onclick=", ">Delete</button>      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=",
+            return html(templateObject_14 || (templateObject_14 = __makeTemplateObject(["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=", ">Save</button>\n        <button onclick=", ">Delete</button>      "], ["<h2>Item ", "</h2>\n        <input value=", " id=\"name\">\n        <button onclick=",
                 ">Save</button>\n        <button onclick=",
                 ">Delete</button>      "])), item.id, item.name, function (e, tpl) {
                 item.name = tpl.ids.name.value;
@@ -113,5 +115,5 @@ Doremifa.mount(document.body, function (state) {
 setInterval(function (_) {
     setState({ time: (new Date).toTimeString() });
 }, 1000);
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_9, templateObject_8, templateObject_7, templateObject_11, templateObject_12, templateObject_10, templateObject_13, templateObject_6;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_7, templateObject_10, templateObject_9, templateObject_8, templateObject_12, templateObject_13, templateObject_11, templateObject_14, templateObject_6;
 //# sourceMappingURL=client.js.map
