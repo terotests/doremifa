@@ -736,11 +736,6 @@ var register_hash = function () {
     }
     app.state = __assign({}, app.state, { page: name, params: params });
 };
-var interval = null;
-var current_node = null;
-var is_registered = false;
-var last_items = null;
-var lastTpl;
 // polyfill for really old browsers
 (function () {
     var lastTime = 0;
@@ -767,6 +762,11 @@ var lastTpl;
 function mount(root, comp, 
 // renderFn : (state:any) => Promise<drmfTemplate>, 
 state, options) {
+    var interval = null;
+    var current_node = null;
+    var is_registered = false;
+    var last_items = null;
+    var lastTpl;
     if (!app.is_registered) {
         app.is_registered = true;
         register_hash();
