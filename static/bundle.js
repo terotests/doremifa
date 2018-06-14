@@ -791,7 +791,7 @@ function html(strings) {
     }
     else {
         if (b_has_key) {
-            t.key = strings.join('&') + key_v;
+            t.key = key_v;
         }
         else {
             t.key = strings.join('&');
