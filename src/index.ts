@@ -1,6 +1,14 @@
  
 import { XMLParser, bufferType } from './xmlparser'
 
+// Ideas:
+// - https://polymer.github.io/lit-html/guide/writing-templates.html
+
+
+// idea from lit-html
+const envCachesTemplates =
+    ((t: any) => t() === t())(() => ((s: TemplateStringsArray) => s) ``);
+
 export class drfmKey {
   value:string
 }
@@ -44,7 +52,7 @@ export class drmfTemplateCollection {
       return
     }
     let ii = 0
-    let list = []
+    let list = new Array(tpls.length)
     for(let ii = 0 ; ii <len ; ii++) {
       const ct = curr_tpls[ii]
       let rt = tpls[ii]
@@ -60,7 +68,7 @@ export class drmfTemplateCollection {
         continue
       }
       if(!ct && rt) { 
-        if(rt.rootNodes.length === 0) rt.createDOM()
+        if(rt.baseNodes.length === 0) rt.createDOM()
         rt.addAt( prevNode.parentNode, prevNode.nextSibling )
         list[ii] = rt
         prevNode = rt.getLastNode()
@@ -72,25 +80,18 @@ export class drmfTemplateCollection {
 }
 
 export class drmfTemplate {
-  key:string
-  strings:string[]
+  key:any
   values:any[]
   valuestream:bufferType[]
-  children : { [key: string]: any } = {}
-  doms : { [key: string]: Element[] } = {}
-
-  templateStr:string
-  templateDom:Node[]
 
   rootNodes:Node[] = []
 
   // to get all the root nodes
   baseNodes:any[] = []  
   slotTypes:any[][] = []
-  prevNode:Node
 
-  ids : { [key: string]: Element } = {}
-  list : { [key: string]: Element[] } = {}
+  ids : { [key: string]: Element } 
+  list : { [key: string]: Element[] } 
 
   _ready : (tpl:drmfTemplate) => void
 
@@ -190,9 +191,15 @@ export class drmfTemplate {
 
     for( let i=0; i<values.length ; i++) {
       const value = values[i]
+
       if(typeof(value) === 'undefined') continue
       const last_slot = this.slotTypes[i]
-      if(!last_slot) continue
+      if(value instanceof drfmKey) {
+        continue
+      }
+      if(typeof(last_slot) === 'undefined' ) {
+        continue
+      } 
       const last_type = last_slot[0]
       const last_root = last_slot[1]
       // assuming now that the type stays the same...
@@ -236,8 +243,6 @@ export class drmfTemplate {
         case 2:
           // simple content template was the last type...
           const currTpl = last_slot[2] as drmfTemplate
-          const nodes = currTpl.rootNodes
-
           let local_value = value
           if(Array.isArray(value)) {
             local_value = html`${value}`
@@ -274,39 +279,62 @@ export class drmfTemplate {
           const text_node = last_slot[2]
           if(typeof(value) == 'string') {
             text_node.textContent = value
-          }          
-          let v = value
-          if(Array.isArray(value)) {
-            v = html`${value}`
-          }
-          if( v instanceof drmfTemplate) {
-            v.createDOM()
-            v.addAt(text_node.parentNode, text_node)
-            text_node.parentNode.removeChild(text_node)
-            this.slotTypes[i] = [2, last_root, v] 
-            // if the slot is base slot...
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = v
-          }
-          if(v instanceof drmfComponent) {
-            const comp = v as drmfComponent
-            const tpl = comp.render()
-            tpl.createDOM()
-            tpl.addAt(text_node.parentNode, text_node)
-            text_node.parentNode.removeChild(text_node)
-            this.slotTypes[i] = [5, last_root, comp, tpl]     
-            if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = tpl
-          } 
+          } else {
+            let v = value
+            if(Array.isArray(value)) {
+              v = html`${value}`
+            }
+            if( v instanceof drmfTemplate) {
+              v.createDOM()
+              v.addAt(text_node.parentNode, text_node)
+              text_node.parentNode.removeChild(text_node)
+              this.slotTypes[i] = [2, last_root, v] 
+              // if the slot is base slot...
+              if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = v
+            }
+            if(v instanceof drmfComponent) {
+              const comp = v as drmfComponent
+              const tpl = comp.render()
+              tpl.createDOM()
+              tpl.addAt(text_node.parentNode, text_node)
+              text_node.parentNode.removeChild(text_node)
+              this.slotTypes[i] = [5, last_root, comp, tpl]     
+              if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = tpl
+            } 
+          }         
         break;
 
          // last node was drmfTemplateCollection
         case 4:
-          const items = Array.isArray( value ) ? value : [html`${value}`]
-          const tpls = items.map( item => {
-            if(item instanceof drmfTemplate) return item
-            return html`${item}`
-          })
           const curr_collection = last_slot[2] as drmfTemplateCollection
-          curr_collection.refreshFrom( tpls )
+          if(Array.isArray(value)) {
+            const items = value 
+            let b_diff = false
+            for(let i=0; i<items.length;i++) {
+              const ii = items[i]
+              if(!(ii instanceof drmfTemplate)) {
+                b_diff = true
+                break
+              }
+            }
+            if(b_diff) {
+              const tpls = new Array( items.length )
+              for(let i=0; i<items.length;i++) {
+                const ii = items[i]
+                if(ii instanceof drmfTemplate) {
+                  tpls[i] = ii
+                } else {
+                  tpls[i] = html`${ii}`
+                }
+              }              
+              curr_collection.refreshFrom( tpls )                  
+            } else {
+              curr_collection.refreshFrom( value )
+            }
+          } else {
+            const tpls =[html`${value}`]         
+            curr_collection.refreshFrom( tpls )  
+          }
         break;
 
         // last node was drmfComponent        
@@ -329,17 +357,15 @@ export class drmfTemplate {
           if(local_tpl instanceof drmfTemplate) {
             const comp = last_slot[2] as drmfComponent
             const tplNow = last_slot[3] as drmfTemplate
-            const tpl_nodes = tplNow.rootNodes
             const rTpl = local_tpl as drmfTemplate
             const newTpl = tplNow.replaceWith( rTpl ) 
-            this.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes]  
+            this.slotTypes[i] = [2, last_root, newTpl]  
             if(typeof(this.baseNodes[i*2 + 1]) !== 'undefined') this.baseNodes[i*2 + 1] = local_tpl
           }          
 
           if(value instanceof drmfComponent) {
             const comp = last_slot[2] as drmfComponent
             const tplNow = last_slot[3] as drmfTemplate
-            const tpl_nodes = tplNow.rootNodes
   
             // render the situation now...
             const renderedComp = value as drmfComponent
@@ -370,9 +396,13 @@ export class drmfTemplate {
     const me = this
      
     const callbacks = {
-      beginNode(name, index:number) {
+      beginNode(name_orig, index:number) {
         let new_node
+        const name = name_orig.toLowerCase()
         switch(name) {
+          case "script":
+            activeNode = document.createElement(name)
+            return
           case "svg":
             new_node= document.createElementNS(svgNS, "svg");
             is_svg = true
@@ -444,9 +474,9 @@ export class drmfTemplate {
             node.setAttribute(name, value)
           }
         }        
-        if(name==='id') me.ids[value] = node        
+        if(name==='id') (me.ids = me.ids || {})[value] = node        
         if(name==='list') {
-          if(!me.list[value]) me.list[value] = []
+          if(!me.list[value]) (me.list = me.list || {}) [value] = []
           me.list[value].push(node)  
         }      
       },
@@ -558,36 +588,38 @@ export class drmfTemplate {
     return this.rootNodes
   }  
 
-  renderTemplate() {
-    const parts = []
-    let s = "",i=0, pcnt = 0;
-    for(; i<this.values.length; i++) {
-      parts.push(this.strings[i])
-      parts.push(`<div placeholder="${pcnt++}" list="placeholders"></div>`)
-    }
-    parts.push(this.strings[i])  
-    this.templateStr = parts.join('')   
-    this.templateDom = this.createDOM()
-  }
-
 }
 
 export function html(strings, ...values) : drmfTemplate {
   const t = new drmfTemplate()   
-  t.key = strings.join('&')
-  t.strings = strings
-  t.values = values.map( value => {
-    if(typeof(value) === 'undefined') return ''
-    if(!isNaN(value) && (!Array.isArray(value))) return value.toString()
-    return value
-  }) 
-  const kk = t.values.filter( _ => _ instanceof drfmKey).map( _ => 'key=' + _.value ).join('&')
-  t.key = t.key + kk
+
+  let b_has_key = false
+  let key_v = ''
+  for(let v of values) {
+    if(v instanceof drfmKey) {
+      b_has_key = true
+      key_v = v.value
+    }
+  }
+  if(envCachesTemplates && !b_has_key) {
+    t.key = strings
+  } else {
+    if(b_has_key) {
+      t.key = strings.join('&') + key_v
+    } else {
+      t.key = strings.join('&')
+    }
+  }
+  t.values = values
+  for(let i=0; i<t.values.length; i++) {
+    if(typeof(t.values[i]) === 'undefined') t.values[i] = ''
+    if( typeof(t.values[i]) === 'number' ) t.values[i] = t.values[i].toString()
+  }
   const len = strings.length + values.length
   t.valuestream = new Array(len);
   let i = 0, si = 0, vi = 0;
   while(i<len) {
-    t.valuestream[i] = i&1 ? t.values[vi++] : t.strings[si++]
+    t.valuestream[i] = i&1 ? t.values[vi++] : strings[si++]
     i++;
   }  
   return t
@@ -677,6 +709,33 @@ let lastTpl:drmfTemplate
 
 export type drmfFunction = (state:any)=>drmfTemplate
 
+// polyfill for really old browsers
+(function() {
+  var lastTime = 0;
+  var vendors = ['ms', 'moz', 'webkit', 'o'];
+  for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                 || window[vendors[x]+'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame)
+      window.requestAnimationFrame = function(callback) {
+          var currTime = new Date().getTime();
+          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+          var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+            timeToCall);
+          lastTime = currTime + timeToCall;
+          return id;
+      };
+
+  if (!window.cancelAnimationFrame)
+      window.cancelAnimationFrame = function(id) {
+          clearTimeout(id);
+      };
+}());
+
+
 // initialize app using init function...
 export function mount ( root:Element, 
   comp:drmfComponent|drmfFunction,
@@ -692,13 +751,13 @@ export function mount ( root:Element,
   let update_delay = (options && options.updateInterval) || 100;
   let retry_cnt = 0
   if(state) app.state = {...app.state, ...state}
-  const update_application = async ()=>{
+  const update_application = ()=>{
     if(b_render_on && (retry_cnt < 5)) {
       retry_cnt++
       return
     }
     retry_cnt = 0
-    try {
+    // try {
       if(last_state != app.state) {
         last_state = app.state
         b_render_on = true
@@ -720,9 +779,9 @@ export function mount ( root:Element,
         }
         b_render_on = false
       }
-    } catch(e) {
-      console.error(e)
-    }
+    //} catch(e) {
+    //  console.error(e)
+    // }
     window.requestAnimationFrame( update_application)
     for(let f of tickFunctions) {
       if(f) f()

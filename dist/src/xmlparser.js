@@ -2432,7 +2432,7 @@ var XMLParser = /** @class */ (function () {
                         intermediate.push('&#' + code + ';');
                     }
                     else {
-                        intermediate.push(String.fromCodePoint(cc));
+                        intermediate.push(String.fromCharCode(cc));
                     }
                     this.step(1);
                     if (this.eof)
@@ -2451,7 +2451,7 @@ var XMLParser = /** @class */ (function () {
                         var name_1 = this.collectUntil(59);
                         var cc = namedChars[name_1];
                         if (cc) {
-                            intermediate.push(String.fromCodePoint(cc));
+                            intermediate.push(String.fromCharCode(cc));
                         }
                         else {
                             intermediate.push('&' + name_1 + ';');

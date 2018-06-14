@@ -8,7 +8,6 @@ for(let i=0; i<1000; i++) {
 }    
 setState({myList})
 setInterval( ()=>{
-  myList.splice(0,1)
   myList.reverse()
   setState({myList})
 },60)
@@ -19,4 +18,4 @@ class Benchmark extends drmfComponent {
     return html`<ul>${state.myList.map( item => html`<li>Item ${item}</li>`)}</ul>`
   }
 }
-mount(document.body, new Benchmark())
+mount(document.body, _ => html`<h1>Benchmark</h1></h1><ul>${_.myList.map( item => html`<li>Item ${item}</li>`)}</ul>`)
