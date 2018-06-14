@@ -682,8 +682,6 @@ export function router(routermap:any) : drmfComponent  {
   return new drmfRouter(routermap)
 }
 
-let b_render_on = false
-let last_state;
 
 const register_hash = () => {
   const parts = window.location.hash.substring(1).split('/')
@@ -700,14 +698,6 @@ const register_hash = () => {
 export interface DoremifaOptions {
   updateInterval: number;
 }
-
-let interval = null
-let current_node = null
-let is_registered = false
-let last_items = null
-let lastTpl:drmfTemplate
-
-export type drmfFunction = (state:any)=>drmfTemplate
 
 // polyfill for really old browsers
 (function() {
@@ -735,6 +725,8 @@ export type drmfFunction = (state:any)=>drmfTemplate
       };
 }());
 
+export type drmfFunction = (state:any)=>drmfTemplate
+
 
 // initialize app using init function...
 export function mount ( root:Element, 
@@ -742,6 +734,16 @@ export function mount ( root:Element,
   // renderFn : (state:any) => Promise<drmfTemplate>, 
   state? :any, 
   options?:DoremifaOptions ) {
+
+  let interval = null
+  let current_node = null
+  let is_registered = false
+  let last_items = null
+  let lastTpl:drmfTemplate
+    
+  let b_render_on = false
+  let last_state;  
+        
   if(!app.is_registered) {
     app.is_registered = true
     register_hash()

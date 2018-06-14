@@ -725,8 +725,6 @@ function router(routermap) {
     return new drmfRouter(routermap);
 }
 exports.router = router;
-var b_render_on = false;
-var last_state;
 var register_hash = function () {
     var parts = window.location.hash.substring(1).split('/');
     var name = parts.shift();
@@ -736,11 +734,6 @@ var register_hash = function () {
     }
     app.state = __assign({}, app.state, { page: name, params: params });
 };
-var interval = null;
-var current_node = null;
-var is_registered = false;
-var last_items = null;
-var lastTpl;
 // polyfill for really old browsers
 (function () {
     var lastTime = 0;
@@ -767,6 +760,13 @@ var lastTpl;
 function mount(root, comp, 
 // renderFn : (state:any) => Promise<drmfTemplate>, 
 state, options) {
+    var interval = null;
+    var current_node = null;
+    var is_registered = false;
+    var last_items = null;
+    var lastTpl;
+    var b_render_on = false;
+    var last_state;
     if (!app.is_registered) {
         app.is_registered = true;
         register_hash();
