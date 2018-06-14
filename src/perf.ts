@@ -1,4 +1,4 @@
-import { mount, router, getState, setState, html, drmfComponent, drmfTemplate } from './index';
+import { mount, router, getState, setState, html, drmfComponent, drmfTemplate, key } from './index';
 
 
 const myList = []
@@ -11,11 +11,4 @@ setInterval( ()=>{
   myList.reverse()
   setState({myList})
 },60)
-
-class Benchmark extends drmfComponent {
-  render() : drmfTemplate {
-    const state = getState()
-    return html`<ul>${state.myList.map( item => html`<li>Item ${item}</li>`)}</ul>`
-  }
-}
-mount(document.body, _ => html`<h1>Benchmark</h1></h1><ul>${_.myList.map( item => html`<li>Item ${item}</li>`)}</ul>`)
+mount(document.body, _ => html`<ul  >${_.myList.map( item => html`<li> ${key(item)} Item ${item}</li>`)}</ul>`)

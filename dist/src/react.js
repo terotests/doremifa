@@ -23,53 +23,17 @@ var PerfTest = /** @class */ (function (_super) {
         }
         _this.setState({ myList: myList });
         setInterval(function () {
-            myList.splice(0, 1);
+            myList.reverse();
             _this.setState({ myList: myList });
-        }, 60);
+        }, 50);
         return _this;
     }
     PerfTest.prototype.render = function () {
-        return (React.createElement("div", null,
-            React.createElement("h1", null, "Hello, world!"),
-            React.createElement("div", null, this.state.myList.map(function (item) { return React.createElement("li", { key: item },
-                "Item ",
-                item); }))));
+        return (React.createElement("ul", null, this.state.myList.map(function (item) { return React.createElement("li", null,
+            "Item ",
+            item); })));
     };
     return PerfTest;
 }(React.Component));
-var Clock = /** @class */ (function (_super) {
-    __extends(Clock, _super);
-    function Clock(params) {
-        var _this = _super.call(this, params) || this;
-        _this.props = {
-            date: null
-        };
-        console.log('Clock was created...');
-        _this.state = Math.random();
-        return _this;
-    }
-    Clock.prototype.componentDidMount = function () {
-        console.log('Clock did mount');
-    };
-    Clock.prototype.render = function () {
-        return React.createElement("div", null,
-            this.props.date.toLocaleTimeString(),
-            " ",
-            this.state);
-    };
-    return Clock;
-}(React.Component));
-var cnt = 0;
-setInterval(function (_) { return cnt++; }, 1000);
-function tick() {
-    ReactDOM.render(cnt & 1 ? React.createElement(Clock, { date: new Date() }) : React.createElement("div", null,
-        React.createElement(Clock, { date: new Date() })), document.getElementById('content'));
-}
-setInterval(tick, 1000);
-/*
-ReactDOM.render(
-  cnt & 1 ? <Clock date={new Date()} /> : <Clock date={new Date()} /> ,
-  document.getElementById('content')
-);
-*/ 
+ReactDOM.render(React.createElement(PerfTest, null), document.getElementById('content'));
 //# sourceMappingURL=react.js.map
