@@ -6,7 +6,6 @@ const envCachesTemplates =
     ((t: any) => t() === t())(() => ((s: TemplateStringsArray) => s) ``);
 
 const svgTagMap = [
-  "a",
   "altGlyph",
   "altGlyphDef",
   "altGlyphItem",
@@ -15,8 +14,6 @@ const svgTagMap = [
   "animateMotion",
   "animateTransform",
   "animation",
-  "audio",
-  "canvas",
   "circle",
   "clipPath",
   "color-profile",
@@ -271,8 +268,7 @@ export class drmfTemplate {
 
   replaceWith(renderedTpl:drmfTemplate) : drmfTemplate {
 
-    if(this.key == renderedTpl.key) {
-      // The problem is here, the update values will update root elements...
+    if(this.key === renderedTpl.key) {
       this.updateValues( renderedTpl.values )
       return this
     } 
@@ -494,6 +490,7 @@ export class drmfTemplate {
     let activeNode:Node 
     let is_svg = false
     const me = this
+    let active_tag = ''
      
     const callbacks = {
       beginNode(name_orig, index:number) {
@@ -522,6 +519,7 @@ export class drmfTemplate {
           if(!me.baseNodes[index]) me.baseNodes[index] = []   
           me.baseNodes[index].push( new_node )  
         }
+        active_tag = name
         activeNode = new_node
         nodetree.push(new_node)
       },
@@ -885,7 +883,6 @@ export function mount ( root:Element,
   window.requestAnimationFrame( update_application )
   // interval = setInterval( update_application, update_delay);
 }
-
 
 
 

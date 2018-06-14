@@ -139,6 +139,7 @@ Doremifa.mount(document.getElementById('content'), function (state) { return htm
 setInterval(function (_) {
     setState({ time: (new Date).toTimeString() });
 }, 50);
-Doremifa.mount(document.getElementById('content2'), function (state) { return html(templateObject_16 || (templateObject_16 = __makeTemplateObject([" \n<div>Second mount of element, item cnt ", "</div>\n"], [" \n<div>Second mount of element, item cnt ", "</div>\n"])), state.items.length); });
+Doremifa.mount(document.getElementById('content2'), function (state) { return html(templateObject_16 || (templateObject_16 = __makeTemplateObject(["<table>\n    <tbody>\n       <tr>\n        <td>$0</td>  \n    <td ><a href=\"#\">tall red burger</a></td><td ><a href=\"#\"><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></a></td><td class=\"col-md-6\"></td></tr></tbody></table>"], ["<table>\n    <tbody>\n       <tr>\n        <td>$0</td>  \n    <td ><a href=\"#\">tall red burger</a></td><td ><a href=\"#\"><span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"></span></a></td><td class=\"col-md-6\"></td></tr></tbody></table>"]))); });
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_8, templateObject_11, templateObject_10, templateObject_9, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_7, templateObject_16;
+// <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 //# sourceMappingURL=client.js.map

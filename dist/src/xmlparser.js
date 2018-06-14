@@ -2355,7 +2355,7 @@ var XMLParser = /** @class */ (function () {
         }
     };
     XMLParser.prototype.skipspace = function () {
-        if (typeof (this.buff) != 'string')
+        if (this.isValueBlock())
             return;
         var c = this.here();
         while (!this.eof) {

@@ -898,8 +898,11 @@ setInterval( _ => {
   setState({time:(new Date).toTimeString()})
 },50)
 
-
 Doremifa.mount(document.getElementById('content2'),
- (state) => html` 
-<div>Second mount of element, item cnt ${state.items.length}</div>
-`)
+ (state) => html`<table>
+    <tbody>
+       <tr>
+        <td>$0</td>  
+    <td ><a href="#">tall red burger</a></td><td ><a href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table>`)
+
+ // <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">

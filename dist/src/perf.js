@@ -6,7 +6,6 @@ var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cook
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("./index");
 var myList = [];
-this.state = { myList: myList };
 for (var i = 0; i < 1000; i++) {
     myList.push(i);
 }

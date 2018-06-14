@@ -9,7 +9,7 @@
     "build:ts": "tsc --declaration false",
     "build:hyper": "browserify ./dist/src/hyper.js -o ./static/hyper.js",
     "build:perf": "browserify ./dist/src/client.js -o ./static/perf.js",
-    "build:browserify": "browserify ./dist/src/client.js -o ./static/bundle.js",
+    "build:browserify": "browserify ./dist/src/perf2.js -o ./static/bundle.js",
     "build:browserpackage": "browserify ./dist/src/index.js --standalone Doremifa -o ./static/Doremifa.js && uglifyjs ./static/Doremifa.js > ./static/Doremifa-min.js",
     "build": "npm run build:ts && npm run build:browserify && npm run build:browserpackage",
     "start": "npm run build && node dist/src/server.js"

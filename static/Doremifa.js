@@ -24,12 +24,9 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var xmlparser_1 = require("./xmlparser");
-// Ideas:
-// - https://polymer.github.io/lit-html/guide/writing-templates.html
 // idea from lit-html
 var envCachesTemplates = (function (t) { return t() === t(); })(function () { return (function (s) { return s; })(templateObject_1 || (templateObject_1 = __makeTemplateObject([""], [""]))); });
 var svgTagMap = [
-    "a",
     "altGlyph",
     "altGlyphDef",
     "altGlyphItem",
@@ -38,8 +35,6 @@ var svgTagMap = [
     "animateMotion",
     "animateTransform",
     "animation",
-    "audio",
-    "canvas",
     "circle",
     "clipPath",
     "color-profile",
@@ -295,8 +290,7 @@ var drmfTemplate = /** @class */ (function () {
         }
     };
     drmfTemplate.prototype.replaceWith = function (renderedTpl) {
-        if (this.key == renderedTpl.key) {
-            // The problem is here, the update values will update root elements...
+        if (this.key === renderedTpl.key) {
             this.updateValues(renderedTpl.values);
             return this;
         }
@@ -518,6 +512,7 @@ var drmfTemplate = /** @class */ (function () {
         var activeNode;
         var is_svg = false;
         var me = this;
+        var active_tag = '';
         var callbacks = {
             beginNode: function (name_orig, index) {
                 var new_node;
@@ -549,6 +544,7 @@ var drmfTemplate = /** @class */ (function () {
                         me.baseNodes[index] = [];
                     me.baseNodes[index].push(new_node);
                 }
+                active_tag = name;
                 activeNode = new_node;
                 nodetree.push(new_node);
             },
@@ -3282,7 +3278,7 @@ var XMLParser = /** @class */ (function () {
         }
     };
     XMLParser.prototype.skipspace = function () {
-        if (typeof (this.buff) != 'string')
+        if (this.isValueBlock())
             return;
         var c = this.here();
         while (!this.eof) {

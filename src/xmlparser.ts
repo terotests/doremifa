@@ -2375,7 +2375,7 @@ export class XMLParser  {
   }
 
   skipspace() {
-    if(typeof(this.buff) != 'string') return;    
+    if(this.isValueBlock()) return;    
     let c = this.here()
     while(!this.eof) {
       if( c > 32 ) break;

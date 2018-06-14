@@ -188,6 +188,11 @@ The router component gets the `state` having following variables set
 - lit-html
 - YallaJS
 
+# Tutorials on similar subjects
+- https://www.twilio.com/blog/2018/05/building-a-chat-with-twilio-lit-html-parcel-and-typescript.html
+- https://itnext.io/a-tiny-disastrous-ecmascript-change-fadc05c83e69
+
+
 # License
 
 MIT.
