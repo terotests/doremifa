@@ -1,13 +1,113 @@
  
 import { XMLParser, bufferType } from './xmlparser'
 
-// Ideas:
-// - https://polymer.github.io/lit-html/guide/writing-templates.html
-
-
 // idea from lit-html
 const envCachesTemplates =
     ((t: any) => t() === t())(() => ((s: TemplateStringsArray) => s) ``);
+
+const svgTagMap = [
+  "a",
+  "altGlyph",
+  "altGlyphDef",
+  "altGlyphItem",
+  "animate",
+  "animateColor",
+  "animateMotion",
+  "animateTransform",
+  "animation",
+  "audio",
+  "canvas",
+  "circle",
+  "clipPath",
+  "color-profile",
+  "cursor",
+  "defs",
+  "desc",
+  "discard",
+  "ellipse",
+  "feBlend",
+  "feColorMatrix",
+  "feComponentTransfer",
+  "feComposite",
+  "feConvolveMatrix",
+  "feDiffuseLighting",
+  "feDisplacementMap",
+  "feDistantLight",
+  "feDropShadow",
+  "feFlood",
+  "feFuncA",
+  "feFuncB",
+  "feFuncG",
+  "feFuncR",
+  "feGaussianBlur",
+  "feImage",
+  "feMerge",
+  "feMergeNode",
+  "feMorphology",
+  "feOffset",
+  "fePointLight",
+  "feSpecularLighting",
+  "feSpotLight",
+  "feTile",
+  "feTurbulence",
+  "filter",
+  "font",
+  "font-face",
+  "font-face-format",
+  "font-face-name",
+  "font-face-src",
+  "font-face-uri",
+  "foreignObject",
+  "g",
+  "glyph",
+  "glyphRef",
+  "handler",
+  "hatch",
+  "hatchpath",
+  "hkern",
+  "iframe",
+  "image",
+  "line",
+  "linearGradient",
+  "listener",
+  "marker",
+  "mask",
+  "mesh",
+  "meshgradient",
+  "meshpatch",
+  "meshrow",
+  "metadata",
+  "missing-glyph",
+  "mpath",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "prefetch",
+  "radialGradient",
+  "rect",
+  "script",
+  "set",
+  "solidColor",
+  "solidcolor",
+  "stop",
+  "style",
+  "svg",
+  "switch",
+  "symbol",
+  "tbreak",
+  "text",
+  "textArea",
+  "textPath",
+  "title",
+  "tref",
+  "tspan",
+  "unknown",
+  "use",
+  "video",
+  "view",
+  "vkern"
+].reduce((prev,curr)=>({...prev, [curr]:true}), {})
 
 export class drfmKey {
   value:string
@@ -399,6 +499,7 @@ export class drmfTemplate {
       beginNode(name_orig, index:number) {
         let new_node
         const name = name_orig.toLowerCase()
+        if(svgTagMap[name]) is_svg = true
         switch(name) {
           case "script":
             activeNode = document.createElement(name)
@@ -407,15 +508,6 @@ export class drmfTemplate {
             new_node= document.createElementNS(svgNS, "svg");
             is_svg = true
           break
-          // TODO: add full set of SVG elements
-          case "g":
-          case "rect":
-          case "path":
-          case "image":
-          case "line":
-          case "ellipse":
-          case "circle":
-            is_svg = true
           default:
             if(is_svg) {
               new_node= document.createElementNS(svgNS, name);
