@@ -28,6 +28,112 @@ var xmlparser_1 = require("./xmlparser");
 // - https://polymer.github.io/lit-html/guide/writing-templates.html
 // idea from lit-html
 var envCachesTemplates = (function (t) { return t() === t(); })(function () { return (function (s) { return s; })(templateObject_1 || (templateObject_1 = __makeTemplateObject([""], [""]))); });
+var svgTagMap = [
+    "a",
+    "altGlyph",
+    "altGlyphDef",
+    "altGlyphItem",
+    "animate",
+    "animateColor",
+    "animateMotion",
+    "animateTransform",
+    "animation",
+    "audio",
+    "canvas",
+    "circle",
+    "clipPath",
+    "color-profile",
+    "cursor",
+    "defs",
+    "desc",
+    "discard",
+    "ellipse",
+    "feBlend",
+    "feColorMatrix",
+    "feComponentTransfer",
+    "feComposite",
+    "feConvolveMatrix",
+    "feDiffuseLighting",
+    "feDisplacementMap",
+    "feDistantLight",
+    "feDropShadow",
+    "feFlood",
+    "feFuncA",
+    "feFuncB",
+    "feFuncG",
+    "feFuncR",
+    "feGaussianBlur",
+    "feImage",
+    "feMerge",
+    "feMergeNode",
+    "feMorphology",
+    "feOffset",
+    "fePointLight",
+    "feSpecularLighting",
+    "feSpotLight",
+    "feTile",
+    "feTurbulence",
+    "filter",
+    "font",
+    "font-face",
+    "font-face-format",
+    "font-face-name",
+    "font-face-src",
+    "font-face-uri",
+    "foreignObject",
+    "g",
+    "glyph",
+    "glyphRef",
+    "handler",
+    "hatch",
+    "hatchpath",
+    "hkern",
+    "iframe",
+    "image",
+    "line",
+    "linearGradient",
+    "listener",
+    "marker",
+    "mask",
+    "mesh",
+    "meshgradient",
+    "meshpatch",
+    "meshrow",
+    "metadata",
+    "missing-glyph",
+    "mpath",
+    "path",
+    "pattern",
+    "polygon",
+    "polyline",
+    "prefetch",
+    "radialGradient",
+    "rect",
+    "script",
+    "set",
+    "solidColor",
+    "solidcolor",
+    "stop",
+    "style",
+    "svg",
+    "switch",
+    "symbol",
+    "tbreak",
+    "text",
+    "textArea",
+    "textPath",
+    "title",
+    "tref",
+    "tspan",
+    "unknown",
+    "use",
+    "video",
+    "view",
+    "vkern"
+].reduce(function (prev, curr) {
+    return (__assign({}, prev, (_a = {}, _a[curr] = true, _a)));
+    var _a;
+}, {});
 var drfmKey = /** @class */ (function () {
     function drfmKey() {
     }
@@ -416,6 +522,8 @@ var drmfTemplate = /** @class */ (function () {
             beginNode: function (name_orig, index) {
                 var new_node;
                 var name = name_orig.toLowerCase();
+                if (svgTagMap[name])
+                    is_svg = true;
                 switch (name) {
                     case "script":
                         activeNode = document.createElement(name);
@@ -424,15 +532,6 @@ var drmfTemplate = /** @class */ (function () {
                         new_node = document.createElementNS(svgNS, "svg");
                         is_svg = true;
                         break;
-                    // TODO: add full set of SVG elements
-                    case "g":
-                    case "rect":
-                    case "path":
-                    case "image":
-                    case "line":
-                    case "ellipse":
-                    case "circle":
-                        is_svg = true;
                     default:
                         if (is_svg) {
                             new_node = document.createElementNS(svgNS, name);
