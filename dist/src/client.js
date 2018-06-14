@@ -83,7 +83,7 @@ function render_cat(x, y, width, item) {
 }
 // &#x20AC;&heartsuit;&#8364;
 // mount application into some node
-Doremifa.mount(document.body, function (state) { return html(templateObject_7 || (templateObject_7 = __makeTemplateObject([" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ", "\n</div>\n\n"], [" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ",
+Doremifa.mount(document.getElementById('content'), function (state) { return html(templateObject_7 || (templateObject_7 = __makeTemplateObject([" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ", "\n</div>\n\n"], [" \n\n  <div>Time now is: ", "</div>\n  <a href=\"#\">Show List</a> \n  <a href=\"#page2\">Show Page 2</a>\n  <a href=\"#page3\">Chartest</a>\n  ",
     "\n</div>\n\n"])), state.time, Doremifa.router({
     page3: function () {
         var w = 100 + Math.sin(Date.now() / 1000) * 100;
@@ -139,5 +139,6 @@ Doremifa.mount(document.body, function (state) { return html(templateObject_7 ||
 setInterval(function (_) {
     setState({ time: (new Date).toTimeString() });
 }, 50);
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_8, templateObject_11, templateObject_10, templateObject_9, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_7;
+Doremifa.mount(document.getElementById('content2'), function (state) { return html(templateObject_16 || (templateObject_16 = __makeTemplateObject([" \n<div>Second mount of element, item cnt ", "</div>\n"], [" \n<div>Second mount of element, item cnt ", "</div>\n"])), state.items.length); });
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_8, templateObject_11, templateObject_10, templateObject_9, templateObject_13, templateObject_14, templateObject_12, templateObject_15, templateObject_7, templateObject_16;
 //# sourceMappingURL=client.js.map

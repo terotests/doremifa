@@ -798,7 +798,7 @@ function render_cat(x,y,width, item) {
 }
 // &#x20AC;&heartsuit;&#8364;
 // mount application into some node
-Doremifa.mount(document.body,
+Doremifa.mount(document.getElementById('content'),
  (state) => html` 
 
   <div>Time now is: ${state.time}</div>
@@ -897,3 +897,9 @@ ${state.items.map( (item,index) => {
 setInterval( _ => {
   setState({time:(new Date).toTimeString()})
 },50)
+
+
+Doremifa.mount(document.getElementById('content2'),
+ (state) => html` 
+<div>Second mount of element, item cnt ${state.items.length}</div>
+`)

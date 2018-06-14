@@ -682,8 +682,6 @@ export function router(routermap:any) : drmfComponent  {
   return new drmfRouter(routermap)
 }
 
-let b_render_on = false
-let last_state;
 
 const register_hash = () => {
   const parts = window.location.hash.substring(1).split('/')
@@ -743,6 +741,8 @@ export function mount ( root:Element,
   let last_items = null
   let lastTpl:drmfTemplate
     
+  let b_render_on = false
+  let last_state;  
         
   if(!app.is_registered) {
     app.is_registered = true
