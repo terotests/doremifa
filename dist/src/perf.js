@@ -22,7 +22,6 @@ for (var i = 0; i < 1000; i++) {
 }
 index_1.setState({ myList: myList });
 setInterval(function () {
-    myList.splice(0, 1);
     myList.reverse();
     index_1.setState({ myList: myList });
 }, 60);
@@ -37,6 +36,6 @@ var Benchmark = /** @class */ (function (_super) {
     };
     return Benchmark;
 }(index_1.drmfComponent));
-index_1.mount(document.body, new Benchmark());
-var templateObject_2, templateObject_1;
+index_1.mount(document.body, function (_) { return index_1.html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["<h1>Benchmark</h1></h1><ul>", "</ul>"], ["<h1>Benchmark</h1></h1><ul>", "</ul>"])), _.myList.map(function (item) { return index_1.html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["<li>Item ", "</li>"], ["<li>Item ", "</li>"])), item); })); });
+var templateObject_2, templateObject_1, templateObject_4, templateObject_3;
 //# sourceMappingURL=perf.js.map

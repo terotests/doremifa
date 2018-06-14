@@ -2454,7 +2454,7 @@ export class XMLParser  {
           if(isNaN(cc)) {
             intermediate.push( '&#'+code+';')
           } else {
-            intermediate.push( String.fromCodePoint(cc) )
+            intermediate.push( String.fromCharCode(cc) )
           }
           this.step(1)
           if(this.eof) break;          
@@ -2471,7 +2471,7 @@ export class XMLParser  {
             const name = this.collectUntil(59)
             const cc = namedChars[name]
             if(cc) {
-              intermediate.push( String.fromCodePoint(cc) )
+              intermediate.push( String.fromCharCode(cc) )
             } else {
               intermediate.push( '&'+name+';')
             }

@@ -22,43 +22,12 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var xmlparser_1 = require("./xmlparser");
+// Ideas:
+// - https://polymer.github.io/lit-html/guide/writing-templates.html
+// idea from lit-html
+var envCachesTemplates = (function (t) { return t() === t(); })(function () { return (function (s) { return s; })(templateObject_1 || (templateObject_1 = __makeTemplateObject([""], [""]))); });
 var drfmKey = /** @class */ (function () {
     function drfmKey() {
     }
@@ -80,7 +49,7 @@ var drmfComponent = /** @class */ (function () {
         return this.lastRender;
     };
     drmfComponent.prototype.render = function () {
-        return exports.drmf(templateObject_1 || (templateObject_1 = __makeTemplateObject(["<div>Hello World</div>"], ["<div>Hello World</div>"])));
+        return exports.drmf(templateObject_2 || (templateObject_2 = __makeTemplateObject(["<div>Hello World</div>"], ["<div>Hello World</div>"])));
     };
     return drmfComponent;
 }());
@@ -104,7 +73,7 @@ var drmfTemplateCollection = /** @class */ (function () {
             return;
         }
         var ii = 0;
-        var list = [];
+        var list = new Array(tpls.length);
         for (var ii_1 = 0; ii_1 < len; ii_1++) {
             var ct = curr_tpls[ii_1];
             var rt = tpls[ii_1];
@@ -120,7 +89,7 @@ var drmfTemplateCollection = /** @class */ (function () {
                 continue;
             }
             if (!ct && rt) {
-                if (rt.rootNodes.length === 0)
+                if (rt.baseNodes.length === 0)
                     rt.createDOM();
                 rt.addAt(prevNode.parentNode, prevNode.nextSibling);
                 list[ii_1] = rt;
@@ -135,14 +104,10 @@ var drmfTemplateCollection = /** @class */ (function () {
 exports.drmfTemplateCollection = drmfTemplateCollection;
 var drmfTemplate = /** @class */ (function () {
     function drmfTemplate() {
-        this.children = {};
-        this.doms = {};
         this.rootNodes = [];
         // to get all the root nodes
         this.baseNodes = [];
         this.slotTypes = [];
-        this.ids = {};
-        this.list = {};
     }
     drmfTemplate.prototype.onReady = function (fn) {
         this._ready = fn;
@@ -244,8 +209,12 @@ var drmfTemplate = /** @class */ (function () {
             if (typeof (value) === 'undefined')
                 return "continue";
             var last_slot = this_1.slotTypes[i];
-            if (!last_slot)
+            if (value instanceof drfmKey) {
                 return "continue";
+            }
+            if (typeof (last_slot) === 'undefined') {
+                return "continue";
+            }
             var last_type = last_slot[0];
             var last_root = last_slot[1];
             // assuming now that the type stays the same...
@@ -291,10 +260,9 @@ var drmfTemplate = /** @class */ (function () {
                 case 2:
                     // simple content template was the last type...
                     var currTpl = last_slot[2];
-                    var nodes = currTpl.rootNodes;
                     var local_value = value;
                     if (Array.isArray(value)) {
-                        local_value = html(templateObject_2 || (templateObject_2 = __makeTemplateObject(["", ""], ["", ""])), value);
+                        local_value = html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["", ""], ["", ""])), value);
                     }
                     if (local_value instanceof drmfTemplate) {
                         var renderedTpl = local_value;
@@ -328,46 +296,72 @@ var drmfTemplate = /** @class */ (function () {
                     if (typeof (value) == 'string') {
                         text_node.textContent = value;
                     }
-                    var v = value;
-                    if (Array.isArray(value)) {
-                        v = html(templateObject_3 || (templateObject_3 = __makeTemplateObject(["", ""], ["", ""])), value);
-                    }
-                    if (v instanceof drmfTemplate) {
-                        v.createDOM();
-                        v.addAt(text_node.parentNode, text_node);
-                        text_node.parentNode.removeChild(text_node);
-                        this_1.slotTypes[i] = [2, last_root, v];
-                        // if the slot is base slot...
-                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this_1.baseNodes[i * 2 + 1] = v;
-                    }
-                    if (v instanceof drmfComponent) {
-                        var comp = v;
-                        var tpl = comp.render();
-                        tpl.createDOM();
-                        tpl.addAt(text_node.parentNode, text_node);
-                        text_node.parentNode.removeChild(text_node);
-                        this_1.slotTypes[i] = [5, last_root, comp, tpl];
-                        if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
-                            this_1.baseNodes[i * 2 + 1] = tpl;
+                    else {
+                        var v = value;
+                        if (Array.isArray(value)) {
+                            v = html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["", ""], ["", ""])), value);
+                        }
+                        if (v instanceof drmfTemplate) {
+                            v.createDOM();
+                            v.addAt(text_node.parentNode, text_node);
+                            text_node.parentNode.removeChild(text_node);
+                            this_1.slotTypes[i] = [2, last_root, v];
+                            // if the slot is base slot...
+                            if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                                this_1.baseNodes[i * 2 + 1] = v;
+                        }
+                        if (v instanceof drmfComponent) {
+                            var comp = v;
+                            var tpl = comp.render();
+                            tpl.createDOM();
+                            tpl.addAt(text_node.parentNode, text_node);
+                            text_node.parentNode.removeChild(text_node);
+                            this_1.slotTypes[i] = [5, last_root, comp, tpl];
+                            if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
+                                this_1.baseNodes[i * 2 + 1] = tpl;
+                        }
                     }
                     break;
                 // last node was drmfTemplateCollection
                 case 4:
-                    var items = Array.isArray(value) ? value : [html(templateObject_4 || (templateObject_4 = __makeTemplateObject(["", ""], ["", ""])), value)];
-                    var tpls = items.map(function (item) {
-                        if (item instanceof drmfTemplate)
-                            return item;
-                        return html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["", ""], ["", ""])), item);
-                    });
                     var curr_collection = last_slot[2];
-                    curr_collection.refreshFrom(tpls);
+                    if (Array.isArray(value)) {
+                        var items = value;
+                        var b_diff = false;
+                        for (var i_1 = 0; i_1 < items.length; i_1++) {
+                            var ii = items[i_1];
+                            if (!(ii instanceof drmfTemplate)) {
+                                b_diff = true;
+                                break;
+                            }
+                        }
+                        if (b_diff) {
+                            var tpls = new Array(items.length);
+                            for (var i_2 = 0; i_2 < items.length; i_2++) {
+                                var ii = items[i_2];
+                                if (ii instanceof drmfTemplate) {
+                                    tpls[i_2] = ii;
+                                }
+                                else {
+                                    tpls[i_2] = html(templateObject_5 || (templateObject_5 = __makeTemplateObject(["", ""], ["", ""])), ii);
+                                }
+                            }
+                            curr_collection.refreshFrom(tpls);
+                        }
+                        else {
+                            curr_collection.refreshFrom(value);
+                        }
+                    }
+                    else {
+                        var tpls = [html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["", ""], ["", ""])), value)];
+                        curr_collection.refreshFrom(tpls);
+                    }
                     break;
                 // last node was drmfComponent        
                 case 5:
                     var local_tpl = value;
                     if (Array.isArray(value)) {
-                        local_tpl = html(templateObject_6 || (templateObject_6 = __makeTemplateObject(["", ""], ["", ""])), value);
+                        local_tpl = html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["", ""], ["", ""])), value);
                     }
                     if (typeof (value) == 'string') {
                         var tplNow = last_slot[3];
@@ -382,17 +376,15 @@ var drmfTemplate = /** @class */ (function () {
                     if (local_tpl instanceof drmfTemplate) {
                         var comp = last_slot[2];
                         var tplNow = last_slot[3];
-                        var tpl_nodes = tplNow.rootNodes;
                         var rTpl = local_tpl;
                         var newTpl = tplNow.replaceWith(rTpl);
-                        this_1.slotTypes[i] = [2, last_root, newTpl, newTpl.rootNodes];
+                        this_1.slotTypes[i] = [2, last_root, newTpl];
                         if (typeof (this_1.baseNodes[i * 2 + 1]) !== 'undefined')
                             this_1.baseNodes[i * 2 + 1] = local_tpl;
                     }
                     if (value instanceof drmfComponent) {
                         var comp = last_slot[2];
                         var tplNow = last_slot[3];
-                        var tpl_nodes = tplNow.rootNodes;
                         // render the situation now...
                         var renderedComp = value;
                         var rTpl = renderedComp.render();
@@ -421,9 +413,13 @@ var drmfTemplate = /** @class */ (function () {
         var is_svg = false;
         var me = this;
         var callbacks = {
-            beginNode: function (name, index) {
+            beginNode: function (name_orig, index) {
                 var new_node;
+                var name = name_orig.toLowerCase();
                 switch (name) {
+                    case "script":
+                        activeNode = document.createElement(name);
+                        return;
                     case "svg":
                         new_node = document.createElementNS(svgNS, "svg");
                         is_svg = true;
@@ -503,10 +499,10 @@ var drmfTemplate = /** @class */ (function () {
                     }
                 }
                 if (name === 'id')
-                    me.ids[value] = node;
+                    (me.ids = me.ids || {})[value] = node;
                 if (name === 'list') {
                     if (!me.list[value])
-                        me.list[value] = [];
+                        (me.list = me.list || {})[value] = [];
                     me.list[value].push(node);
                 }
             },
@@ -574,7 +570,7 @@ var drmfTemplate = /** @class */ (function () {
                         var tpls = value.map(function (item) {
                             if (item instanceof drmfTemplate)
                                 return item;
-                            return html(templateObject_7 || (templateObject_7 = __makeTemplateObject(["", ""], ["", ""])), item);
+                            return html(templateObject_8 || (templateObject_8 = __makeTemplateObject(["", ""], ["", ""])), item);
                         });
                         coll.list = tpls;
                         var snodes = [];
@@ -628,17 +624,6 @@ var drmfTemplate = /** @class */ (function () {
         }
         return this.rootNodes;
     };
-    drmfTemplate.prototype.renderTemplate = function () {
-        var parts = [];
-        var s = "", i = 0, pcnt = 0;
-        for (; i < this.values.length; i++) {
-            parts.push(this.strings[i]);
-            parts.push("<div placeholder=\"" + pcnt++ + "\" list=\"placeholders\"></div>");
-        }
-        parts.push(this.strings[i]);
-        this.templateStr = parts.join('');
-        this.templateDom = this.createDOM();
-    };
     return drmfTemplate;
 }());
 exports.drmfTemplate = drmfTemplate;
@@ -648,22 +633,38 @@ function html(strings) {
         values[_i - 1] = arguments[_i];
     }
     var t = new drmfTemplate();
-    t.key = strings.join('&');
-    t.strings = strings;
-    t.values = values.map(function (value) {
-        if (typeof (value) === 'undefined')
-            return '';
-        if (!isNaN(value) && (!Array.isArray(value)))
-            return value.toString();
-        return value;
-    });
-    var kk = t.values.filter(function (_) { return _ instanceof drfmKey; }).map(function (_) { return 'key=' + _.value; }).join('&');
-    t.key = t.key + kk;
+    var b_has_key = false;
+    var key_v = '';
+    for (var _a = 0, values_1 = values; _a < values_1.length; _a++) {
+        var v = values_1[_a];
+        if (v instanceof drfmKey) {
+            b_has_key = true;
+            key_v = v.value;
+        }
+    }
+    if (envCachesTemplates && !b_has_key) {
+        t.key = strings;
+    }
+    else {
+        if (b_has_key) {
+            t.key = strings.join('&') + key_v;
+        }
+        else {
+            t.key = strings.join('&');
+        }
+    }
+    t.values = values;
+    for (var i_3 = 0; i_3 < t.values.length; i_3++) {
+        if (typeof (t.values[i_3]) === 'undefined')
+            t.values[i_3] = '';
+        if (typeof (t.values[i_3]) === 'number')
+            t.values[i_3] = t.values[i_3].toString();
+    }
     var len = strings.length + values.length;
     t.valuestream = new Array(len);
     var i = 0, si = 0, vi = 0;
     while (i < len) {
-        t.valuestream[i] = i & 1 ? t.values[vi++] : t.strings[si++];
+        t.valuestream[i] = i & 1 ? t.values[vi++] : strings[si++];
         i++;
     }
     return t;
@@ -717,7 +718,7 @@ var drmfRouter = /** @class */ (function (_super) {
             app.last_page_name = page_name;
             return page(__assign({}, app.state, { phase: phase }));
         }
-        return exports.drmf(templateObject_8 || (templateObject_8 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
+        return exports.drmf(templateObject_9 || (templateObject_9 = __makeTemplateObject(["<div></div>"], ["<div></div>"])));
     };
     return drmfRouter;
 }(drmfComponent));
@@ -741,11 +742,32 @@ var current_node = null;
 var is_registered = false;
 var last_items = null;
 var lastTpl;
+// polyfill for really old browsers
+(function () {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame']
+            || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function (callback) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function (id) {
+            clearTimeout(id);
+        };
+}());
 // initialize app using init function...
 function mount(root, comp, 
 // renderFn : (state:any) => Promise<drmfTemplate>, 
 state, options) {
-    var _this = this;
     if (!app.is_registered) {
         app.is_registered = true;
         register_hash();
@@ -757,56 +779,51 @@ state, options) {
     var retry_cnt = 0;
     if (state)
         app.state = __assign({}, app.state, state);
-    var update_application = function () { return __awaiter(_this, void 0, void 0, function () {
-        var tpl, _i, tickFunctions_1, f;
-        return __generator(this, function (_a) {
-            if (b_render_on && (retry_cnt < 5)) {
-                retry_cnt++;
-                return [2 /*return*/];
+    var update_application = function () {
+        if (b_render_on && (retry_cnt < 5)) {
+            retry_cnt++;
+            return;
+        }
+        retry_cnt = 0;
+        // try {
+        if (last_state != app.state) {
+            last_state = app.state;
+            b_render_on = true;
+            var tpl = void 0;
+            if (typeof (comp) == 'function') {
+                tpl = comp(app.state);
             }
-            retry_cnt = 0;
-            try {
-                if (last_state != app.state) {
-                    last_state = app.state;
-                    b_render_on = true;
-                    tpl = void 0;
-                    if (typeof (comp) == 'function') {
-                        tpl = comp(app.state);
-                    }
-                    if (comp instanceof drmfComponent) {
-                        tpl = comp.render();
-                    }
-                    if (tpl) {
-                        if (lastTpl) {
-                            lastTpl = lastTpl.replaceWith(tpl);
-                        }
-                        else {
-                            tpl.createDOM();
-                            tpl.addAt(root, root.lastChild);
-                            lastTpl = tpl;
-                        }
-                    }
-                    b_render_on = false;
+            if (comp instanceof drmfComponent) {
+                tpl = comp.render();
+            }
+            if (tpl) {
+                if (lastTpl) {
+                    lastTpl = lastTpl.replaceWith(tpl);
+                }
+                else {
+                    tpl.createDOM();
+                    tpl.addAt(root, root.lastChild);
+                    lastTpl = tpl;
                 }
             }
-            catch (e) {
-                console.error(e);
-            }
-            window.requestAnimationFrame(update_application);
-            for (_i = 0, tickFunctions_1 = tickFunctions; _i < tickFunctions_1.length; _i++) {
-                f = tickFunctions_1[_i];
-                if (f)
-                    f();
-            }
-            tickFunctions.length = 0;
-            return [2 /*return*/];
-        });
-    }); };
+            b_render_on = false;
+        }
+        //} catch(e) {
+        //  console.error(e)
+        // }
+        window.requestAnimationFrame(update_application);
+        for (var _i = 0, tickFunctions_1 = tickFunctions; _i < tickFunctions_1.length; _i++) {
+            var f = tickFunctions_1[_i];
+            if (f)
+                f();
+        }
+        tickFunctions.length = 0;
+    };
     window.requestAnimationFrame(update_application);
     // interval = setInterval( update_application, update_delay);
 }
 exports.mount = mount;
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7, templateObject_8, templateObject_9;
 
 },{"./xmlparser":2}],2:[function(require,module,exports){
 "use strict";
@@ -3243,7 +3260,7 @@ var XMLParser = /** @class */ (function () {
                         intermediate.push('&#' + code + ';');
                     }
                     else {
-                        intermediate.push(String.fromCodePoint(cc));
+                        intermediate.push(String.fromCharCode(cc));
                     }
                     this.step(1);
                     if (this.eof)
@@ -3262,7 +3279,7 @@ var XMLParser = /** @class */ (function () {
                         var name_1 = this.collectUntil(59);
                         var cc = namedChars[name_1];
                         if (cc) {
-                            intermediate.push(String.fromCodePoint(cc));
+                            intermediate.push(String.fromCharCode(cc));
                         }
                         else {
                             intermediate.push('&' + name_1 + ';');
